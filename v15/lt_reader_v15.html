@@ -885,11 +885,11 @@
             <h4>2.6 查词浮层行为</h4>
             <div class="config-card">
                 <div class="option-grid" id="wlpAutoCloseOptions">
-                    <div class="radio-card active" data-val="off" onclick="applyWlpAutoClose('off', this)">
+                    <div class="radio-card" data-val="off" onclick="applyWlpAutoClose('off', this)">
                         <span>版本1：不自动关闭（点右上角 ✕ 才关）</span><span>✓</span>
                     </div>
-                    <div class="radio-card" data-val="sec" onclick="applyWlpAutoClose('sec', this)">
-                        <span>版本2：鼠标没进面板就自动关闭</span><span>✓</span>
+                    <div class="radio-card active" data-val="sec" onclick="applyWlpAutoClose('sec', this)">
+                        <span>版本2：鼠标没进面板就自动关闭（默认）</span><span>✓</span>
                     </div>
                 </div>
                 <div class="config-row" style="margin-top:7px;">
@@ -2171,7 +2171,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     }
     function armWlpAutoClose() {
         clearTimeout(_wlpAutoTimer);
-        const mode = localStorage.getItem('lt_wlp_autoclose') || 'off';
+        const mode = localStorage.getItem('lt_wlp_autoclose') || '3';
         if (mode === 'off' || _wlpPinned) return;
         _wlpHovered = false;
         const ms = (parseFloat(mode) || 3) * 1000;
@@ -2193,13 +2193,13 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         if (mode !== 'sec') clearTimeout(_wlpAutoTimer);
     }
     function initWlpAutoClose() {
-        const saved = localStorage.getItem('lt_wlp_autoclose') || 'off';
+        const saved = localStorage.getItem('lt_wlp_autoclose') || '3';
         const cards = document.querySelectorAll('#wlpAutoCloseOptions .radio-card');
         const secInput = document.getElementById('wlpAutoCloseSec');
         if (saved !== 'off' && secInput) secInput.value = String(parseFloat(saved) || 3);
         cards.forEach(el => el.classList.toggle('active', el.dataset.val === (saved === 'off' ? 'off' : 'sec')));
         if (secInput) secInput.addEventListener('change', () => {
-            if ((localStorage.getItem('lt_wlp_autoclose') || 'off') !== 'off') {
+            if ((localStorage.getItem('lt_wlp_autoclose') || '3') !== 'off') {
                 try { localStorage.setItem('lt_wlp_autoclose', String(wlpAutoSec())); } catch (e) { }
                 showToast(`⏱ 自动收起改为 ${wlpAutoSec()} 秒`);
             }
