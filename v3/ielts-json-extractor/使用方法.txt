@@ -1,0 +1,13 @@
+---
+
+### 二、 在不同工具里怎么用它？（一劳永逸）
+
+1. **在 Workbuddy / Cursor / Claude Code 等 Agent 工具中**：
+   * 把上面这段存为 `SKILL.md` 放进你的 Skills 目录[cite: 3]。以后你只需说：**“用 `ielts-reading-json-extractor` 技能解析下面这篇文章”**，
+   它就会自动读取这份契约并吐出标准的 JSON。
+2. **在你本地的 Ollama (`qwen3.5:9b`) 或其他网页 AI 中**：
+   * 在开新对话时，先把上面这段代码发给它（或设为 System Prompt），它回复“收到”后，你就可以**连续不断地把一篇篇英文文章丢给它**，它会像流水线工人
+   一样只给你吐出标准的 JSON，你复制粘进 `ielts_reader_engine_v3.html` 即可[cite: 3, 4]。
+3. **更进一步的工程自动化（供你后续写 Rust 工具参考）**：
+   * 等你以后把之前规划的 **Rust 桌面软件** 搭起来时[cite: 3]，甚至连“复制粘贴 JSON”这一步都可以省掉：Rust 后端调本地 Ollama 接口拿到这段
+    JSON 后，直接追加写入一个本地 `articles.js` 文件，网页刷新就自动出来新文章了[cite: 3]。

@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>插件化双栏逐词精读电子书引擎 v4.0</title>
+    <style>
+        /* ================= 1. 排版样式主题变量 ================= */
+        body.theme-green {
+            --bg-outer: #e5e7eb; --bg-paper: #ffffff; --banner-bg: #4a5d54; --meta-bg: #6b7f75;
+            --title-color: #2c4a3e; --tier-red-color: #1f3a2e; --tier-red-bg: #e3ede8;
+            --tier-normal-color: #222222; --tier-normal-bg: #f1f3f2; --rt-color: #4b5563;
+            --trans-bg: #f3f5f4; --trans-border: #6b7f75; --dashed-color: #88968f;
+            --vocab-def-bg: #f6f8f7; --pos-color: #2c4a3e;
+        }
+        body.theme-red {
+            --bg-outer: #e2e4e8; --bg-paper: #fcfcfc; --banner-bg: #58636d; --meta-bg: #79848e;
+            --title-color: #2b3a42; --tier-red-color: #9e2a2b; --tier-red-bg: #f9ebeb;
+            --tier-normal-color: #2d3134; --tier-normal-bg: #eef0f2; --rt-color: #4a5056;
+            --trans-bg: #eff1f3; --trans-border: #8c969e; --dashed-color: #7a8288;
+            --vocab-def-bg: #f2f4f7; --pos-color: #9e2a2b;
+        }
+        body.theme-sepia {
+            --bg-outer: #dfd8c8; --bg-paper: #fbf7ed; --banner-bg: #6d594a; --meta-bg: #8c7665;
+            --title-color: #4a3525; --tier-red-color: #a63a2b; --tier-red-bg: #f4e6d8;
+            --tier-normal-color: #362e28; --tier-normal-bg: #f2ece1; --rt-color: #695c50;
+            --trans-bg: #f3ede0; --trans-border: #a38f7d; --dashed-color: #9e8e7e;
+            --vocab-def-bg: #f4eee2; --pos-color: #8c3b2b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-outer);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            padding: 16px;
+            transition: background-color 0.25s ease;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* ================= 2. 顶部极简导航栏（左目录图标 + 插件槽 + 右 Setting 按钮） ================= */
+        .top-bar {
+            max-width: 1180px;
+            margin: 0 auto 14px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-left, .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .icon-btn {
+            height: 36px; padding: 0 12px; border-radius: 7px;
+            border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.15s;
+        }
+        .icon-btn:hover { background: #f8fafc; transform: translateY(-1px); }
+        .icon-btn.primary { background: var(--banner-bg); color: #ffffff; border-color: var(--banner-bg); }
+
+        /* ================= 3. 左侧极简目录抽屉 ================= */
+        .backdrop {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.35);
+            z-index: 1000; display: none;
+        }
+        .backdrop.open { display: block; }
+
+        .drawer-left {
+            position: fixed; top: 0; left: 0; bottom: 0; width: 290px;
+            background: #ffffff; z-index: 1001; box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+            transform: translateX(-100%); transition: transform 0.22s ease;
+            display: flex; flex-direction: column;
+        }
+        .drawer-left.open { transform: translateX(0); }
+
+        .drawer-header {
+            padding: 15px 18px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 15px; color: #0f172a;
+        }
+        .drawer-list { padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .drawer-item {
+            text-align: left; border: none; background: transparent; padding: 9px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 13px; color: #334155;
+        }
+        .drawer-item:hover { background: #f1f5f9; }
+        .drawer-item.active { background: var(--banner-bg); color: #ffffff; font-weight: 600; }
+        .drawer-item small { display: block; opacity: 0.78; font-size: 11px; margin-top: 2px; }
+
+        /* ================= 4. 右侧 Setting 统一设置抽屉 ================= */
+        .drawer-right {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 320px;
+            background: #ffffff; z-index: 1001; box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+            transform: translateX(100%); transition: transform 0.22s ease;
+            display: flex; flex-direction: column;
+        }
+        .drawer-right.open { transform: translateX(0); }
+
+        .setting-body { padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        .setting-group h4 {
+            font-size: 12.5px; color: #64748b; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 10px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px;
+        }
+        .option-grid { display: flex; flex-direction: column; gap: 8px; }
+        .radio-card {
+            border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 10px 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            font-size: 13px; font-weight: 600; color: #334155; transition: all 0.15s;
+        }
+        .radio-card:hover { border-color: #94a3b8; }
+        .radio-card.active { border-color: var(--banner-bg); background: #f8fafc; color: #0f172a; }
+        .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+
+        /* ================= 5. 显示样式 1：单页面显示（上下滚动） ================= */
+        .page-container {
+            max-width: 1180px;
+            margin: 0 auto 30px auto;
+            background: var(--bg-paper);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.09);
+            padding: 32px 38px;
+            border-radius: 6px;
+            transition: all 0.25s ease;
+        }
+
+        .top-banner {
+            display: flex; align-items: center; background-color: var(--banner-bg);
+            color: #ffffff; padding: 11px 18px; border-radius: 3px; margin-bottom: 8px;
+        }
+        .badge-box {
+            border: 2px solid #ffffff; padding: 3px 10px; font-size: 20px;
+            font-weight: 800; letter-spacing: 2px; margin-right: 16px;
+        }
+        .banner-titles h1 { font-size: 18px; font-weight: 700; }
+        .banner-titles .chapter-info { font-size: 13px; color: #e2e8f0; margin-top: 2px; }
+
+        .meta-bar {
+            display: flex; justify-content: space-between; background-color: var(--meta-bg);
+            color: #ffffff; font-size: 12px; padding: 5px 14px; margin-bottom: 20px; font-weight: 600;
+        }
+
+        .main-grid { display: grid; grid-template-columns: 66% 34%; }
+        .left-column { padding-right: 24px; border-right: 1.5px dashed var(--dashed-color); }
+        .right-column { padding-left: 20px; }
+
+        /* ================= 6. 显示样式 2：双页面显示（左右横向滚动/翻页模式） ================= */
+        body.view-horizontal .page-container {
+            height: calc(100vh - 95px);
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            padding: 24px 32px;
+        }
+
+        body.view-horizontal .main-grid {
+            display: block; /* 解除上下网格，启用多栏横向书页 */
+            height: calc(100% - 95px);
+            column-count: 2;
+            column-gap: 48px;
+            column-rule: 1.5px dashed var(--dashed-color);
+            column-fill: auto;
+        }
+
+        body.view-horizontal .left-column,
+        body.view-horizontal .right-column {
+            padding: 0;
+            border: none;
+        }
+
+        body.view-horizontal .right-column {
+            break-before: column; /* 词汇解析自动排入右侧书页栏 */
+            margin-top: 10px;
+        }
+
+        /* 双页左右翻页浮动控制器 */
+        .pager-controls {
+            display: none;
+            position: fixed;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.88);
+            color: #ffffff;
+            padding: 7px 16px;
+            border-radius: 20px;
+            gap: 14px;
+            align-items: center;
+            font-size: 13px;
+            z-index: 900;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        body.view-horizontal .pager-controls { display: flex; }
+        .pager-btn {
+            background: rgba(255,255,255,0.16); border: none; color: #fff;
+            padding: 4px 12px; border-radius: 12px; cursor: pointer; font-weight: 600;
+        }
+        .pager-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* ================= 7. 正文逐词注音与词表样式 ================= */
+        .article-header { margin-bottom: 18px; break-inside: avoid; }
+        .en-title {
+            font-family: Georgia, "Times New Roman", serif; font-size: 22px;
+            font-weight: 700; color: var(--title-color); line-height: 1.3; margin-bottom: 4px;
+        }
+        .cn-title { font-size: 14.5px; font-weight: 700; color: #4b5563; }
+
+        .gloss-paragraph {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 17px; line-height: 2.65; margin-bottom: 12px; text-align: justify;
+        }
+
+        ruby { ruby-position: under; -webkit-ruby-position: after; margin: 0 1.5px; cursor: pointer; border-radius: 3px; }
+        ruby.tier-red { color: var(--tier-red-color); background-color: var(--tier-red-bg); font-weight: 700; padding: 1px 4px; }
+        ruby.tier-normal { color: var(--tier-normal-color); background-color: var(--tier-normal-bg); font-weight: 500; padding: 1px 3px; }
+        ruby.tier-func { color: #374151; padding: 0 2px; }
+
+        rt {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 11px; color: var(--rt-color); font-weight: 500; line-height: 1.15; padding-top: 2px; user-select: none;
+        }
+
+        body.vocab-core-only ruby.tier-func rt { display: none; }
+        body.quiz-mode rt { opacity: 0; }
+        body.quiz-mode ruby:hover rt { opacity: 1; color: #b91c1c; font-weight: 700; }
+        body.quiz-mode .full-translation { filter: blur(5px); cursor: pointer; }
+        body.quiz-mode .full-translation:hover { filter: none; }
+
+        .full-translation {
+            background-color: var(--trans-bg); padding: 10px 14px; border-radius: 5px;
+            font-size: 13px; line-height: 1.7; color: #374151; margin-bottom: 20px;
+            border-left: 3.5px solid var(--trans-border); break-inside: avoid;
+        }
+
+        .vocab-list { display: flex; flex-direction: column; gap: 9px; }
+        .vocab-item { border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 7px; break-inside: avoid; }
+        body.vocab-core-only .vocab-item[data-level="basic"] { display: none; }
+
+        .vocab-head {
+            font-family: Georgia, "Times New Roman", serif; font-size: 14px;
+            margin-bottom: 3px; cursor: pointer; display: flex; justify-content: space-between;
+        }
+        .vocab-word { font-weight: 700; color: var(--tier-red-color); }
+        .vocab-item[data-level="basic"] .vocab-word { color: #374151; }
+        .vocab-ipa { font-size: 11.5px; color: #555555; margin-left: 5px; }
+        .vocab-def { font-size: 12px; line-height: 1.45; color: #333; background-color: var(--vocab-def-bg); padding: 4px 8px; border-radius: 3px; }
+        .pos-tag { font-weight: 700; color: var(--pos-color); margin-right: 3px; }
+
+        /* ================= 8. 导入模态框 ================= */
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-box { background: #fff; width: 100%; max-width: 650px; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-header { padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; font-weight: 700; }
+        .modal-tabs { display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9; }
+        .m-tab { flex: 1; padding: 10px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; }
+        .m-tab.active { background: #fff; color: #0f172a; border-bottom: 2px solid var(--banner-bg); }
+        .modal-body { padding: 18px 20px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .input-area { width: 100%; height: 145px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 12.5px; margin: 8px 0 12px 0; }
+        .hint-box { background: #f8fafc; border-left: 3px solid #64748b; padding: 10px 12px; font-size: 12.5px; color: #475569; line-height: 1.6; margin-bottom: 10px; }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .top-bar, .pager-controls { display: none !important; }
+            .page-container { box-shadow: none; max-width: 100%; padding: 10px; height: auto !important; overflow: visible !important; }
+        }
+    </style>
+</head>
+<body class="theme-red view-vertical">
+
+<!-- 1. 顶部极简控制栏（包含插件插槽） -->
+<header class="top-bar">
+    <div class="top-left">
+        <button class="icon-btn" title="打开书籍目录" onclick="toggleLeftDrawer(true)">☰ 目录</button>
+        <button class="icon-btn primary" onclick="openImportModal()">📥 导入文章 / 整本电子书</button>
+        <!-- 🧩 插件插槽 A：工具栏扩展区（新功能 JS 插件自动挂载到这里） -->
+        <div id="plugin-slot-toolbar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+    <div class="top-right">
+        <button class="icon-btn" onclick="toggleRightDrawer(true)">⚙️ Setting</button>
+    </div>
+</header>
+
+<!-- 2. 左侧目录抽屉 -->
+<div class="backdrop" id="globalBackdrop" onclick="closeAllDrawers()"></div>
+<aside class="drawer-left" id="leftDrawer">
+    <div class="drawer-header">
+        <span>📚 书籍与章节目录 (<span id="articleCount">0</span>)</span>
+        <button style="border:none;background:none;font-size:18px;cursor:pointer;" onclick="closeAllDrawers()">✕</button>
+    </div>
+    <div class="drawer-list" id="drawerList"></div>
+</aside>
+
+<!-- 3. 右侧统一 Setting 设置中心抽屉 -->
+<aside class="drawer-right" id="rightDrawer">
+    <div class="drawer-header">
+        <span>⚙️ Setting 阅读与排版设置</span>
+        <button style="border:none;background:none;font-size:18px;cursor:pointer;" onclick="closeAllDrawers()">✕</button>
+    </div>
+    <div class="setting-body">
+        <!-- 设置项 1：排版样式 -->
+        <div class="setting-group">
+            <h4>1. 排版样式 (Theme)</h4>
+            <div class="option-grid" id="themeOptions">
+                <div class="radio-card" data-val="theme-green" onclick="applySetting('theme', 'theme-green', this)">
+                    <span><span class="dot" style="background:#2c4a3e"></span>样式1：黑灰绿（沉稳学术）</span><span>✓</span>
+                </div>
+                <div class="radio-card active" data-val="theme-red" onclick="applySetting('theme', 'theme-red', this)">
+                    <span><span class="dot" style="background:#9e2a2b"></span>样式2：真经暗红（原图高亮）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="theme-sepia" onclick="applySetting('theme', 'theme-sepia', this)">
+                    <span><span class="dot" style="background:#d4b886"></span>样式3：暖纸护眼（纸书质感）</span><span>✓</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置项 2：显示样式（单页上下滚动 vs 双页左右滚动） -->
+        <div class="setting-group">
+            <h4>2. 显示样式 (View Layout)</h4>
+            <div class="option-grid" id="viewOptions">
+                <div class="radio-card active" data-val="view-vertical" onclick="applySetting('view', 'view-vertical', this)">
+                    <span>1. 单页面显示（屏幕从上到下滚动）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="view-horizontal" onclick="applySetting('view', 'view-horizontal', this)">
+                    <span>2. 双页面显示（屏幕左右滚动翻页）</span><span>✓</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置项 3：词汇详解颗粒度 -->
+        <div class="setting-group">
+            <h4>3. 词汇解析深度</h4>
+            <div class="option-grid" id="vocabOptions">
+                <div class="radio-card active" data-val="full" onclick="applySetting('vocab', 'full', this)">
+                    <span>全词详尽版（基础阶段：含虚词/基础词）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="core" onclick="applySetting('vocab', 'core', this)">
+                    <span>仅核心高频词（进阶冲刺阶段）</span><span>✓</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🧩 插件插槽 B：Setting 面板扩展区 -->
+        <div id="plugin-slot-setting"></div>
+    </div>
+</aside>
+
+<!-- 4. 主体书籍阅读区 -->
+<div class="page-container" id="readerRoot"></div>
+
+<!-- 双页模式下的左右翻页控制器 -->
+<div class="pager-controls">
+    <button class="pager-btn" onclick="scrollHorizontal(-1)">◀ 上一页 (左滑)</button>
+    <span>左右滚动 / 方向键翻页</span>
+    <button class="pager-btn" onclick="scrollHorizontal(1)">下一页 (右滑) ▶</button>
+</div>
+
+<!-- 🧩 插件插槽 C：页面底部扩展区 -->
+<div id="plugin-slot-footer" style="max-width:1180px; margin:0 auto;"></div>
+
+<!-- 5. 导入/电子书解析弹窗 -->
+<div class="modal-backdrop" id="importModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>📥 导入单篇文章或整本英文电子书</span>
+            <button style="border:none;background:none;font-size:18px;cursor:pointer;" onclick="closeImportModal()">✕</button>
+        </div>
+        <div class="modal-tabs">
+            <button class="m-tab active" onclick="switchModalTab(0, this)">✍️ 粘贴 AI JSON / 原文</button>
+            <button class="m-tab" onclick="switchModalTab(1, this)">📚 打开本地电子书 (.txt)</button>
+            <button class="m-tab" onclick="switchModalTab(2, this)">🌐 从网上抓取 (预留)</button>
+        </div>
+        <div class="modal-body">
+            <!-- Tab 1 -->
+            <div class="tab-panel active" id="mpanel-0">
+                <div class="hint-box">将任意章节发给挂载 Skill 的 AI，把返回的 <strong>纯 JSON</strong> 粘贴到下方即可秒级入库：</div>
+                <textarea class="input-area" id="jsonInput" placeholder='在此粘贴 AI 生成的 JSON 数据对象...'></textarea>
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="icon-btn" onclick="quickRawPreview()">⚡ 仅粘贴纯英文快速预览</button>
+                    <button class="icon-btn primary" onclick="importJsonArticle()">✅ 确认渲染并加入目录</button>
+                </div>
+            </div>
+
+            <!-- Tab 2：本地整本电子书（如《小王子》）自动分章导入 -->
+            <div class="tab-panel" id="mpanel-1">
+                <div class="hint-box">
+                    <strong>整本英文电子书自动分章引擎（例如《The Little Prince 小王子》）：</strong><br>
+                    选择本地 <code>.txt</code> 电子书文件，系统会自动按 <code>Chapter / 罗马数字 / 空行</code> 切分为独立章节存入左侧目录。点开某一章后，再配合 AI 逐章生成精读注释（避免整本书一次解析导致 Token 截断）。
+                </div>
+                <input type="file" id="ebookFileInput" accept=".txt" style="margin:12px 0;" onchange="handleEbookFile(this)">
+            </div>
+
+            <!-- Tab 3：网上抓取预留 -->
+            <div class="tab-panel" id="mpanel-2">
+                <div class="hint-box"><strong>接口预留位：</strong>后续接入 Rust / Tauri 本地后端后，支持输入网址直接抓取解析。</div>
+                <input type="text" style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:6px;" placeholder="https://... (预留接口)" disabled>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /* =========================================================================
+       一、 微内核插件总线 (Plugin System) —— 以后加新功能只需调用 ReaderPlugins.register
+       ========================================================================= */
+    window.ReaderPlugins = {
+        plugins: [],
+        register(plugin) {
+            this.plugins.push(plugin);
+            this.mountPlugin(plugin);
+        },
+        mountPlugin(plugin) {
+            const slotMap = {
+                'toolbar': document.getElementById('plugin-slot-toolbar'),
+                'setting': document.getElementById('plugin-slot-setting'),
+                'footer': document.getElementById('plugin-slot-footer')
+            };
+            const container = slotMap[plugin.slot];
+            if (container && typeof plugin.render === 'function') {
+                const wrapper = document.createElement('div');
+                wrapper.id = `plugin-${plugin.id}`;
+                wrapper.innerHTML = plugin.render(window.ReaderApp);
+                container.appendChild(wrapper);
+                if (typeof plugin.onMounted === 'function') plugin.onMounted(wrapper, window.ReaderApp);
+            }
+        },
+        notifyArticleChange(article) {
+            this.plugins.forEach(p => {
+                if (typeof p.onArticleChange === 'function') p.onArticleChange(article, window.ReaderApp);
+            });
+        }
+    };
+
+    /* =========================================================================
+       二、 内置示例书目：《小王子 The Little Prince》Chapter 1 示范精读
+       ========================================================================= */
+    const DEFAULT_ARTICLES = [
+        {
+            id: "little-prince-ch1",
+            category: "世界名著精读 · 《小王子》The Little Prince",
+            titleEn: "The Little Prince — Chapter 1",
+            titleCn: "小王子 · 第一章（蟒蛇吞象的画）",
+            wordCount: 92,
+            paragraphs: [
+                {
+                    tokens: [
+                        { text: "Once", gloss: "曾经", tier: "normal" },
+                        { text: "when", gloss: "当……时", tier: "func" },
+                        { text: "I", gloss: "我", tier: "func" },
+                        { text: "was", gloss: "是", tier: "func" },
+                        { text: "six", gloss: "六", tier: "normal" },
+                        { text: "years", gloss: "岁", tier: "normal" },
+                        { text: "old", gloss: "……大的", tier: "normal" },
+                        { text: "I", gloss: "我", tier: "func" },
+                        { text: "saw", gloss: "看见", tier: "normal" },
+                        { text: "a", gloss: "一幅", tier: "func" },
+                        { text: "magnificent", gloss: "壮丽的，宏伟的", tier: "red" },
+                        { text: "picture", gloss: "图画", tier: "normal" },
+                        { text: "in", gloss: "在……里", tier: "func" },
+                        { text: "a", gloss: "一本", tier: "func" },
+                        { text: "book,", gloss: "书", tier: "normal" },
+                        { text: "called", gloss: "名叫", tier: "normal" },
+                        { text: "True Stories from Nature,", gloss: "《大自然的真实故事》", tier: "red", isPhrase: true },
+                        { text: "about", gloss: "关于", tier: "func" },
+                        { text: "the", gloss: "这片", "tier": "func" },
+                        { text: "primeval forest.", gloss: "原始森林", tier: "red", isPhrase: true }
+                    ],
+                    translation: "当我六岁的时候，在一本描写原始森林、名叫《大自然的真实故事》的书里，看见了一幅壮丽的图画。"
+                },
+                {
+                    tokens: [
+                        { text: "It", gloss: "它", tier: "func" },
+                        { text: "was", gloss: "是", tier: "func" },
+                        { text: "a", gloss: "一幅", tier: "func" },
+                        { text: "picture", gloss: "画", tier: "normal" },
+                        { text: "of", gloss: "……的", tier: "func" },
+                        { text: "a", gloss: "一条", tier: "func" },
+                        { text: "boa constrictor", gloss: "巨蟒", tier: "red", isPhrase: true },
+                        { text: "in the act of", gloss: "正在……的过程中", tier: "red", isPhrase: true },
+                        { text: "swallowing", gloss: "吞咽", tier: "red" },
+                        { text: "an", gloss: "一只", tier: "func" },
+                        { text: "animal.", gloss: "野兽", tier: "normal" }
+                    ],
+                    translation: "画的是一条巨蟒正在吞食一只野兽。"
+                }
+            ],
+            vocabulary: [
+                { word: "once", ipa: "[wʌns]", level: "basic", defs: [{ pos: "adv./conj.", meaning: "曾经；一旦，当……时候" }] },
+                { word: "magnificent", ipa: "[mæɡ'nɪfɪsnt]", level: "core", defs: [{ pos: "adj.", meaning: "壮丽的，宏伟的，极好的" }] },
+                { word: "primeval", ipa: "[praɪ'miːvl]", level: "core", defs: [{ pos: "adj.", meaning: "原始的，远古的，太古的" }] },
+                { word: "boa constrictor", ipa: "['boʊə kən'strɪktər]", level: "core", defs: [{ pos: "n.", meaning: "王蛇，巨蟒（通过缠绕使猎物窒息的大型蛇类）" }] },
+                { word: "in the act of", ipa: "[ɪn ði ækt əv]", level: "core", defs: [{ pos: "phr.", meaning: "正在做……的过程中，当场" }] },
+                { word: "swallow", ipa: "['swɒloʊ]", level: "core", defs: [{ pos: "v.", meaning: "吞下，咽下；轻信" }, { pos: "n.", meaning: "燕子；吞咽" }] }
+            ]
+        }
+    ];
+
+    /* =========================================================================
+       三、 主渲染引擎状态与方法
+       ========================================================================= */
+    window.ReaderApp = {
+        articles: JSON.parse(localStorage.getItem('ielts_ebook_v4')) || DEFAULT_ARTICLES,
+        currentIndex: 0,
+        getCurrentArticle() { return this.articles[this.currentIndex]; },
+        speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const clean = text.replace(/[.,!?;:"'()—]/g, '').trim();
+            if (!clean) return;
+            const u = new SpeechSynthesisUtterance(clean);
+            u.lang = 'en-US'; u.rate = 0.92;
+            window.speechSynthesis.speak(u);
+        }
+    };
+
+    function renderAll() {
+        const app = window.ReaderApp;
+        document.getElementById('articleCount').textContent = app.articles.length;
+        document.getElementById('drawerList').innerHTML = app.articles.map((art, idx) => `
+      <button class="drawer-item ${idx === app.currentIndex ? 'active' : ''}" onclick="selectArticle(${idx})">
+        ${idx + 1}. ${art.titleCn || art.titleEn}
+        <small>${art.titleEn}</small>
+      </button>
+    `).join('');
+
+        const art = app.getCurrentArticle();
+        if (!art) return;
+
+        const parasHtml = art.paragraphs.map(p => {
+            const rubies = p.tokens.map(t =>
+                `<ruby class="tier-${t.tier || 'normal'}" onclick="ReaderApp.speak('${t.text.replace(/'/g, "\\'")}')">${t.text}<rt>${t.gloss || ''}</rt></ruby>`
+            ).join(' ');
+            return `<p class="gloss-paragraph">${rubies}</p><div class="full-translation">${p.translation}</div>`;
+        }).join('');
+
+        const vocabHtml = (art.vocabulary || []).map(v => {
+            const defsHtml = v.defs.map(d => `<div><span class="pos-tag">${d.pos}</span> ${d.meaning}</div>`).join('');
+            return `
+        <div class="vocab-item" data-level="${v.level || 'core'}">
+          <div class="vocab-head" onclick="ReaderApp.speak('${v.word.replace(/'/g, "\\'")}')">
+            <span><span class="vocab-word">${v.word}</span> <span class="vocab-ipa">${v.ipa || ''}</span></span>
+            <span style="font-size:11px;opacity:0.5;">🔊</span>
+          </div>
+          <div class="vocab-def">${defsHtml}</div>
+        </div>
+      `;
+        }).join('');
+
+        document.getElementById('readerRoot').innerHTML = `
+      <header class="top-banner">
+        <div class="badge-box">精读</div>
+        <div class="banner-titles">
+          <h1>双栏逐词对照与全词解析电子书</h1>
+          <div class="chapter-info">${art.category || '默认书架'}</div>
+        </div>
+      </header>
+      <div class="meta-bar">
+        <span>本篇词数：${art.wordCount || '--'}词</span>
+        <span>DATE: _______________</span>
+      </div>
+      <div class="main-grid">
+        <main class="left-column">
+          <div class="article-header">
+            <div class="en-title">${art.titleEn}</div>
+            <div class="cn-title">${art.titleCn}</div>
+          </div>
+          ${parasHtml}
+        </main>
+        <aside class="right-column">
+          <div class="vocab-list">${vocabHtml || '<div style="color:#64748b;font-size:13px;">本章节尚未注入 AI 词汇解析 JSON，请点击右上角插件或导入面板获取全词释义。</div>'}</div>
+        </aside>
+      </div>
+    `;
+
+        window.ReaderPlugins.notifyArticleChange(art);
+    }
+
+    /* =========================================================================
+       四、 抽屉与 Setting 设置中心逻辑
+       ========================================================================= */
+    function toggleLeftDrawer(open) {
+        closeAllDrawers();
+        if (open) {
+            document.getElementById('leftDrawer').classList.add('open');
+            document.getElementById('globalBackdrop').classList.add('open');
+        }
+    }
+    function toggleRightDrawer(open) {
+        closeAllDrawers();
+        if (open) {
+            document.getElementById('rightDrawer').classList.add('open');
+            document.getElementById('globalBackdrop').classList.add('open');
+        }
+    }
+    function closeAllDrawers() {
+        document.getElementById('leftDrawer').classList.remove('open');
+        document.getElementById('rightDrawer').classList.remove('open');
+        document.getElementById('globalBackdrop').classList.remove('open');
+    }
+
+    function selectArticle(idx) {
+        window.ReaderApp.currentIndex = idx;
+        renderAll();
+        closeAllDrawers();
+        document.getElementById('readerRoot').scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
+
+    function applySetting(type, val, cardEl) {
+        cardEl.parentElement.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active'));
+        cardEl.classList.add('active');
+
+        if (type === 'theme') {
+            document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+            document.body.classList.add(val);
+        } else if (type === 'view') {
+            document.body.className = document.body.className.replace(/view-\w+/g, '').trim();
+            document.body.classList.add(val);
+        } else if (type === 'vocab') {
+            document.body.classList.toggle('vocab-core-only', val === 'core');
+        }
+    }
+
+    // 双页模式下的左右翻页控制 + 鼠标滚轮转横向滚动
+    function scrollHorizontal(dir) {
+        const container = document.getElementById('readerRoot');
+        container.scrollBy({ left: dir * (container.clientWidth * 0.85), behavior: 'smooth' });
+    }
+    document.getElementById('readerRoot').addEventListener('wheel', (e) => {
+        if (document.body.classList.contains('view-horizontal') && Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            e.currentTarget.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+
+    /* =========================================================================
+       五、 导入弹窗 & 整本 TXT 电子书自动分章解析器
+       ========================================================================= */
+    function openImportModal() { document.getElementById('importModal').classList.add('open'); }
+    function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
+    function switchModalTab(idx, btn) {
+        document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`mpanel-${idx}`).classList.add('active');
+    }
+
+    function saveAndRefresh() {
+        localStorage.setItem('ielts_ebook_v4', JSON.stringify(window.ReaderApp.articles));
+        renderAll();
+    }
+
+    function importJsonArticle() {
+        const raw = document.getElementById('jsonInput').value.trim();
+        if (!raw) return alert('请粘贴 AI 生成的 JSON 数据！');
+        try {
+            const obj = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/```\s*$/, ''));
+            // 若当前章节是刚导入的未解析章节，直接覆盖更新；否则追加新章节
+            const cur = window.ReaderApp.getCurrentArticle();
+            if (cur && cur.isUnparsed && cur.titleEn === obj.titleEn) {
+                window.ReaderApp.articles[window.ReaderApp.currentIndex] = obj;
+            } else {
+                window.ReaderApp.articles.push(obj);
+                window.ReaderApp.currentIndex = window.ReaderApp.articles.length - 1;
+            }
+            saveAndRefresh();
+            closeImportModal();
+            document.getElementById('jsonInput').value = '';
+        } catch (e) {
+            alert('JSON 格式有误：\n' + e.message);
+        }
+    }
+
+    function quickRawPreview() {
+        const raw = document.getElementById('jsonInput').value.trim();
+        if (!raw || raw.startsWith('{')) return alert('请先粘贴纯英文段落！');
+        const paras = raw.split(/\n+/).filter(Boolean).map(line => ({
+            tokens: line.split(/\s+/).map(w => ({ text: w, gloss: "", tier: w.length > 6 ? "red" : "normal" })),
+            translation: "（未解析原文：点击顶部 [📋 复制本章原文给 AI 解析] 按钮即可获取全词注释）"
+        }));
+        window.ReaderApp.articles.push({
+            id: 'raw-' + Date.now(), isUnparsed: true,
+            category: '粘贴导入章节', titleEn: 'Custom Passage ' + (window.ReaderApp.articles.length + 1),
+            titleCn: '自定义导入章节（待 AI 解析）', wordCount: raw.split(/\s+/).length,
+            paragraphs: paras, vocabulary: []
+        });
+        window.ReaderApp.currentIndex = window.ReaderApp.articles.length - 1;
+        saveAndRefresh();
+        closeImportModal();
+    }
+
+    // 读取整本本地 TXT 电子书并自动按章节切分
+    function handleEbookFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const bookName = file.name.replace(/\.txt$/i, '');
+            // 按常见英文章节标题（Chapter 1 / I. / II.）切分
+            const chapters = text.split(/\n(?=(?:Chapter|CHAPTER)\s+\d+|^[IVXLC]+\.\s)/m).filter(c => c.trim().length > 40);
+            if (chapters.length === 0) return alert('未能识别出章节内容，请确认文件为 UTF-8 编码的英文 TXT。');
+
+            chapters.forEach((chText, idx) => {
+                const lines = chText.trim().split(/\n+/).filter(Boolean);
+                const chTitle = lines[0].slice(0, 60);
+                const bodyLines = lines.slice(1);
+                const paras = (bodyLines.length ? bodyLines : lines).map(line => ({
+                    tokens: line.split(/\s+/).map(w => ({ text: w, gloss: "", tier: w.length > 6 ? "red" : "normal" })),
+                    translation: "（电子书章节原文：点击顶部 [📋 复制本章原文给 AI 解析] 获取逐词释义）"
+                }));
+                window.ReaderApp.articles.push({
+                    id: `book-${Date.now()}-${idx}`,
+                    isUnparsed: true,
+                    category: `电子书 · 《${bookName}》`,
+                    titleEn: chTitle,
+                    titleCn: `第 ${idx + 1} 章 (${chTitle})`,
+                    wordCount: chText.split(/\s+/).length,
+                    paragraphs: paras,
+                    vocabulary: []
+                });
+            });
+
+            window.ReaderApp.currentIndex = window.ReaderApp.articles.length - chapters.length;
+            saveAndRefresh();
+            closeImportModal();
+            alert(`成功导入《${bookName}》，共自动切分出 ${chapters.length} 个章节！已加入左上角目录。`);
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    /* =========================================================================
+       六、 示范插件注册（展示如何不改主框架，直接往 JS 中插拔新功能）
+       ========================================================================= */
+    // 插件 1：自测遮罩开关插件
+    window.ReaderPlugins.register({
+        id: 'quiz-mask-plugin',
+        slot: 'toolbar',
+        render() {
+            return `<button class="icon-btn" id="plgQuizBtn">👁️ 自测遮罩：关</button>`;
+        },
+        onMounted(el) {
+            el.querySelector('#plgQuizBtn').addEventListener('click', (e) => {
+                const on = document.body.classList.toggle('quiz-mode');
+                e.target.textContent = on ? '👁️ 自测遮罩：开' : '👁️ 自测遮罩：关';
+            });
+        }
+    });
+
+    // 插件 2：一键复制当前章节原文给 AI 解析插件（配合整本电子书分章工作流）
+    window.ReaderPlugins.register({
+        id: 'copy-for-ai-plugin',
+        slot: 'toolbar',
+        render() {
+            return `<button class="icon-btn" id="plgCopyAiBtn">📋 复制本章给 AI 解析</button>`;
+        },
+        onMounted(el, app) {
+            el.querySelector('#plgCopyAiBtn').addEventListener('click', () => {
+                const art = app.getCurrentArticle();
+                const plainText = art.titleEn + '\n\n' + art.paragraphs.map(p => p.tokens.map(t => t.text).join(' ')).join('\n\n');
+                navigator.clipboard.writeText(plainText).then(() => {
+                    alert('已复制当前章节英文原文！\n请直接发送给挂载了 ielts-reading-json-extractor Skill 的 AI，再把生成的 JSON 粘贴回导入框即可。');
+                });
+            });
+        }
+    });
+
+    // 启动主渲染引擎
+    renderAll();
+</script>
+</body>
+</html>

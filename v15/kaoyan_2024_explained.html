@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2024 考研英语（一）· 试卷框架精读页 · v15</title>
+<style>
+  :root{
+    --paper:#fffdf7; --outer:#e8e6df; --ink:#1f2933; --sub:#5b6672; --line:#d9d4c6;
+    --accent:#0f766e; --accent-soft:#e6f2f0; --gold:#a16207; --gold-soft:#fbf3dc;
+    --insight:#eff6ff; --insight-line:#bfdbfe; --nav:#f4f1e8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--outer);color:var(--ink);
+    font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75}
+  a{color:var(--accent)}
+  /* 页眉 */
+  .top{position:sticky;top:0;z-index:20;background:#233b36;color:#fff;padding:14px 26px;
+    box-shadow:0 2px 10px rgba(0,0,0,.15)}
+  .top h1{margin:0;font-size:18px;letter-spacing:.5px}
+  .top .meta{font-size:12px;opacity:.82;margin-top:3px}
+  .top .tools{float:right;display:flex;gap:8px;margin-top:-30px}
+  .top button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;
+    border-radius:6px;padding:5px 12px;cursor:pointer;font-size:12px}
+  .top button:hover{background:rgba(255,255,255,.22)}
+  /* 布局 */
+  .wrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;max-width:1280px;margin:18px auto;padding:0 16px}
+  nav{background:var(--nav);border:1px solid var(--line);border-radius:10px;padding:12px;
+    height:calc(100vh - 110px);position:sticky;top:88px;overflow:auto}
+  nav .grp{font-size:11px;font-weight:700;color:var(--sub);letter-spacing:1px;margin:14px 0 6px;padding-left:6px}
+  nav button{display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);
+    padding:7px 9px;border-radius:6px;cursor:pointer;font-size:13px;line-height:1.4}
+  nav button:hover{background:#e8e3d4}
+  nav button.active{background:var(--accent);color:#fff}
+  nav button small{display:block;font-size:11px;opacity:.7}
+  /* 试卷纸张 */
+  article{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    box-shadow:0 4px 18px rgba(60,50,30,.08);padding:34px 42px 48px;min-height:70vh}
+  .paper-head{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:20px}
+  .paper-head .sec{font-size:13px;letter-spacing:2px;color:var(--sub);text-transform:uppercase}
+  .paper-head h2{margin:6px 0 4px;font-size:26px;letter-spacing:1px}
+  .paper-head .pts{font-size:13px;color:var(--gold)}
+  .dir{background:#f5f2e8;border-left:3px solid var(--gold);padding:10px 14px;margin:16px 0 22px;
+    font-size:14px;color:#3f4852}
+  .passage{font-family:Georgia,"Times New Roman",serif;font-size:16px;line-height:1.95;margin:0 0 18px}
+  .passage .n{display:inline-block;min-width:26px;color:var(--accent);font-weight:700;font-size:12px;
+    vertical-align:super;margin-right:4px}
+  .passage.zh-show .en{display:none}
+  .zh{display:none;color:var(--sub);font-family:inherit;font-size:14px;line-height:1.85}
+  .passage.zh-show .zh{display:block}
+  .blank{display:inline-block;min-width:24px;border-bottom:1px solid var(--accent);color:var(--accent);
+    font-weight:700;text-align:center;font-size:13px}
+  /* 题目 / 选项 */
+  .q{margin:20px 0 24px;padding:14px 16px;background:#faf9f4;border:1px solid #e6e2d6;border-radius:8px}
+  .q .qt{font-weight:600;margin-bottom:8px}
+  .q .qt .qn{color:var(--accent);margin-right:8px}
+  .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:5px 18px;font-size:14px}
+  .opts div{padding:2px 0}
+  .opts b{color:var(--gold);margin-right:6px}
+  .cloze-opts{margin:22px 0;font-size:14px}
+  .cloze-opts .row{padding:7px 10px;border-bottom:1px dashed var(--line)}
+  .cloze-opts .row span{display:inline-block;min-width:118px;margin-right:14px}
+  .cloze-opts .row b{color:var(--accent);margin-right:6px}
+  .u{text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:3px}
+  /* 解读面板 */
+  .insight{margin-top:30px;border:1px solid var(--insight-line);background:var(--insight);
+    border-radius:10px;overflow:hidden}
+  .insight>h3{margin:0;padding:11px 16px;background:#dbeafe;font-size:15px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center}
+  .insight .body{padding:6px 18px 16px;font-size:14px}
+  .insight.collapsed .body{display:none}
+  .insight h4{margin:14px 0 6px;font-size:13px;color:#1e40af}
+  .insight ul{margin:4px 0;padding-left:22px}
+  .insight li{margin:4px 0}
+  .words{display:flex;flex-wrap:wrap;gap:6px}
+  .words span{background:#fff;border:1px solid #bfdbfe;border-radius:14px;padding:2px 10px;font-size:12px}
+  .tip{color:#7c2d12}
+  .foot{text-align:center;color:var(--sub);font-size:12px;padding:24px}
+  @media(max-width:860px){.wrap{grid-template-columns:1fr}nav{position:static;height:auto}article{padding:22px}.top .tools{float:none;margin:8px 0 0}}
+  @media print{nav,.top,.tools,.insight{display:none!important}.wrap{display:block}article{border:0;box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>2024 年全国硕士研究生招生考试 · 英语（一） · 试卷框架精读</h1>
+  <div class="meta">按原卷 Section → Part → Text 划分 9 个独立页面 · 真题原文 + 中文脉络解读</div>
+  <div class="tools">
+    <button onclick="toggleZh()">中/英对照</button>
+    <button onclick="toggleInsight()">展开/收起解读</button>
+    <button onclick="window.print()">打印本页</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav id="nav"></nav>
+  <article id="stage"></article>
+</div>
+<div class="foot">v15 · 依据 2024 考研英语一真题 PDF 原卷框架重排 · 解读为学习辅助，答案请以官方解析为准</div>
+
+<script>
+/* ============================ 数据：严格按原卷框架 ============================ */
+const EXAM = [
+{
+  id:'s1', group:'Section I', label:'Use of English', cn:'完形填空', points:'10 points', range:'1–20',
+  kind:'cloze',
+  dir:'Read the following text. Choose the best word(s) for each numbered blank and mark A, B, C or D on the ANSWER SHEET.',
+  passages:[
+    {en:"There's nothing more welcoming than opening a door for you. <b class='blank'>1</b> the need to be touched to open or close, automatic doors are essential in <b class='blank'>2</b> disabled access to buildings and helping provide general <b class='blank'>3</b> to commercial buildings.",zh:"开门迎客最自然不过；自动门无需触碰即可开关，对残障通行与商业便利至关重要。"},
+    {en:"Self-sliding doors began to emerge as a commercial product in 1960 after being invented six years <b class='blank'>4</b> by two Americans Dee Horton and Lew Hewitt. They <b class='blank'>5</b> as a novelty feature, but as their use has grown, their <b class='blank'>6</b> have extended within our technologically advanced world. Particularly <b class='blank'>7</b> in busy locations and during times of emergency, the doors <b class='blank'>8</b> crowd management by reducing the obstacles put in people's way.",zh:"自动滑门 1960 年商业化，最初只是新奇玩意；如今在繁忙场所与紧急时刻承担人流管理功能。"},
+    {en:"<b class='blank'>9</b> making access both in and out buildings easier for people, the difference in the way many of these doors open helps to reduce the total area <b class='blank'>10</b> by them. Automatic doors often open to the side, with the panels sliding across one another. Replacing swing doors, these <b class='blank'>11</b> smaller buildings to maximise the usable space inside without having to <b class='blank'>12</b> the way for a large, sticking-out door. There are many different types of automatic door, with each <b class='blank'>13</b> specific signals to tell them when to open. <b class='blank'>14</b> these methods differ, the main <b class='blank'>15</b> remain the same.",zh:"侧滑开门节省占地，让小建筑也能最大化利用空间；门型各异，但核心原理一致。"},
+    {en:"Each automatic door system <b class='blank'>16</b> the light, sound, weight or movement in their vicinity as a signal. Sensor-types are chosen to <b class='blank'>17</b> the different environments they are needed in. <b class='blank'>18</b> a busy road might not <b class='blank'>19</b> a motion-sensored door, as it would constantly be opening for passers-by. A pressure-sensitive mat would be more <b class='blank'>20</b> to limit the surveyed area.",zh:"各类门靠光、声、重量或移动作为信号；传感器须匹配环境——繁忙路边不宜用感应门，压力垫更合适。"}
+  ],
+  options:[
+    [1,'Though','Despite','Besides','Without'],[2,'revealing','demanding','improving','tracing'],
+    [3,'experience','convenience','guidance','reference'],[4,'previously','temporarily','successively','eventually'],
+    [5,'held on','started out','settled down','went by'],[6,'relations','volumes','benefits','sources'],
+    [7,'useful','simple','flexible','stable'],[8,'call for','yield to','insist on','act as'],
+    [9,'As well as','In terms of','Thanks to','Rather than'],[10,'connected','shared','represented','occupied'],
+    [11,'allow','expect','require','direct'],[12,'adopt','lead','clear','change'],
+    [13,'adapting to','deriving from','relying on','pointing at'],[14,'Once','Since','Unless','Although'],
+    [15,'records','positions','principles','resources'],[16,'controls','analyses','produces','mixes'],
+    [17,'decorate','compare','protect','complement'],[18,'In conclusion','By contrast','For example','Above all'],
+    [19,'identify','suit','secure','include'],[20,'appropriate','obvious','impressive','delicate']
+  ],
+  insight:{
+    thesis:'以自动门为对象，讲清它的价值、发展、空间优势与传感器选型逻辑——一篇典型的「说明文 + 逻辑衔接」完形。',
+    outline:['第1段：开门的 welcome → 自动门对残障通行与商业便利的意义','第2段：1960 年商业化，从 novelty 到 crowd management','第3段：侧滑省空间；门型不同但 principles 相同','第4段：传感器按环境选择，举 busy road 反例'],
+    words:[['essential','必需的'],['disabled access','残障通道'],['novelty feature','新奇功能'],['crowd management','人流管理'],['maximise','最大化'],['sensor-type','传感器类型'],['motion-sensored','感应式'],['pressure-sensitive mat','压力感应垫']],
+    tips:['空格 1/9/14/18 全是逻辑关系题：先看前后句是转折、让步还是举例。','空格 2/11/12 考固定搭配：improve access / allow … to / clear the way。','空格 6/15 考上下文复现：后文 methods differ 对应 principles remain the same。']
+  }
+},
+{
+  id:'t1', group:'Section II · Part A', label:'Text 1', cn:'钉子与廉价技术', points:'', range:'21–25', kind:'reading',
+  dir:'Read the following four texts. Answer the questions below each text by choosing A, B, C or D. Mark your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'Nearly 2000 years ago, as the Romans began to pull out of Scotland, they left behind a curious treasure: 10 tons of nails, nearly a million of the things. The nail hoard was discovered in 1960 in a four-metre-deep pit covered by two metres of gravel.',zh:'罗马人撤出苏格兰时留下 10 吨约百万枚钉子，1960 年被发现于深埋的坑中。'},
+    {en:"Why had the Romans buried a million nails? The likely explanation is that the withdrawal was rushed, and they didn't want the local Caledonians getting their hands on 10 tons of weapons grade iron. The Romans buried the nails so deep that they would not be discovered for almost two millennia.",zh:'推测是撤军仓促，不愿让当地人得到可制武器的铁。'},
+    {en:"Later civilizations would value the skilled blacksmith's labour in a nail even more than the raw material. As Roma Agrawal explains in her new delightful book Nuts and Bolts, early 17th-century Virginians would sometimes burn down their homes if they were planning to relocate.",zh:'后来的文明更看重钉子里的铁匠劳动；17 世纪弗吉尼亚人搬家时会烧房取钉。'},
+    {en:'This was an attempt to recover the valuable nails, which could be reused after sifting the ashes. The idea that one might burn down an entire house just to reclaim the nails underlines how scarce, costly and valuable the simple-seeming technology was.',zh:'从灰烬中筛出钉子再利用——烧房取钉凸显当时制钉技术的稀缺与昂贵。'},
+    {en:'The price of nails fell by 90% between the late 1700s and mid-1900s, as economist Daniel Sichel points out in a research paper. According to Sichel, although the falling price of nails was driven partly by cheaper iron and cheaper energy, most of the credit goes to nail manufacturers who simply found more efficient ways to turn steel into nails.',zh:'钉价 150 年间跌 90%，主因不是原料/能源降价，而是制造效率提升。'},
+    {en:"Nails themselves have changed over the years, but Sichel studied them because they haven't changed much. Roman lamps and Roman chariots are very different from LED strips and sports cars, but Roman nails are still clearly nails. It would be absurd to try to track the changing price of sports cars since 1695, but to ask the same question of nails makes perfect sense.",zh:'钉子形态几乎没变，正因如此才适合做长周期价格比较。'},
+    {en:"I make no apology for being obsessed by a particular feature of everyday objects: their price. I am an economist, after all. After writing two books about the history of inventions, one thing I've learnt is that while it is the enchantingly sophisticated technologies that get all the hype, it's the cheap technologies that change the world.",zh:'作者自白：痴迷日常物品价格；真正改变世界的是便宜的技术，而非炫目的高科技。'},
+    {en:'The Gutenberg printing press transformed civilisation not by changing the nature of writing but by changing its cost — and it would have achieved little without a parallel collapse in the price of surfaces to write on, thanks to an unexpectedly overlooked technology called paper. Solar panels had a few niche uses until they became cheap; now they are transforming the global energy system.',zh:'古腾堡印刷机、纸张降价、太阳能板——都是「降本带来革命」的例证。'}
+  ],
+  questions:[
+    {n:21,q:'Romans buried the nails probably for the sake of ___.',opts:['saving them for future use','keeping them from rusting','letting them grow in value','hiding them from locals']},
+    {n:22,q:'The example of early 17th-century Virginians is used to ___.',opts:['highlight the thriftiness of early American colonists','illustrate the high status of blacksmiths in that period','contrast the attitudes of different civilizations toward nails','show the preciousness of nail-making technology at that time']},
+    {n:23,q:'What played the major role in lowering the price of nails after the late 1700?',opts:['Increased productivity','wider use of new energies','Fierce market competition','reduced cost of raw material']},
+    {n:24,q:'It can be learned from Paragraph 5 that nails ___.',opts:['have undergone many technological improvements','have remained basically the same since Roman times','are less studied than other everyday product','are one of the world\'s most significant inventions']},
+    {n:25,q:'Which of the following best summarises the last 2 paragraphs?',opts:['cheap technologies bring about revolutionary change','technological innovation is integral to economic success','technology defines people\'s understanding of the world','sophisticated technology developed from small inventions']}
+  ],
+  insight:{
+    thesis:'用「钉子三百年降价史」论证核心论点：改变世界的不是炫目高科技，而是变得便宜的技术。',
+    outline:['① 罗马埋钉 → 防止铁落入当地人手中（细节题）','②③ 烧房取钉 → 例证当时制钉技术之珍贵（例证题）','④ 降价 90% → 主因是制造效率，而非原料（因果题）','⑤ 形态未变 → 适合长周期研究（推断题）','⑥⑦ 印刷机 / 纸张 / 太阳能 → 降本即革命（主旨题）'],
+    words:[['hoard','储藏，囤积'],['blacksmith','铁匠'],['reclaim','回收'],['sift the ashes','筛灰烬'],['scarce','稀缺的'],['hype','炒作，大肆宣传'],['niche use','小众用途'],['collapse in price','价格暴跌']],
+    tips:['22 题是典型例证作用题：例子永远服务于段落论点，盯住例子后那句 underlines…。','23 题注意 although 引导的让步：cheaper iron/energy 是陪衬，most of the credit goes to… 才是主因。','25 题段落主旨看末段首句与例子落点：cheap technologies change the world。']
+  }
+},
+{
+  id:'t2', group:'Section II · Part A', label:'Text 2', cn:'共同育儿', points:'', range:'26–30', kind:'reading',
+  dir:'Read the following four texts. Answer the questions below each text by choosing A, B, C or D. Mark your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'Parenting tips obtained from hunter-gatherers in Africa may be the key to bringing up more contented children, researchers have suggested. The idea is based on studies of communities such as the Kung of Botswana, where each child is cared for by many adults. Kung children as young as four will help to look after younger ones and "baby-wearing", in which infants are carried in slings, is considered the norm.',zh:'非洲狩猎采集部落的育儿经验可能更利于培养快乐孩子：多成人共同照料（alloparenting）。'},
+    {en:'According to Dr Nikhil Chaudhary, an evolutionary anthropologist at Cambridge University, these practices, known as alloparenting, could lead to less anxiety for children and parents.',zh:'剑桥大学 Chaudhary 博士：共同育儿能减少孩子与父母的焦虑。'},
+    {en:'Dr Annie Swanepoel, a child psychiatrist, believes that there are ways to incorporate them into western life. In Germany, one scheme has paired an old people\'s home with a nursery. The residents help to look after the children, an arrangement akin to alloparenting. Another measure could be encouraging friendships between children in different school years to mimic the supervised mixed-age play groups in hunter-gatherer communities.',zh:'如何融入西方生活？德国「养老院+幼儿园」配对；跨年级交友模拟混龄游戏。'},
+    {en:'In a paper published in the Journal of Child Psychology and Psychiatry, researchers said that the western nuclear family was a recent invention which broke with evolutionary history. This abrupt shift to an "intensive mothering narrative" which suggests that mothers should manage child care alone, was likely to have been harmful. "Such narratives can lead to maternal exhaustion and have dangerous consequences," they wrote.',zh:'西方核心家庭是近代产物；「密集母职」要求母亲独自带娃，可能有害并导致母亲筋疲力尽。'},
+    {en:'By contrast, in hunter-gatherer societies adults other than the parents can provide almost half of a child\'s care. One previous study looked at the people of the Democratic Republic of Congo. It found that infants had an average of 14 alloparents a day by the time they were 18 weeks old and were passed between caregivers eight times an hour.',zh:'对比：狩猎社会中非父母成人承担近一半照料；刚果研究显示 18 周婴儿日均 14 位照料者。'},
+    {en:'Chaudhary said that parents now had less child care support from family and social networks than during most of human evolution, but introducing additional caregivers could reduce stress and maternal depression, which could have a "knock-on" benefit to child\'s wellbeing. An infant born to a hunter-gatherer society could have more than ten caregivers — this contrasts starkly to nursery setting in the UK where regulation can allow a ratio of one carer to four children aged two to three.',zh:'增加照料者能减压并连带给孩子带来好处；英国托育配比 1:4 与狩猎社会 10+ 形成鲜明反差。'},
+    {en:'While hunter-gatherer children learn from observation and imitation in mixed-age playgroups, researchers said that western "instructive teaching", where pupils are asked to sit still, may contribute to conditions such as attention deficit hyperactivity disorder. Chaudhary said that Britain should explore the possibility that older siblings helping their parents might also enhance their own social development.',zh:'观察模仿式学习 vs 指令式教学；后者或与多动症相关。年长兄弟姐妹帮忙也可能促进其社交发展。'}
+  ],
+  questions:[
+    {n:26,q:'According to the first two paragraphs, alloparenting refers to the practice of ___.',opts:['sharing childcare among community members','assigning babies to specific adult categories','teaching parenting skills to older children','carrying infants around by their parents']},
+    {n:27,q:'The scheme in Germany is mentioned to illustrate ___.',opts:['an attempt to facilitate intergenerational communication','an approach to integrating into western society','the conventional parenting style in western culture','the differences between western and African ways of living']},
+    {n:28,q:'According to paragraph 4, the "intensive mothering narrative" ___.',opts:['alleviates parenting pressures','consolidates family relationships','results in the child-centred family','departs from the course of evolution']},
+    {n:29,q:'What can be inferred about the nurseries in the UK?',opts:['They tend to fall short of official requirements','They have difficulty finding enough caregivers','They ought to improve their caregiver-to-child ratio','They should try to prevent parental depression']},
+    {n:30,q:'Which of the following would be the best title for the text?',opts:['Instructive teaching: a dilemma for anxious parents','For a happier family learn from the hunter-gatherers','Mixed-aged playgroup: a better choice for lonely children','Tracing the history of parenting: from Africa to Europe']}
+  ],
+  insight:{
+    thesis:'介绍 alloparenting（多人共同育儿）在狩猎采集社会的普遍性，论证它对缓解现代西方育儿焦虑的启示。',
+    outline:['①② Kung 族例子 → 给出 alloparenting 定义（26 题）','③ 德国养老院+幼儿园 → 如何融入西方（27 题例证作用）','④ 核心家庭是「近代发明」，密集母职有害（28 题）','⑤⑥ 刚果数据 + 英国托育配比 → 照料者数量反差（29 题推断）','⑦ 观察学习 vs 指令教学 → 最佳标题落点（30 题）'],
+    words:[['contented','满足的，快乐的'],['alloparenting','共同育儿'],['baby-wearing','用背带抱婴'],['nuclear family','核心家庭'],['intensive mothering','密集母职'],['maternal exhaustion','母亲精疲力竭'],['knock-on benefit','连带好处'],['ADHD','注意力缺陷多动障碍']],
+    tips:['26 题是定义归纳题：把「each child is cared for by many adults」换成同义表达。','29 题问「可推断」：原文只说配比 1:4 与 10+ 形成反差，推断应落在「应提高照料者配比」。','30 题标题要覆盖全文：既讲狩猎社会经验，又落到西方家庭如何借鉴。']
+  }
+},
+{
+  id:'t3', group:'Section II · Part A', label:'Text 3', cn:'AI 绘画与版权', points:'', range:'31–35', kind:'reading',
+  dir:'Read the following four texts. Answer the questions below each text by choosing A, B, C or D. Mark your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'Rutkowski is a Polish digital artist who uses classical painting styles to create dreamy fantasy landscapes. He has made illustrations for games such as Sony\'s Horizon Forbidden West, Ubisoft\'s Anno, Dungeons & Dragons, and Magic: The Gathering. And he\'s become a sudden hit in the new world of text-to-image AI generation.',zh:'波兰数字艺术家 Rutkowski 擅古典奇幻风格，为多款游戏绘图，如今意外走红于文生图 AI 圈。'},
+    {en:'His distinctive style is now one of the most commonly used prompts in the new open-source AI art generator Stable Diffusion, which was launched late last month. The tool, along with other popular image-generation AI models, allows anyone to create impressive images based on text prompts. For example, type in "Wizard with sword and a glowing orb of magic fire fights a fierce dragon, Greg Rutkowski," and the system will produce something that looks not a million miles away from works in Rutkowski\'s style.',zh:'他的风格成了 Stable Diffusion 最常用提示词之一；输入其名字即可生成近似风格的作品。'},
+    {en:'But these open-source programs are built by scraping images from the Internet, often without permission and proper attribution to artists. As a result, they are raising tricky questions about ethics and copyright. And artists like Rutkowski have had enough.',zh:'开源模型靠抓取网络图片训练，常未经许可、未署名 → 引发伦理与版权争议。'},
+    {en:'According to the website Lexica, which tracks over 10 million images and prompts generated by Stable Diffusion, Rutkowski\'s name has been used as a prompt around 93,000 times. Some of the world\'s most famous artists, such as Michelangelo, Pablo Picasso, and Leonardo da Vinci, brought up around 2,000 prompts each or less. Rutkowski\'s name also features as a prompt thousands of times in the Discord of another text-to-image generator, Midjourney.',zh:'Lexica 数据：他的名字被用作提示词约 9.3 万次，远超米开朗基罗、毕加索、达芬奇（各约 2000 次）。'},
+    {en:'Rutkowski was initially surprised but thought it might be a good way to reach new audiences. Then he tried searching for his name to see if a piece he had worked on had been published. The online search brought back work that had his name attached to it but wasn\'t his.',zh:'他起初以为是曝光机会，搜索后却发现大量冒名的非本人作品。'},
+    {en:'"It\'s been just a month. What about in a year? I probably won\'t be able to find my work out there because [the internet] will be flooded with AI art," Rutkowski says. "That\'s concerning."',zh:'他担忧一年后自己的作品会被海量 AI 生成图淹没，难以辨认。'},
+    {en:'"There is a coalition growing within artist industries to figure out how to tackle or mitigate this," says Ortiz. The group is in its early days of mobilization, which could involve pushing for new policies or regulation. One suggestion is that AI models could be trained on images in the public domain, and AI companies could forge partnerships with museums and artists, Ortiz says.',zh:'艺术行业正形成联盟，可能推动新政策；建议用公共领域图像训练，并与博物馆、艺术家合作。'}
+  ],
+  questions:[
+    {n:31,q:'What can be learned about Rutkowski from the first two paragraphs?',opts:['He is enthusiastic about using AI models','He is popular with users of an AI art generator','He attracts admiration from other illustrators','He specialises in classical painting digitalization']},
+    {n:32,q:'The problem with open-source AI art generators is that they ___.',opts:['lack flexibility in responding to prompts','produce artworks in unpredictable styles','make unauthorized use of online images','collect user information without consent']},
+    {n:33,q:'After searching online, Rutkowski found ___.',opts:['a unique way to reach audiences','a new method to identify AI images','AI-generated work bearing his name','heated disputes regarding his copyright']},
+    {n:34,q:'According to Ortiz, AI companies are advised to ___.',opts:['campaign for new policies or regulation','offer their services to public institutions','strengthen their relationship with AI users','adopt a different strategy for AI model training']},
+    {n:35,q:'What is the text mainly about?',opts:["Artists' responses to AI art generation","AI's expanded role in artistic creation",'Privacy issues in the application of AI','Opposing views on AI development']}
+  ],
+  insight:{
+    thesis:'以 Rutkowski 名字被当作 AI 提示词为切口，讨论开源文生图工具的版权/伦理困境与行业应对。',
+    outline:['①② 他是谁 + 风格成热门提示词（31 题细节）','③ 问题核心：抓取图像、未经许可与署名（32 题）','④ 9.3 万次 vs 2000 次 → 数据冲击','⑤⑥ 搜索发现冒名作品 → 担忧被淹没（33 题）','⑦ Ortiz：联盟、政策、公共领域训练、合作（34 题建议；35 题主旨）'],
+    words:[['text-to-image','文生图'],['prompt','提示词'],['scrape','抓取'],['attribution','署名，归属'],['ethics and copyright','伦理与版权'],['coalition','联盟'],['mitigate','缓解'],['public domain','公共领域'],['forge partnerships','建立合作']],
+    tips:['32 题定位第 3 段：without permission and proper attribution = unauthorized use。','34 题注意建议内容：用 public domain 训练是「换训练策略」，不是「推动政策」（那是联盟的事）。','35 题主旨要覆盖「艺术家如何回应」，不能只说 AI 发展。']
+  }
+},
+{
+  id:'t4', group:'Section II · Part A', label:'Text 4', cn:'湿地与最高法院', points:'', range:'36–40', kind:'reading',
+  dir:'Read the following four texts. Answer the questions below each text by choosing A, B, C or D. Mark your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'The miracle of the Chesapeake Bay lies not in its depths, but in the complexity of its natural construction: the interaction of fresh and saline waters, and the mix of land and water. The shallows provide homes for hundreds of species while storing floodwaters, filtering pollutants from water, and protecting nearby communities from potentially destructive storm surges.',zh:'切萨皮克湾的奇迹在于淡水与咸水交汇、水陆交融的复杂生态：栖息地、蓄洪、净水、防风暴潮。'},
+    {en:'All this was put at great risk late last month, when the U.S. Supreme Court issued a ruling in an Idaho case that provides the U.S. Environmental Protection Agency (EPA) far less authority to regulate wetlands and waterways. Specifically, a 5-4 majority decided that wetlands protected by the EPA under its Clean Water Act authority must have a "continuous surface connection to bodies of water." This narrowing of the regulatory scope was a victory for builders, mining operators and other commercial interests often at odds with environmental rules. And it carries "significant repercussions for water quality and flood control throughout the United States," as Justice Brett Kavanaugh observed.',zh:'最高法院以 5:4 收窄 EPA 对湿地的监管权，开发商受益；大法官 Kavanaugh 警告对水质与防洪影响重大。'},
+    {en:'In Maryland, the good news is that there are many state laws in place that provide wetlands protections. But that\'s a very shortsighted view, particularly when it comes to the Chesapeake Bay. The reality is that water, and the pollutants that so often come with it, don\'t respect state boundaries. The Chesapeake draws from a 64,000-square-mile watershed that extends into Virginia, Pennsylvania, New York, West Virginia, the District of Columbia and Delaware. Will those jurisdictions extend the same protections now denied under Sackett v. EPA? Perhaps some, but all? That seems unlikely.',zh:'马里兰州有保护法，但污染不认州界；6.4 万平方英里流域跨 6 州，其他州未必跟进。'},
+    {en:'It is too easy, and misleading, to see such court rulings as merely standing up for the rights of landowners when the consequences can be so dire for their neighbours. And it\'s a reminder that the EPA\'s involvement in the Chesapeake Bay Program has long been crucial as the means to transcend the influence of deep-pocketed special interests in neighbouring states. Pennsylvania farmers, to use one telling example, aren\'t thinking about next year\'s blue crab harvest in Maryland when they decide whether to spread animal waste on their field, yet the runoff into nearby creeks can have enormous impact downstream.',zh:'把裁决说成维护地主权利是误导；宾州农民施肥的径流会影响下游马里兰的蓝蟹收成，凸显 EPA 跨州协调的必要。'},
+    {en:'And so we would call on state lawmakers from Richmond to Albany to consider reviewing their own wetlands protections and see for themselves the enormous stakes involved. We can offer them a visit to Blackwater National Wildlife Refuge in Dorchester County where bald eagles fly over tidal marshes so shallow you could not paddle a boat across them but teeming with aquatic life. It\'s worth the scenic drive.',zh:'呼吁各州立法者重新审视湿地保护，并邀请他们实地考察 Blackwater 保护区——值得一游。'}
+  ],
+  questions:[
+    {n:36,q:'The Chesapeake Bay is described in paragraph 1 as ___.',opts:['a valuable natural environment','a controversial conservation area','a place with commercial potential','a headache for nearby communities']},
+    {n:37,q:"The U.S. Supreme Court's ruling in the Idaho case ___.",opts:['reinforces water pollution control','weakens the EPA\'s regulatory power','will end conflicts among local residents','may face opposition from mining operators']},
+    {n:38,q:'How does the author feel about the future of the Chesapeake Bay?',opts:['worried','puzzled','relieved','encouraged']},
+    {n:39,q:"What can be inferred about the EPA's involvement in the Chesapeake Bay Program?",opts:['It has restored the balance among neighbouring jurisdictions','It has triggered a radical reform in commercial fisheries','It has set a fine example of respecting state authorities','It has ensured the coordination of protection efforts']},
+    {n:40,q:'The author holds that state lawmakers should ___.',opts:['be cautious about the influence of landowners','attach due importance to wetlands protections','recognize the need to expand wildlife refuges','improve the wellbeing of endangered species']}
+  ],
+  insight:{
+    thesis:'借最高法院削弱 EPA 湿地监管权的裁决，论证湿地保护必须跨州协调、EPA 参与不可替代。',
+    outline:['① 海湾生态价值 → 描述题（36 题）','② 5:4 裁决收窄监管权 → 细节题（37 题）','③ 州法不足：污染不认州界，流域跨 6 州 → 态度铺垫','④ 宾州农民径流影响下游 → 推断 EPA 作用（39 题）','⑤ 呼吁州立法者自查 → 作者建议（40 题）'],
+    words:[['saline','含盐的'],['storm surge','风暴潮'],['continuous surface connection','连续地表连接'],['regulatory scope','监管范围'],['repercussion','负面影响，反响'],['watershed','流域'],['jurisdiction','管辖区域'],['deep-pocketed special interests','财力雄厚的利益集团'],['runoff','径流'],['teem with','充满']],
+    tips:['38 题态度题：全文用 at risk / dire / shortsighted / unlikely 等词，基调是担忧而非释然。','39 题推断题：原文说 EPA 的参与对「超越邻近州利益集团影响」至关重要 → 落到「确保协调保护努力」。','40 题别被末段 wildlife refuge 细节带偏，call on … review their own wetlands protections 才是建议核心。']
+  }
+},
+{
+  id:'pb', group:'Section II · Part B', label:'Part B', cn:'新题型 · 观点匹配', points:'10 points', range:'41–45', kind:'matching',
+  dir:'Choose the best statement from the list A-G for each numbered name (41-45). There are two extra choices which you do not need to use. Mark your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'<b>41. Hannah</b> Simply there are people in Nigeria who cannot travel to the Smithsonian Institution to see that part of their history and culture represented by the Benin Bronzes. These should be available to them as part of their cultural heritage and history and as a source of national pride. There is no good reason that these artifacts should be beyond the ordinary reach of the educational objectives or inspiration of the generations to which they were left. They serve no purpose in a museum in the United States or elsewhere except as curious objects.',zh:'Hannah：尼日利亚人无法远赴史密森尼看贝宁青铜器；文物应作为文化遗产归还原处。'},
+    {en:'<b>42. Buck</b> We know very exact reproductions of artwork can be and are regularly produced. Perhaps museums and governments might explore some role for the use of nearly exact reproductions as a means of resolving issues relating to returning works of art and antiquities. The context of any exhibit is more important to me than whether the object being displayed is 2000 years old or 2 months old. In many cases the experts have a hard time agreeing on what is the real object and what is a forgery. Again, the story an exhibit is trying to tell is what matters. The monetary value of the object on display is a distant second place in importance.',zh:'Buck：可用高仿复制品解决归还争议；展览讲述的故事比真品年代与价格更重要。'},
+    {en:'<b>43. Sara</b> When visiting the Baltimore Museum of Art, I came across a magnificent 15th-century Chinese sculpture. It inspired me to learn more about the culture that it represented. Artifacts in museums have the power to inspire, and perhaps spark that need to learn and understand the nature of their creators. Having said that, I do feel that whatever artifacts find their way to public museums should, in fact, be sanctioned as having been obtained on loan, legally purchased or obtained by treaty. Stealing artifacts from other peoples\' cultures is obscene; it robs not only the physical objects, but the dignity and spirit of their creators.',zh:'Sara：文物能激发学习欲望，但进入博物馆的文物必须是借展、合法购买或条约取得；偷窃可耻。'},
+    {en:'<b>44. Victor</b> Ancient art that is displayed in foreign countries by all means should be returned to the original country. The foreign countries have no right to hold back returning the items. I would ask that the foreign nations and the original country discuss the terms of transfer. Yes, there is the risk that the original will not have as good security as do the foreign countries. But look at what happened to Boston\'s Gardner Museum theft in 1990, including the loss of Rembrandt, Vermeer, Manet and other masterpieces. Nothing is absolutely safe nowhere, and now climate change agitators are attacking publicly displayed work in European museums.',zh:'Victor：文物必须归还；安全不是借口——连波士顿加德纳博物馆都曾失窃。'},
+    {en:'<b>45. Julia</b> To those of you in the comments section who are having strong feelings about artifacts being removed from cities in the US and Britain and returned to their countries of origin, I would ask you to consider: why do you think Americans have more of a right to easily access the Benin Bronzes than people of Nigeria? Why are people who live within a day\'s drive of London entitled to go and see the Elgin Marbles whenever they want, but the people of Athens aren\'t? What intrinsic factors make the West a suitable home for these artifacts but preclude them from being preserved and displayed by their countries of origin? If your conclusion is that the West is better able to preserve these artifacts, think about why you\'re assuming that to be true.',zh:'Julia：用连环反问质疑「西方更擅长保管」这一前提，反驳反对归还的论证。'}
+  ],
+  options:[
+    ['A','It is clear that the countries of origin have never been compensated for the stolen artifacts.'],
+    ['B','It is a flawed line of reasoning to argue against returning artifacts to their countries of origin.'],
+    ['C','Museum visitors can still learn as much from artifacts\' copies as from the originals.'],
+    ['D','Reproductions, even if perfectly made, cannot take the place of the authentic object.'],
+    ['E','The real value of artifacts can only be recognized in their countries of origin rather than anywhere else.'],
+    ['F','Ways to get artifacts from other countries must be decent and lawful.'],
+    ['G','Concern over security is no excuse for refusing to return artifacts to their countries of origin.']
+  ],
+  insight:{
+    thesis:'围绕「贝宁青铜器/帕特农神庙雕塑是否应归还原属国」，五位发言人呈现五种立场，考观点与选项的语义匹配。',
+    outline:['Hannah → 强调原属国民众的文化权利与自豪感（对应「真实价值只能在原属国被认识」）','Buck → 复制品足以承载展览故事（对应「复制品同样可学」）','Sara → 取得途径须合法正当（对应 F）','Victor → 安全担忧不能成为拒还借口（对应 G，用失窃案例佐证）','Julia → 连环反问拆穿反方推理缺陷（对应 B）'],
+    words:[['artifact','文物，人工制品'],['reproduction','复制品'],['forgery','赝品'],['treaty','条约'],['obscene','可耻的'],['preclude','排除，阻止'],['intrinsic factor','内在因素']],
+    tips:['先看选项中的「论断强度」：E 说 only，D 说 cannot take the place — 别把 Buck 的复制品立场错配给 D。','两个多余项常是「偷换概念」：A 的 compensated 原文无人提及。','段落主题句未必在首句：Victor 的 security 论据在中部，Julia 的答案靠全段反问归纳。']
+  }
+},
+{
+  id:'pc', group:'Section II · Part C', label:'Part C', cn:'翻译', points:'10 points', range:'46–50', kind:'translation',
+  dir:'Read the following text carefully and then translate the underlined segments into Chinese. Write your answers on the ANSWER SHEET.',
+  passages:[
+    {en:'"Elephants never forget" — or so they say — and that piece of folklore seems to have some foundation. The African savanna elephants, also known as the African bush elephants, is distributed across 37 African countries. They move between a variety of habitats, including forests, grassland, woodlands, wetlands.',zh:'「大象永不忘记」这句俗语似乎有些依据。非洲草原象分布于 37 国，在森林、草原、林地、湿地等多种栖息地间迁移。'},
+    {en:'<u class="u">(46) They sometimes travel more than sixty miles to find food or water, and are very good at working out where other elephants are — even when they are out of sight.</u> What is more, they almost always seem to choose the nearest waterhole.',zh:'它们有时为寻找食物或水行走 60 多英里，并极其擅长弄清其他大象的位置——即便看不见对方。'},
+    {en:'<u class="u">(47) The researchers are convinced that the elephants always know precisely where they are in relation to all the resources they need, and can therefore take shortcuts, as well as following familiar routes.</u>',zh:'研究者确信，大象总能精确知道自己相对于所需资源的位置，因此既能走捷径，也能沿熟悉路线行进。'},
+    {en:'Although the cues used by African elephants for long-distance navigation are not yet understood, smell may well play a part.',zh:'尽管大象远距离导航所用线索尚未明确，嗅觉很可能起作用。'},
+    {en:'Elephants are very choosy eaters, but until recently little was known about how they selected their food. <u class="u">(48) One possibility was that they merely used their eyes and tried out the plants they found, but that would probably result in a lot of wasted time and energy, not least because their eyesight is actually not very good.</u>',zh:'一种可能是它们仅用眼睛、试吃找到的植物；但这会浪费大量时间与能量，尤其因为视力其实不太好。'},
+    {en:'<u class="u">(49) The volatile chemicals produced by plants can be carried a long way, and they are very characteristic: each plant or tree has its own particular odor signature.</u> What is more, they can be detected even where they are not actually visible. New research suggests that smell is a crucial factor in guiding elephants — and probably other herbivores — to the best food resources.',zh:'植物释放的挥发性化学物质可传播很远且极具特征：每株植物或树都有独特气味签名；即便看不见也能被探测到。'},
+    {en:'The researchers first established what kinds of plant the elephants preferred either to eat or avoid when foraging freely. They then set up a food station experiment, in which they gave the elephants a series of choices based only on smell. <u class="u">(50) The experiment showed that elephants may well use smell to identify patches of trees that are good to eat, and secondly to assess the quality of the trees within each patch.</u> Free-ranging elephants presumably also use this information to locate their preferred food.',zh:'实验显示，大象很可能先用嗅觉识别哪些树林可食，再评估每片树林中树木的质量。'},
+    {en:'Their well-developed hippocampal structures may enable elephants, like rats and people, to construct cognitive maps.',zh:'发达的海马结构可能让大象像鼠和人一样构建认知地图。'}
+  ],
+  insight:{
+    thesis:'说明大象的长距离导航与觅食能力，重点论证「嗅觉是关键线索」——五处划线句均为科普说明句。',
+    outline:['46 并列句：travel … and are good at working out …；out of sight 处理为「看不见对方」','47 宾语从句 + 目的状语：be convinced that… / in relation to / take shortcuts','48 表语从句 + 让步：One possibility was that… / not least because','49 被动 + 冒号解释：can be carried / very characteristic / odor signature','50 宾语从句 + 并列目的：identify patches… and secondly assess…'],
+    words:[['folklore','民间传说'],['habitat','栖息地'],['waterhole','水坑'],['navigation','导航'],['volatile chemicals','挥发性化学物质'],['odor signature','气味签名'],['herbivore','食草动物'],['hippocampal structure','海马结构'],['cognitive map','认知地图']],
+    tips:['46 句的 work out 是「弄清楚」不是「锻炼」；out of sight 指其他大象不在视野内。','48 句 not least because = 「尤其因为」，别译成「不少因为」。','50 句 secondly 对应前面的 first，翻译时补出「首先……其次……」层次更清楚。']
+  }
+},
+{
+  id:'wa', group:'Section III · Writing', label:'Part A', cn:'应用文 · 回复邮件', points:'10 points', range:'51', kind:'writing',
+  dir:'Read the following email from an international student and write a reply.',
+  passages:[
+    {en:'<b>Dear Li Ming,</b> I\'ve got a class assignment to make an oral report on an ancient Chinese scientist, but I\'m not sure how to prepare for it. Can you give me some advice? Thank you for your help. <b>Yours, Paul</b>',zh:'留学生 Paul 求助：如何准备关于中国古代科学家的口头报告。'},
+    {en:'Write your answer in about 100 words on the ANSWER SHEET. Do not use your own name in the letter. Use "Li Ming" instead.',zh:'约 100 词；署名统一用 Li Ming。'}
+  ],
+  insight:{
+    thesis:'标准「建议信/回复邮件」：先回应求助，再给 2–3 条具体建议，最后表达祝愿。',
+    outline:['第 1 段：说明写信目的（很高兴提供建议）','第 2 段：建议 1 选一位代表性科学家（如 Zhang Heng / Shen Kuo）；建议 2 查权威资料并搭好结构；建议 3 练习口头表达','第 3 段：愿意进一步帮忙 + 祝愿'],
+    words:[['oral report','口头报告'],['assignment','课程作业'],['prepare for','为……做准备'],['reputable source','可靠资料'],['structure','结构'],['delivery','表达，呈现']],
+    tips:['格式三件套：称呼 Dear Paul / 落款 Yours, Li Ming / 不写自己真实姓名。','建议要有「具体动作」，不要通篇 You should read more 这种空话。','控制在 100 词左右，三段式最稳。']
+  }
+},
+{
+  id:'wb', group:'Section III · Writing', label:'Part B', cn:'图画作文 · 图表议论文', points:'20 points', range:'52', kind:'writing',
+  dir:'Write an essay based on the picture below. In your essay, you should 1) describe the picture and the chart briefly, 2) interpret the implied meaning, and 3) give your comments.',
+  passages:[
+    {en:'Write your answer in 160-200 words on the ANSWER SHEET.',zh:'160–200 词；原卷此处配有一幅图画与一张图表（本页保留文字说明，图片见真题 PDF 第 14 页）。'},
+    {en:'<b>写作框架提示：</b> 第一段描述图画与图表的关键信息；第二段阐释寓意（现象、原因、影响）；第三段给出评论与建议。',zh:'三段式：描述 → 释义 → 评论。'}
+  ],
+  insight:{
+    thesis:'英语一图画作文的经典三段式：描述画面 + 揭示寓意 + 个人评论。',
+    outline:['第 1 段（约 50 词）：用 As is shown in the picture… 客观描述，别急着议论','第 2 段（约 90 词）：The picture conveys that… 点明寓意，再展开 2 个论证角度','第 3 段（约 40 词）：In my view… 给建议或展望'],
+    words:[['depict','描绘'],['implied meaning','隐含意义'],['convey','传达'],['reflect','反映'],['phenomenon','现象'],['attach importance to','重视']],
+    tips:['图表出现时务必写清「趋势/对比」，不能只复述图里的数字。','寓意段要有逻辑连接词：to begin with / moreover / therefore。','结尾避免喊口号，给一个具体、可操作的建议更稳。']
+  }
+}
+];
+
+/* ============================ 渲染 ============================ */
+let idx = 0, showZh = false, insightCollapsed = false;
+const $ = s => document.querySelector(s);
+
+function buildNav(){
+  const nav = $('#nav'); nav.innerHTML = '';
+  let lastGroup = '';
+  EXAM.forEach((c,i)=>{
+    if(c.group !== lastGroup){ lastGroup=c.group; const g=document.createElement('div'); g.className='grp'; g.textContent=c.group; nav.appendChild(g); }
+    const b=document.createElement('button'); b.className = i===idx?'active':'';
+    b.innerHTML = `${c.label} <small>${c.cn} · ${c.range}${c.points?' · '+c.points:''}</small>`;
+    b.onclick = ()=>go(i); nav.appendChild(b);
+  });
+}
+
+function render(){
+  const c = EXAM[idx];
+  let h = `<div class="paper-head"><div class="sec">${c.group}</div>
+    <h2>${c.label} · ${c.cn}</h2><div class="pts">${c.range} 题${c.points?' · '+c.points:''}</div></div>
+    <div class="dir"><b>Directions:</b> ${c.dir}</div>`;
+
+  c.passages.forEach((p,i)=>{
+    h += `<div class="passage ${showZh?'zh-show':''}"><div class="en"><span class="n">${i+1}</span>${p.en}</div>
+      <div class="zh"><span class="n">${i+1}</span>${p.zh}</div></div>`;
+  });
+
+  if(c.kind==='cloze'){
+    h += `<div class="cloze-opts">` + c.options.map((o,i)=>
+      `<div class="row"><b>${o[0]}.</b> <span>[A] ${o[1]}</span><span>[B] ${o[2]}</span><span>[C] ${o[3]}</span><span>[D] ${o[4]}</span></div>`
+    ).join('') + `</div>`;
+  }
+  if(c.kind==='reading'){
+    h += c.questions.map(q=>`<div class="q"><div class="qt"><span class="qn">${q.n}.</span>${q.q}</div>
+      <div class="opts">${q.opts.map((o,i)=>`<div><b>[${'ABCD'[i]}]</b>${o}</div>`).join('')}</div></div>`).join('');
+  }
+  if(c.kind==='matching'){
+    h += `<h3 style="margin-top:26px;font-size:16px">Options A–G</h3>` +
+      c.options.map(o=>`<div class="q" style="margin:8px 0;padding:9px 14px"><b style="color:var(--gold)">[${o[0]}]</b> ${o[1]}</div>`).join('');
+  }
+
+  h += `<div class="insight ${insightCollapsed?'collapsed':''}" id="insight">
+    <h3 onclick="toggleInsight()"><span>📖 中文解读 · ${c.cn}</span><span>${insightCollapsed?'展开 ▾':'收起 ▴'}</span></h3>
+    <div class="body">
+      <h4>一句话主旨</h4><div>${c.insight.thesis}</div>
+      <h4>行文脉络</h4><ul>${c.insight.outline.map(x=>`<li>${x}</li>`).join('')}</ul>
+      <h4>重点词汇</h4><div class="words">${c.insight.words.map(w=>`<span>${w[0]} · ${w[1]}</span>`).join('')}</div>
+      <h4 class="tip">做题提示</h4><ul>${c.insight.tips.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div></div>`;
+
+  $('#stage').innerHTML = h;
+  buildNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function go(i){ idx=(i+EXAM.length)%EXAM.length; render(); }
+function toggleZh(){ showZh=!showZh; render(); }
+function toggleInsight(){ insightCollapsed=!insightCollapsed; const el=$('#insight'); if(el){el.classList.toggle('collapsed',insightCollapsed); el.querySelector('h3 span:last-child').textContent=insightCollapsed?'展开 ▾':'收起 ▴';} }
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft')go(idx-1); if(e.key==='ArrowRight')go(idx+1); });
+render();
+</script>
+</body>
+</html>

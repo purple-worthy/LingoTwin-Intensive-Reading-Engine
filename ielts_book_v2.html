@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雅思短文精读与核心词汇真经（电子书版）</title>
+    <style>
+        /* ================= 1. 多套皮肤样式契约 (CSS Variables) ================= */
+        /* 样式1：黑灰绿样式 */
+        body.theme-green {
+            --bg-outer: #e5e7eb;
+            --bg-paper: #ffffff;
+            --banner-bg: #4a5d54;
+            --meta-bg: #6b7f75;
+            --title-color: #2c4a3e;
+            --tier-red-color: #1f3a2e;
+            --tier-red-bg: #e3ede8;
+            --tier-normal-color: #222222;
+            --tier-normal-bg: #f1f3f2;
+            --rt-color: #4b5563;
+            --trans-bg: #f3f5f4;
+            --trans-border: #6b7f75;
+            --dashed-color: #88968f;
+            --vocab-def-bg: #f6f8f7;
+            --pos-color: #2c4a3e;
+        }
+
+        /* 样式2：真经暗红高亮样式（1:1 还原原图暗红重点词 + 黑灰普通词阶梯对比） */
+        body.theme-red {
+            --bg-outer: #e2e4e8;
+            --bg-paper: #fcfcfc;
+            --banner-bg: #58636d;
+            --meta-bg: #79848e;
+            --title-color: #2b3a42;
+            --tier-red-color: #9e2a2b;      /* 原图标志性暗红色 */
+            --tier-red-bg: #f9ebeb;         /* 极浅红底突出重点 */
+            --tier-normal-color: #2d3134;   /* 普通实词黑灰色 */
+            --tier-normal-bg: #eef0f2;      /* 普通实词浅灰底 */
+            --rt-color: #4a5056;
+            --trans-bg: #eff1f3;
+            --trans-border: #8c969e;
+            --dashed-color: #7a8288;
+            --vocab-def-bg: #f2f4f7;
+            --pos-color: #9e2a2b;
+        }
+
+        /* 样式3：暖纸护眼样式 */
+        body.theme-sepia {
+            --bg-outer: #dfd8c8;
+            --bg-paper: #fbf7ed;
+            --banner-bg: #6d594a;
+            --meta-bg: #8c7665;
+            --title-color: #4a3525;
+            --tier-red-color: #a63a2b;
+            --tier-red-bg: #f4e6d8;
+            --tier-normal-color: #362e28;
+            --tier-normal-bg: #f2ece1;
+            --rt-color: #695c50;
+            --trans-bg: #f3ede0;
+            --trans-border: #a38f7d;
+            --dashed-color: #9e8e7e;
+            --vocab-def-bg: #f4eee2;
+            --pos-color: #8c3b2b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-outer);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            padding: 20px;
+            transition: background-color 0.25s ease;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* ================= 2. 顶部目录与学习控制栏 ================= */
+        .book-nav-bar {
+            max-width: 1080px;
+            margin: 0 auto 14px auto;
+            background: #ffffff;
+            padding: 10px 18px;
+            border-radius: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc-tabs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toc-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4b5563;
+            margin-right: 4px;
+        }
+
+        .toc-btn {
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            color: #374151;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+
+        .toc-btn:hover { background: #eef2f6; }
+        .toc-btn.active {
+            background: var(--banner-bg);
+            color: #ffffff;
+            border-color: var(--banner-bg);
+        }
+
+        .study-tools {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-btn {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #1e293b;
+            padding: 5px 11px;
+            border-radius: 4px;
+            font-size: 12.5px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tool-btn.active {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        /* ================= 3. 书籍纸张主容器 ================= */
+        .page-container {
+            max-width: 1080px;
+            margin: 0 auto 60px auto;
+            background: var(--bg-paper);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.09);
+            padding: 34px 40px;
+            border-radius: 4px;
+            transition: background-color 0.25s ease;
+        }
+
+        .article-section { display: none; }
+        .article-section.active { display: block; animation: fadeIn 0.2s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0.4; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 顶部出版物横幅 */
+        .top-banner {
+            display: flex;
+            align-items: center;
+            background-color: var(--banner-bg);
+            color: #ffffff;
+            padding: 11px 18px;
+            border-radius: 3px;
+            margin-bottom: 8px;
+        }
+
+        .badge-box {
+            border: 2px solid #ffffff;
+            padding: 3px 10px;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-right: 16px;
+        }
+
+        .banner-titles h1 { font-size: 19px; font-weight: 700; }
+        .banner-titles .chapter-info { font-size: 13.5px; color: #e2e8f0; margin-top: 2px; font-weight: 600; }
+
+        .meta-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: var(--meta-bg);
+            color: #ffffff;
+            font-size: 12px;
+            padding: 5px 14px;
+            margin-bottom: 22px;
+            font-weight: 600;
+        }
+
+        /* 双栏布局 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 67% 33%;
+        }
+
+        .left-column {
+            padding-right: 24px;
+            border-right: 1.5px dashed var(--dashed-color);
+        }
+
+        .article-header { margin-bottom: 20px; }
+        .en-title {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 23px;
+            font-weight: 700;
+            color: var(--title-color);
+            line-height: 1.3;
+            margin-bottom: 5px;
+        }
+        .cn-title { font-size: 15px; font-weight: 700; color: #4b5563; }
+
+        /* ================= 4. 逐词行间注音与色阶高亮 ================= */
+        .gloss-paragraph {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 17.5px;
+            line-height: 2.65; /* 紧凑且清晰的字下注释行距 */
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+
+        ruby {
+            ruby-position: under;
+            -webkit-ruby-position: after;
+            margin: 0 1.5px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: transform 0.1s, filter 0.15s;
+        }
+
+        ruby:hover { filter: brightness(0.93); }
+
+        /* 梯度1：核心重点词（样式2下呈现暗红色加粗） */
+        ruby.tier-red {
+            color: var(--tier-red-color);
+            background-color: var(--tier-red-bg);
+            font-weight: 700;
+            padding: 1px 4px;
+        }
+
+        /* 梯度2：普通实词（黑灰色常规） */
+        ruby.tier-normal {
+            color: var(--tier-normal-color);
+            background-color: var(--tier-normal-bg);
+            font-weight: 500;
+            padding: 1px 3px;
+        }
+
+        /* 梯度3：虚词（无底色、无注音） */
+        ruby.tier-func {
+            color: #374151;
+            padding: 0 1px;
+        }
+
+        rt {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 11.5px;
+            color: var(--rt-color);
+            font-weight: 500;
+            line-height: 1.15;
+            padding-top: 2px;
+            user-select: none;
+            transition: opacity 0.2s;
+        }
+
+        /* 自测模式：隐藏中文释义，悬停单个词时显示 */
+        body.quiz-mode rt { opacity: 0; }
+        body.quiz-mode ruby:hover rt { opacity: 1; color: #b91c1c; font-weight: 700; }
+        body.quiz-mode .full-translation { filter: blur(5px); cursor: pointer; }
+        body.quiz-mode .full-translation:hover { filter: none; }
+
+        .full-translation {
+            background-color: var(--trans-bg);
+            padding: 11px 15px;
+            border-radius: 5px;
+            font-size: 13.5px;
+            line-height: 1.75;
+            color: #374151;
+            margin-bottom: 24px;
+            border-left: 3.5px solid var(--trans-border);
+            transition: filter 0.2s;
+        }
+
+        /* 右侧词汇栏 */
+        .right-column { padding-left: 20px; }
+        .vocab-list { display: flex; flex-direction: column; gap: 10px; }
+        .vocab-item { border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 8px; }
+        .vocab-item:last-child { border-bottom: none; }
+
+        .vocab-head {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 14.5px;
+            margin-bottom: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+        .vocab-head:hover .vocab-word { text-decoration: underline; }
+        .vocab-word { font-weight: 700; color: var(--tier-red-color); }
+        .vocab-ipa { font-size: 12px; color: #555555; margin-left: 5px; font-weight: 400; }
+        .speak-icon { font-size: 11px; opacity: 0.5; }
+
+        .vocab-def {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333333;
+            background-color: var(--vocab-def-bg);
+            padding: 5px 8px;
+            border-radius: 3px;
+        }
+        .pos-tag { font-weight: 700; color: var(--pos-color); margin-right: 3px; }
+
+        /* ================= 5. 右下角悬浮样式切换器 ================= */
+        .theme-switcher {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+            border-radius: 8px;
+            padding: 10px 12px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .switcher-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+
+        .theme-options { display: flex; gap: 6px; }
+
+        .theme-pill {
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #334155;
+            transition: all 0.15s;
+        }
+
+        .theme-pill.active {
+            border-color: #0f172a;
+            background: #0f172a;
+            color: #ffffff;
+        }
+
+        .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+        /* 打印隐藏交互控件 */
+        @media print {
+            body { background: #ffffff; padding: 0; }
+            .book-nav-bar, .theme-switcher { display: none !important; }
+            .page-container { box-shadow: none; max-width: 100%; padding: 12px 16px; margin: 0; }
+        }
+    </style>
+</head>
+<body class="theme-red">
+
+<!-- 顶部目录与学习工具 -->
+<nav class="book-nav-bar">
+    <div class="toc-tabs">
+        <span class="toc-label">📖 精读目录：</span>
+        <button class="toc-btn active" onclick="switchArticle(0, this)">01. 热带雨林生态</button>
+        <button class="toc-btn" onclick="switchArticle(1, this)">02. 海洋微塑料危机</button>
+        <button class="toc-btn" onclick="switchArticle(2, this)">03. 城市热岛效应</button>
+    </div>
+    <div class="study-tools">
+        <button class="tool-btn" id="quizBtn" onclick="toggleQuizMode()">👁️ 自测遮罩：关</button>
+        <button class="tool-btn" onclick="window.print()">🖨️ 打印/存PDF</button>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <!-- ==================== 文章 1 ==================== -->
+    <article class="article-section active" id="art-0">
+        <header class="top-banner">
+            <div class="badge-box">雅思</div>
+            <div class="banner-titles">
+                <h1>短文精读与核心词汇真经 3600 词</h1>
+                <div class="chapter-info">1. Chapter 1 自然地理与生态 List 1（点击任意英文单词可发音）</div>
+            </div>
+        </header>
+        <div class="meta-bar">
+            <span>单词数：168个</span>
+            <span>DATE: _______________</span>
+        </div>
+
+        <div class="main-grid">
+            <main class="left-column">
+                <div class="article-header">
+                    <div class="en-title">Tropical Rainforests: Fragile Ecosystems Under Threat</div>
+                    <div class="cn-title">热带雨林：面临威胁的脆弱生态系统</div>
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-normal">Tropical<rt>热带的</rt></ruby>
+                    <ruby class="tier-normal">rainforests<rt>雨林</rt></ruby>
+                    <ruby class="tier-red">harbor<rt>庇护，孕育</rt></ruby>
+                    <ruby class="tier-func">an<rt></rt></ruby>
+                    <ruby class="tier-normal">astonishing<rt>惊人的</rt></ruby>
+                    <ruby class="tier-red">diversity<rt>多样性</rt></ruby>
+                    <ruby class="tier-func">of<rt></rt></ruby>
+                    <ruby class="tier-red">terrestrial<rt>陆生的</rt></ruby>
+                    <ruby class="tier-normal">species,<rt>物种</rt></ruby>
+                    <ruby class="tier-normal">functioning<rt>起作用</rt></ruby>
+                    <ruby class="tier-func">as<rt></rt></ruby>
+                    <ruby class="tier-normal">vital<rt>至关重要的</rt></ruby>
+                    <ruby class="tier-red">carbon sinks<rt>碳汇，碳吸收池</rt></ruby>
+                    <ruby class="tier-func">that<rt></rt></ruby>
+                    <ruby class="tier-red">regulate<rt>调节</rt></ruby>
+                    <ruby class="tier-normal">global<rt>全球的</rt></ruby>
+                    <ruby class="tier-normal">climate.<rt>气候</rt></ruby>
+                    <ruby class="tier-normal">Beneath<rt>在……之下</rt></ruby>
+                    <ruby class="tier-func">the<rt></rt></ruby>
+                    <ruby class="tier-normal">dense<rt>茂密的</rt></ruby>
+                    <ruby class="tier-red">canopy,<rt>树冠层</rt></ruby>
+                    <ruby class="tier-red">intricate<rt>错综复杂的</rt></ruby>
+                    <ruby class="tier-red">food webs<rt>食物网</rt></ruby>
+                    <ruby class="tier-red">sustain<rt>维持</rt></ruby>
+                    <ruby class="tier-normal">countless<rt>无数的</rt></ruby>
+                    <ruby class="tier-normal">organisms,<rt>生物体</rt></ruby>
+                    <ruby class="tier-func">from<rt></rt></ruby>
+                    <ruby class="tier-normal">microscopic<rt>微小的</rt></ruby>
+                    <ruby class="tier-normal">fungi<rt>真菌</rt></ruby>
+                    <ruby class="tier-func">to<rt></rt></ruby>
+                    <ruby class="tier-red">apex predators.<rt>顶级捕食者</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    热带雨林孕育着惊人丰富的陆生物种多样性，并作为至关重要的“碳汇”调节着全球气候。在茂密的树冠层之下，错综复杂的食物网维系着从微观真菌到顶级捕食者的无数生物体。
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-normal">However,<rt>然而</rt></ruby>
+                    <ruby class="tier-red">relentless<rt>持续不断的</rt></ruby>
+                    <ruby class="tier-red">deforestation<rt>滥伐森林</rt></ruby>
+                    <ruby class="tier-normal">driven<rt>驱动</rt></ruby>
+                    <ruby class="tier-func">by<rt></rt></ruby>
+                    <ruby class="tier-normal">commercial<rt>商业的</rt></ruby>
+                    <ruby class="tier-normal">logging<rt>伐木业</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">agricultural<rt>农业的</rt></ruby>
+                    <ruby class="tier-normal">expansion<rt>扩张</rt></ruby>
+                    <ruby class="tier-red">accelerates<rt>加速</rt></ruby>
+                    <ruby class="tier-red">habitat fragmentation.<rt>栖息地碎片化</rt></ruby>
+                    <ruby class="tier-func">When<rt></rt></ruby>
+                    <ruby class="tier-normal">ancient<rt>古老的</rt></ruby>
+                    <ruby class="tier-normal">woodlands<rt>林地</rt></ruby>
+                    <ruby class="tier-func">are<rt></rt></ruby>
+                    <ruby class="tier-normal">cleared,<rt>清除</rt></ruby>
+                    <ruby class="tier-red">torrential rains<rt>倾盆大雨</rt></ruby>
+                    <ruby class="tier-red">erode<rt>侵蚀</rt></ruby>
+                    <ruby class="tier-normal">exposed<rt>裸露的</rt></ruby>
+                    <ruby class="tier-normal">topsoil,<rt>表层土</rt></ruby>
+                    <ruby class="tier-red">depleting<rt>耗尽</rt></ruby>
+                    <ruby class="tier-normal">essential<rt>必需的</rt></ruby>
+                    <ruby class="tier-normal">nutrients<rt>养分</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">triggering<rt>引发</rt></ruby>
+                    <ruby class="tier-red">irreversible<rt>不可逆转的</rt></ruby>
+                    <ruby class="tier-normal">ecological<rt>生态的</rt></ruby>
+                    <ruby class="tier-normal">collapse.<rt>崩溃</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    然而，受商业伐木和农业扩张驱动的持续滥伐森林行为，正在加速栖息地的碎片化。当古老的林地被砍伐一空时，倾盆大雨会侵蚀裸露的表层土，耗尽必需的养分并引发不可逆转的生态崩溃。
+                </div>
+            </main>
+
+            <aside class="right-column">
+                <div class="vocab-list">
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('harbor')"><span><span class="vocab-word">harbor</span> <span class="vocab-ipa">['hɑːrbər]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">
+                            <div><span class="pos-tag">vt.</span> 庇护；怀有（想法）；蕴藏</div>
+                            <div><span class="pos-tag">n.</span> 海港，港口；避难所</div>
+                        </div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('diversity')"><span><span class="vocab-word">diversity</span> <span class="vocab-ipa">[daɪ'vɜːrsəti]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">n.</span> 多样性，差异；多变性</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('terrestrial')"><span><span class="vocab-word">terrestrial</span> <span class="vocab-ipa">[tə'restriəl]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">
+                            <div><span class="pos-tag">adj.</span> 陆生的，陆地的；地球的</div>
+                            <div><span class="pos-tag">n.</span> 陆地生物</div>
+                        </div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('carbon sink')"><span><span class="vocab-word">carbon sink</span> <span class="vocab-ipa">['kɑːrbən sɪŋk]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">指森林、海洋等能够从大气中吸收并储存二氧化碳的自然系统（碳汇）。</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('regulate')"><span><span class="vocab-word">regulate</span> <span class="vocab-ipa">['reɡjuleɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">vt.</span> 调节，控制；管理，校准</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('canopy')"><span><span class="vocab-word">canopy</span> <span class="vocab-ipa">['kænəpi]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">森林中树木枝叶在顶部交织形成的连续覆盖层（树冠层）；天篷</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('intricate')"><span><span class="vocab-word">intricate</span> <span class="vocab-ipa">['ɪntrɪkət]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 错综复杂的，精致的</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('sustain')"><span><span class="vocab-word">sustain</span> <span class="vocab-ipa">[sə'steɪn]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">vt.</span> 维持，支撑；遭受（损失）</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('relentless')"><span><span class="vocab-word">relentless</span> <span class="vocab-ipa">[rɪ'lentləs]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 无情的，残酷的；持续不断的</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('deforestation')"><span><span class="vocab-word">deforestation</span> <span class="vocab-ipa">[ˌdiːˌfɔːrɪ'steɪʃn]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">n.</span> 砍伐森林，滥伐林木</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('erode')"><span><span class="vocab-word">erode</span> <span class="vocab-ipa">[ɪ'roʊd]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">v.</span> 侵蚀，腐蚀；逐渐削弱</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('deplete')"><span><span class="vocab-word">deplete</span> <span class="vocab-ipa">[dɪ'pliːt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">vt.</span> 耗尽，使枯竭；大量减少</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('irreversible')"><span><span class="vocab-word">irreversible</span> <span class="vocab-ipa">[ˌɪrɪ'vɜːrsəbl]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 不可逆转的，无法挽回的</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <!-- ==================== 文章 2 ==================== -->
+    <article class="article-section" id="art-1">
+        <header class="top-banner">
+            <div class="badge-box">雅思</div>
+            <div class="banner-titles">
+                <h1>短文精读与核心词汇真经 3600 词</h1>
+                <div class="chapter-info">2. Chapter 1 自然地理与生态 List 2</div>
+            </div>
+        </header>
+        <div class="meta-bar">
+            <span>单词数：154个</span>
+            <span>DATE: _______________</span>
+        </div>
+
+        <div class="main-grid">
+            <main class="left-column">
+                <div class="article-header">
+                    <div class="en-title">Marine Microplastics: An Invisible Threat in the Food Chain</div>
+                    <div class="cn-title">海洋微塑料：食物链中的隐形威胁</div>
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-normal">Discarded<rt>丢弃的</rt></ruby>
+                    <ruby class="tier-normal">synthetic<rt>合成的</rt></ruby>
+                    <ruby class="tier-normal">polymers<rt>聚合物</rt></ruby>
+                    <ruby class="tier-red">gradually<rt>逐渐地</rt></ruby>
+                    <ruby class="tier-red">disintegrate<rt>碎裂，分解</rt></ruby>
+                    <ruby class="tier-func">into<rt></rt></ruby>
+                    <ruby class="tier-red">microplastics<rt>微塑料</rt></ruby>
+                    <ruby class="tier-func">under<rt></rt></ruby>
+                    <ruby class="tier-red">ultraviolet radiation<rt>紫外线辐射</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">relentless<rt>持续的</rt></ruby>
+                    <ruby class="tier-normal">wave<rt>波浪</rt></ruby>
+                    <ruby class="tier-normal">action.<rt>作用</rt></ruby>
+                    <ruby class="tier-normal">These<rt>这些</rt></ruby>
+                    <ruby class="tier-red">minute<rt>微小的</rt></ruby>
+                    <ruby class="tier-normal">fragments<rt>碎片</rt></ruby>
+                    <ruby class="tier-red">permeate<rt>渗透，弥漫</rt></ruby>
+                    <ruby class="tier-normal">every<rt>每个</rt></ruby>
+                    <ruby class="tier-normal">oceanic<rt>海洋的</rt></ruby>
+                    <ruby class="tier-normal">layer,<rt>层</rt></ruby>
+                    <ruby class="tier-func">from<rt></rt></ruby>
+                    <ruby class="tier-normal">surface<rt>表层</rt></ruby>
+                    <ruby class="tier-normal">currents<rt>洋流</rt></ruby>
+                    <ruby class="tier-func">to<rt></rt></ruby>
+                    <ruby class="tier-red">abyssal trenches.<rt>深海海沟</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    被丢弃的合成聚合物在紫外线辐射和持续海浪的拍打下逐渐碎裂成微塑料。这些微小的碎片渗透到从表层洋流到深海海沟的每一个海洋水层中。
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-red">Zooplankton<rt>浮游动物</rt></ruby>
+                    <ruby class="tier-red">inadvertently<rt>无意地</rt></ruby>
+                    <ruby class="tier-red">ingest<rt>摄取，吞食</rt></ruby>
+                    <ruby class="tier-normal">these<rt>这些</rt></ruby>
+                    <ruby class="tier-normal">toxic<rt>有毒的</rt></ruby>
+                    <ruby class="tier-normal">particles,<rt>颗粒</rt></ruby>
+                    <ruby class="tier-normal">mistaking<rt>误认为</rt></ruby>
+                    <ruby class="tier-func">them<rt></rt></ruby>
+                    <ruby class="tier-func">for<rt></rt></ruby>
+                    <ruby class="tier-normal">natural<rt>天然的</rt></ruby>
+                    <ruby class="tier-normal">prey.<rt>猎物</rt></ruby>
+                    <ruby class="tier-normal">Consequently,<rt>因此</rt></ruby>
+                    <ruby class="tier-red">contaminants<rt>污染物</rt></ruby>
+                    <ruby class="tier-red">accumulate<rt>积聚，累积</rt></ruby>
+                    <ruby class="tier-func">along<rt></rt></ruby>
+                    <ruby class="tier-func">the<rt></rt></ruby>
+                    <ruby class="tier-red">marine food chain,<rt>海洋食物链</rt></ruby>
+                    <ruby class="tier-normal">ultimately<rt>最终</rt></ruby>
+                    <ruby class="tier-normal">posing<rt>构成</rt></ruby>
+                    <ruby class="tier-normal">severe<rt>严重的</rt></ruby>
+                    <ruby class="tier-red">physiological<rt>生理的</rt></ruby>
+                    <ruby class="tier-normal">risks<rt>风险</rt></ruby>
+                    <ruby class="tier-func">to<rt></rt></ruby>
+                    <ruby class="tier-normal">human<rt>人类的</rt></ruby>
+                    <ruby class="tier-normal">consumers.<rt>消费者</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    浮游动物会将这些有毒颗粒误认为天然猎物而无意中吞食。因此，污染物沿着海洋食物链不断累积，最终对人类消费者构成严重的生理健康风险。
+                </div>
+            </main>
+
+            <aside class="right-column">
+                <div class="vocab-list">
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('synthetic')"><span><span class="vocab-word">synthetic</span> <span class="vocab-ipa">[sɪn'θetɪk]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 合成的，人造的；虚假的</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('disintegrate')"><span><span class="vocab-word">disintegrate</span> <span class="vocab-ipa">[dɪs'ɪntɪɡreɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">v.</span> 碎裂，瓦解，崩溃</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('minute')"><span><span class="vocab-word">minute</span> <span class="vocab-ipa">[maɪ'njuːt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">
+                            <div><span class="pos-tag">adj.</span> 微小的，细微的；详细的</div>
+                            <div><span class="pos-tag">n.</span> ['mɪnɪt] 分钟；会议记录</div>
+                        </div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('permeate')"><span><span class="vocab-word">permeate</span> <span class="vocab-ipa">['pɜːrmieɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">v.</span> 渗透，弥漫，遍布</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('inadvertently')"><span><span class="vocab-word">inadvertently</span> <span class="vocab-ipa">[ˌɪnəd'vɜːrtəntli]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adv.</span> 无意地，不经意地，疏忽地</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('ingest')"><span><span class="vocab-word">ingest</span> <span class="vocab-ipa">[ɪn'dʒest]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">vt.</span> 摄取，咽下，吸收</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('contaminant')"><span><span class="vocab-word">contaminant</span> <span class="vocab-ipa">[kən'tæmɪnənt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">n.</span> 污染物，致污物</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('accumulate')"><span><span class="vocab-word">accumulate</span> <span class="vocab-ipa">[ə'kjuːmjəleɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">v.</span> 积累，积聚，逐渐增加</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+    <!-- ==================== 文章 3 ==================== -->
+    <article class="article-section" id="art-2">
+        <header class="top-banner">
+            <div class="badge-box">雅思</div>
+            <div class="banner-titles">
+                <h1>短文精读与核心词汇真经 3600 词</h1>
+                <div class="chapter-info">3. Chapter 2 城市建筑与气候 List 1</div>
+            </div>
+        </header>
+        <div class="meta-bar">
+            <span>单词数：149个</span>
+            <span>DATE: _______________</span>
+        </div>
+
+        <div class="main-grid">
+            <main class="left-column">
+                <div class="article-header">
+                    <div class="en-title">Mitigating the Urban Heat Island Effect</div>
+                    <div class="cn-title">缓解城市热岛效应</div>
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-red">Metropolitan<rt>大都市的</rt></ruby>
+                    <ruby class="tier-normal">areas<rt>区域</rt></ruby>
+                    <ruby class="tier-normal">frequently<rt>频繁地</rt></ruby>
+                    <ruby class="tier-normal">experience<rt>经历</rt></ruby>
+                    <ruby class="tier-normal">higher<rt>更高的</rt></ruby>
+                    <ruby class="tier-normal">temperatures<rt>气温</rt></ruby>
+                    <ruby class="tier-func">than<rt></rt></ruby>
+                    <ruby class="tier-normal">surrounding<rt>周边的</rt></ruby>
+                    <ruby class="tier-normal">rural<rt>乡村的</rt></ruby>
+                    <ruby class="tier-normal">regions,<rt>地区</rt></ruby>
+                    <ruby class="tier-func">a<rt></rt></ruby>
+                    <ruby class="tier-red">phenomenon<rt>现象</rt></ruby>
+                    <ruby class="tier-normal">termed<rt>被称为</rt></ruby>
+                    <ruby class="tier-func">the<rt></rt></ruby>
+                    <ruby class="tier-red">urban heat island<rt>城市热岛</rt></ruby>
+                    <ruby class="tier-normal">effect.<rt>效应</rt></ruby>
+                    <ruby class="tier-red">Impervious<rt>不透水的</rt></ruby>
+                    <ruby class="tier-normal">surfaces<rt>表面</rt></ruby>
+                    <ruby class="tier-func">such as<rt></rt></ruby>
+                    <ruby class="tier-red">asphalt<rt>沥青</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">concrete<rt>混凝土</rt></ruby>
+                    <ruby class="tier-normal">absorb<rt>吸收</rt></ruby>
+                    <ruby class="tier-red">solar radiation<rt>太阳辐射</rt></ruby>
+                    <ruby class="tier-func">during<rt></rt></ruby>
+                    <ruby class="tier-func">the<rt></rt></ruby>
+                    <ruby class="tier-normal">day<rt>白天</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">re-emit<rt>重新释放</rt></ruby>
+                    <ruby class="tier-normal">heat<rt>热量</rt></ruby>
+                    <ruby class="tier-normal">nocturnally.<rt>在夜间</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    大都市区域的气温往往高于周边乡村地区，这一现象被称为“城市热岛效应”。沥青和混凝土等不透水表面在白天吸收太阳辐射，并在夜间重新释放热量。
+                </div>
+
+                <p class="gloss-paragraph">
+                    <ruby class="tier-func">To<rt></rt></ruby>
+                    <ruby class="tier-red">alleviate<rt>减轻，缓解</rt></ruby>
+                    <ruby class="tier-normal">thermal<rt>热量的</rt></ruby>
+                    <ruby class="tier-normal">stress,<rt>压力</rt></ruby>
+                    <ruby class="tier-normal">urban<rt>城市的</rt></ruby>
+                    <ruby class="tier-normal">planners<rt>规划者</rt></ruby>
+                    <ruby class="tier-red">advocate<rt>提倡，拥护</rt></ruby>
+                    <ruby class="tier-normal">installing<rt>安装</rt></ruby>
+                    <ruby class="tier-red">vegetated roofs<rt>绿化屋顶</rt></ruby>
+                    <ruby class="tier-func">and<rt></rt></ruby>
+                    <ruby class="tier-normal">expanding<rt>扩大</rt></ruby>
+                    <ruby class="tier-normal">public<rt>公共的</rt></ruby>
+                    <ruby class="tier-normal">parks.<rt>公园</rt></ruby>
+                    <ruby class="tier-normal">Vegetation<rt>植被</rt></ruby>
+                    <ruby class="tier-normal">cools<rt>使冷却</rt></ruby>
+                    <ruby class="tier-normal">ambient<rt>周围环境的</rt></ruby>
+                    <ruby class="tier-normal">air<rt>空气</rt></ruby>
+                    <ruby class="tier-func">through<rt></rt></ruby>
+                    <ruby class="tier-red">evapotranspiration,<rt>蒸散作用</rt></ruby>
+                    <ruby class="tier-normal">thereby<rt>从而</rt></ruby>
+                    <ruby class="tier-normal">reducing<rt>减少</rt></ruby>
+                    <ruby class="tier-normal">peak<rt>峰值的</rt></ruby>
+                    <ruby class="tier-normal">electricity<rt>电力</rt></ruby>
+                    <ruby class="tier-normal">demand.<rt>需求</rt></ruby>
+                </p>
+
+                <div class="full-translation">
+                    为了缓解热压力，城市规划者提倡建造绿化屋顶并扩大公共公园面积。植被通过蒸散作用冷却周围空气，从而降低峰值电力需求。
+                </div>
+            </main>
+
+            <aside class="right-column">
+                <div class="vocab-list">
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('metropolitan')"><span><span class="vocab-word">metropolitan</span> <span class="vocab-ipa">[ˌmetrə'pɑːlɪtən]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 大都市的，大城市的</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('impervious')"><span><span class="vocab-word">impervious</span> <span class="vocab-ipa">[ɪm'pɜːrviəs]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">adj.</span> 不透水的；不受影响的</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('asphalt')"><span><span class="vocab-word">asphalt</span> <span class="vocab-ipa">['æsfɔːlt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">n.</span> 沥青，柏油</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('alleviate')"><span><span class="vocab-word">alleviate</span> <span class="vocab-ipa">[ə'liːvieɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def"><span class="pos-tag">vt.</span> 减轻，缓解，缓和</div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('advocate')"><span><span class="vocab-word">advocate</span> <span class="vocab-ipa">['ædvəkeɪt]</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">
+                            <div><span class="pos-tag">vt.</span> 提倡，主张，拥护</div>
+                            <div><span class="pos-tag">n.</span> ['ædvəkət] 提倡者；辩护律师</div>
+                        </div>
+                    </div>
+                    <div class="vocab-item">
+                        <div class="vocab-head" onclick="speakText('evapotranspiration')"><span><span class="vocab-word">evapotranspiration</span></span><span class="speak-icon">🔊</span></div>
+                        <div class="vocab-def">地表水分蒸发与植物叶片蒸腾作用的总称（蒸散作用）。</div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </article>
+
+</div>
+
+<!-- 右下角悬浮排版样式切换器 -->
+<div class="theme-switcher">
+    <div class="switcher-title">🎨 排版样式切换</div>
+    <div class="theme-options">
+        <button class="theme-pill" data-theme="theme-green" onclick="setTheme('theme-green', this)">
+            <span class="dot" style="background:#2c4a3e"></span>样式1: 黑灰绿
+        </button>
+        <button class="theme-pill active" data-theme="theme-red" onclick="setTheme('theme-red', this)">
+            <span class="dot" style="background:#9e2a2b"></span>样式2: 真经暗红
+        </button>
+        <button class="theme-pill" data-theme="theme-sepia" onclick="setTheme('theme-sepia', this)">
+            <span class="dot" style="background:#d4b886"></span>样式3: 暖纸护眼
+        </button>
+    </div>
+</div>
+
+<script>
+    // 1. 切换目录文章
+    function switchArticle(index, btn) {
+        document.querySelectorAll('.article-section').forEach((el, i) => {
+            el.classList.toggle('active', i === index);
+        });
+        document.querySelectorAll('.toc-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 2. 切换排版皮肤样式
+    function setTheme(themeClass, btn) {
+        document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+        document.body.classList.add(themeClass);
+        document.querySelectorAll('.theme-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // 3. 自测模式开关
+    function toggleQuizMode() {
+        const isQuiz = document.body.classList.toggle('quiz-mode');
+        const btn = document.getElementById('quizBtn');
+        btn.textContent = isQuiz ? '👁️ 自测遮罩：开' : '👁️ 自测遮罩：关';
+        btn.classList.toggle('active', isQuiz);
+    }
+
+    // 4. Web Speech API 点击发音（自动剥离 <rt> 中文释义，只读英文）
+    function speakText(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const cleanWord = text.replace(/[.,!?;:"'()]/g, '').trim();
+        if (!cleanWord) return;
+        const utter = new SpeechSynthesisUtterance(cleanWord);
+        utter.lang = 'en-US';
+        utter.rate = 0.92;
+        window.speechSynthesis.speak(utter);
+    }
+
+    // 为正文所有 <ruby> 绑定点击发音事件
+    document.querySelectorAll('ruby').forEach(rubyEl => {
+        rubyEl.addEventListener('click', () => {
+            // 克隆节点并移除 <rt> 拿到纯英文单词/短语
+            const clone = rubyEl.cloneNode(true);
+            clone.querySelectorAll('rt').forEach(rt => rt.remove());
+            speakText(clone.textContent);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,643 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>-->
+<!--html-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雅思双栏精读电子书引擎 v3.0</title>
+    <style>
+        /* ================= 1. 多套皮肤样式契约 ================= */
+        body.theme-green {
+            --bg-outer: #e5e7eb; --bg-paper: #ffffff; --banner-bg: #4a5d54; --meta-bg: #6b7f75;
+            --title-color: #2c4a3e; --tier-red-color: #1f3a2e; --tier-red-bg: #e3ede8;
+            --tier-normal-color: #222222; --tier-normal-bg: #f1f3f2; --rt-color: #4b5563;
+            --trans-bg: #f3f5f4; --trans-border: #6b7f75; --dashed-color: #88968f;
+            --vocab-def-bg: #f6f8f7; --pos-color: #2c4a3e;
+        }
+        body.theme-red {
+            --bg-outer: #e2e4e8; --bg-paper: #fcfcfc; --banner-bg: #58636d; --meta-bg: #79848e;
+            --title-color: #2b3a42; --tier-red-color: #9e2a2b; --tier-red-bg: #f9ebeb;
+            --tier-normal-color: #2d3134; --tier-normal-bg: #eef0f2; --rt-color: #4a5056;
+            --trans-bg: #eff1f3; --trans-border: #8c969e; --dashed-color: #7a8288;
+            --vocab-def-bg: #f2f4f7; --pos-color: #9e2a2b;
+        }
+        body.theme-sepia {
+            --bg-outer: #dfd8c8; --bg-paper: #fbf7ed; --banner-bg: #6d594a; --meta-bg: #8c7665;
+            --title-color: #4a3525; --tier-red-color: #a63a2b; --tier-red-bg: #f4e6d8;
+            --tier-normal-color: #362e28; --tier-normal-bg: #f2ece1; --rt-color: #695c50;
+            --trans-bg: #f3ede0; --trans-border: #a38f7d; --dashed-color: #9e8e7e;
+            --vocab-def-bg: #f4eee2; --pos-color: #8c3b2b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-outer);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            padding: 18px;
+            transition: background-color 0.25s ease;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* ================= 2. 左上角极简目录触发按钮 & 抽屉 ================= */
+        .toc-trigger-btn {
+            position: fixed;
+            top: 18px;
+            left: 18px;
+            z-index: 1001;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #1e293b;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+        .toc-trigger-btn:hover { background: #f1f5f9; transform: scale(1.04); }
+
+        .toc-drawer-backdrop {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.35);
+            z-index: 1002; display: none;
+        }
+        .toc-drawer-backdrop.open { display: block; }
+
+        .toc-drawer {
+            position: fixed; top: 0; left: 0; bottom: 0; width: 280px;
+            background: #ffffff; z-index: 1003;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+            transform: translateX(-100%);
+            transition: transform 0.22s ease;
+            display: flex; flex-direction: column;
+        }
+        .toc-drawer.open { transform: translateX(0); }
+
+        .drawer-header {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 15px; color: #0f172a;
+        }
+        .drawer-close {
+            background: none; border: none; font-size: 18px; cursor: pointer; color: #64748b;
+        }
+        .drawer-list {
+            padding: 10px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px;
+        }
+        .drawer-item {
+            text-align: left; border: none; background: transparent;
+            padding: 9px 12px; border-radius: 6px; cursor: pointer;
+            font-size: 13.5px; color: #334155; line-height: 1.4;
+            transition: background 0.12s;
+        }
+        .drawer-item:hover { background: #f1f5f9; }
+        .drawer-item.active {
+            background: var(--banner-bg); color: #ffffff; font-weight: 600;
+        }
+        .drawer-item small { display: block; opacity: 0.75; font-size: 11px; margin-top: 2px; }
+
+        /* ================= 3. 顶部精简学习工具栏 ================= */
+        .top-toolbar {
+            max-width: 1060px;
+            margin: 0 auto 14px auto;
+            padding-left: 48px; /* 避开左上角目录图标 */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .toolbar-group { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+        .btn {
+            border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b;
+            padding: 6px 12px; border-radius: 6px; font-size: 12.5px;
+            cursor: pointer; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: all 0.15s;
+        }
+        .btn:hover { background: #f8fafc; }
+        .btn.primary { background: var(--banner-bg); color: #ffffff; border-color: var(--banner-bg); }
+        .btn.active-toggle { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+
+        /* ================= 4. 主体纸张区 ================= */
+        .page-container {
+            max-width: 1060px;
+            margin: 0 auto 70px auto;
+            background: var(--bg-paper);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.09);
+            padding: 34px 40px;
+            border-radius: 4px;
+        }
+
+        .top-banner {
+            display: flex; align-items: center; background-color: var(--banner-bg);
+            color: #ffffff; padding: 11px 18px; border-radius: 3px; margin-bottom: 8px;
+        }
+        .badge-box {
+            border: 2px solid #ffffff; padding: 3px 10px; font-size: 21px;
+            font-weight: 800; letter-spacing: 2px; margin-right: 16px;
+        }
+        .banner-titles h1 { font-size: 19px; font-weight: 700; }
+        .banner-titles .chapter-info { font-size: 13px; color: #e2e8f0; margin-top: 2px; font-weight: 600; }
+
+        .meta-bar {
+            display: flex; justify-content: space-between; background-color: var(--meta-bg);
+            color: #ffffff; font-size: 12px; padding: 5px 14px; margin-bottom: 22px; font-weight: 600;
+        }
+
+        .main-grid { display: grid; grid-template-columns: 66% 34%; }
+        .left-column { padding-right: 24px; border-right: 1.5px dashed var(--dashed-color); }
+
+        .article-header { margin-bottom: 20px; }
+        .en-title {
+            font-family: Georgia, "Times New Roman", serif; font-size: 23px;
+            font-weight: 700; color: var(--title-color); line-height: 1.3; margin-bottom: 5px;
+        }
+        .cn-title { font-size: 15px; font-weight: 700; color: #4b5563; }
+
+        /* 逐词注音排版 */
+        .gloss-paragraph {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 17.5px; line-height: 2.7; margin-bottom: 14px; text-align: justify;
+        }
+
+        ruby {
+            ruby-position: under; -webkit-ruby-position: after;
+            margin: 0 1.5px; cursor: pointer; border-radius: 3px;
+        }
+        ruby:hover { filter: brightness(0.92); }
+
+        ruby.tier-red {
+            color: var(--tier-red-color); background-color: var(--tier-red-bg);
+            font-weight: 700; padding: 1px 4px;
+        }
+        ruby.tier-normal {
+            color: var(--tier-normal-color); background-color: var(--tier-normal-bg);
+            font-weight: 500; padding: 1px 3px;
+        }
+        ruby.tier-func { color: #374151; padding: 0 2px; }
+
+        rt {
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            font-size: 11px; color: var(--rt-color); font-weight: 500;
+            line-height: 1.15; padding-top: 2px; user-select: none;
+        }
+
+        /* 【进阶精简模式】下隐藏虚词的注音，【全词详尽模式】下全部显示 */
+        body.vocab-core-only ruby.tier-func rt { display: none; }
+
+        /* 自测遮罩 */
+        body.quiz-mode rt { opacity: 0; }
+        body.quiz-mode ruby:hover rt { opacity: 1; color: #b91c1c; font-weight: 700; }
+        body.quiz-mode .full-translation { filter: blur(5px); cursor: pointer; }
+        body.quiz-mode .full-translation:hover { filter: none; }
+
+        .full-translation {
+            background-color: var(--trans-bg); padding: 11px 15px; border-radius: 5px;
+            font-size: 13.5px; line-height: 1.75; color: #374151;
+            margin-bottom: 24px; border-left: 3.5px solid var(--trans-border);
+        }
+
+        /* 右侧生词栏 */
+        .right-column { padding-left: 20px; }
+        .vocab-list { display: flex; flex-direction: column; gap: 10px; }
+        .vocab-item { border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 8px; }
+        .vocab-item:last-child { border-bottom: none; }
+
+        /* 进阶模式下隐藏基础词条 */
+        body.vocab-core-only .vocab-item[data-level="basic"] { display: none; }
+
+        .vocab-head {
+            font-family: Georgia, "Times New Roman", serif; font-size: 14.5px;
+            margin-bottom: 3px; cursor: pointer; display: flex; justify-content: space-between;
+        }
+        .vocab-word { font-weight: 700; color: var(--tier-red-color); }
+        .vocab-item[data-level="basic"] .vocab-word { color: #374151; }
+        .vocab-ipa { font-size: 12px; color: #555555; margin-left: 5px; font-weight: 400; }
+
+        .vocab-def {
+            font-size: 12px; line-height: 1.5; color: #333333;
+            background-color: var(--vocab-def-bg); padding: 5px 8px; border-radius: 3px;
+        }
+        .pos-tag { font-weight: 700; color: var(--pos-color); margin-right: 3px; }
+
+        /* ================= 5. 导入/抓取/粘贴弹窗模态框 ================= */
+        .modal-backdrop {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5);
+            z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px;
+        }
+        .modal-backdrop.open { display: flex; }
+
+        .modal-box {
+            background: #ffffff; width: 100%; max-width: 660px; border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden;
+        }
+        .modal-header {
+            padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center; font-weight: 700;
+        }
+        .modal-tabs {
+            display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9;
+        }
+        .m-tab {
+            flex: 1; padding: 10px; border: none; background: transparent;
+            font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer;
+        }
+        .m-tab.active { background: #ffffff; color: #0f172a; border-bottom: 2px solid var(--banner-bg); }
+        .modal-body { padding: 18px 20px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .input-area {
+            width: 100%; height: 150px; border: 1px solid #cbd5e1; border-radius: 6px;
+            padding: 10px; font-family: monospace; font-size: 12.5px; margin: 8px 0 12px 0;
+        }
+        .url-input {
+            width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px;
+            font-size: 13px; margin: 8px 0 12px 0;
+        }
+        .hint-box {
+            background: #f8fafc; border-left: 3px solid #64748b; padding: 10px 12px;
+            font-size: 12.5px; color: #475569; line-height: 1.6; margin-bottom: 10px;
+        }
+
+        /* ================= 6. 右下角悬浮样式切换器 ================= */
+        .theme-switcher {
+            position: fixed; right: 20px; bottom: 20px;
+            background: rgba(255, 255, 255, 0.96); border: 1px solid #cbd5e1;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.14); border-radius: 8px;
+            padding: 9px 11px; z-index: 999; display: flex; flex-direction: column; gap: 5px;
+        }
+        .switcher-title { font-size: 11px; font-weight: 700; color: #64748b; }
+        .theme-options { display: flex; gap: 5px; }
+        .theme-pill {
+            border: 1px solid #cbd5e1; background: #f8fafc; padding: 4px 9px;
+            border-radius: 5px; font-size: 11.5px; font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: 4px; color: #334155;
+        }
+        .theme-pill.active { border-color: #0f172a; background: #0f172a; color: #ffffff; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .toc-trigger-btn, .top-toolbar, .theme-switcher { display: none !important; }
+            .page-container { box-shadow: none; max-width: 100%; padding: 10px 14px; margin: 0; }
+        }
+    </style>
+</head>
+<body class="theme-red">
+
+<!-- 1. 左上角极简目录触发图标 -->
+<button class="toc-trigger-btn" title="打开文章目录" onclick="toggleDrawer(true)">☰</button>
+
+<!-- 左侧滑出极简目录抽屉 -->
+<div class="toc-drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer(false)"></div>
+<aside class="toc-drawer" id="tocDrawer">
+    <div class="drawer-header">
+        <span>📚 精读目录 (<span id="articleCount">0</span>)</span>
+        <button class="drawer-close" onclick="toggleDrawer(false)">✕</button>
+    </div>
+    <div class="drawer-list" id="drawerList"></div>
+</aside>
+
+<!-- 2. 顶部操作工具栏 -->
+<div class="top-toolbar">
+    <div class="toolbar-group">
+        <button class="btn primary" onclick="openImportModal()">📥 导入 / 粘贴新文章</button>
+        <button class="btn active-toggle" id="vocabDepthBtn" onclick="toggleVocabDepth()">📖 词汇详解：全词详尽版</button>
+    </div>
+    <div class="toolbar-group">
+        <button class="btn" id="quizBtn" onclick="toggleQuizMode()">👁️ 自测遮罩：关</button>
+        <button class="btn" onclick="window.print()">🖨️ 打印 / 导出PDF</button>
+    </div>
+</div>
+
+<!-- 3. 主体阅读渲染容器（由 JS 动态注入数据渲染，永不重复写 HTML 骨架） -->
+<div class="page-container" id="readerRoot"></div>
+
+<!-- 4. 右下角样式切换器 -->
+<div class="theme-switcher">
+    <div class="switcher-title">🎨 排版样式</div>
+    <div class="theme-options">
+        <button class="theme-pill" onclick="setTheme('theme-green', this)"><span class="dot" style="background:#2c4a3e"></span>样式1: 黑灰绿</button>
+        <button class="theme-pill active" onclick="setTheme('theme-red', this)"><span class="dot" style="background:#9e2a2b"></span>样式2: 真经暗红</button>
+        <button class="theme-pill" onclick="setTheme('theme-sepia', this)"><span class="dot" style="background:#d4b886"></span>样式3: 暖纸护眼</button>
+    </div>
+</div>
+
+<!-- 5. 导入与抓取模态框（预留网页抓取与本地文件接口） -->
+<div class="modal-backdrop" id="importModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>📥 导入文章到当前精读本</span>
+            <button class="drawer-close" onclick="closeImportModal()">✕</button>
+        </div>
+        <div class="modal-tabs">
+            <button class="m-tab active" onclick="switchModalTab(0, this)">✍️ 粘贴文章 / 注入 AI JSON</button>
+            <button class="m-tab" onclick="switchModalTab(1, this)">🌐 从网上抓取 (预留)</button>
+            <button class="m-tab" onclick="switchModalTab(2, this)">📂 打开本地文件 (预留)</button>
+        </div>
+        <div class="modal-body">
+            <!-- Tab 1: 粘贴文章或注入 AI JSON -->
+            <div class="tab-panel active" id="mpanel-0">
+                <div class="hint-box">
+                    <strong>标准工作流：</strong>把英文文章发给挂载了 <code>ielts-reading-json-extractor</code> Skill 的 AI，AI 会直接返回纯 JSON 数据；将 JSON 粘贴到下方即可秒级渲染入库（不修改网页源码）：
+                </div>
+                <textarea class="input-area" id="jsonInput" placeholder='在此粘贴 AI 生成的 JSON 数据对象，例如：{"id": "art-2", "titleEn": "...", ...}'></textarea>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <button class="btn" onclick="quickRawPreview()">⚡ 仅粘贴纯英文原文快速预览</button>
+                    <button class="btn primary" onclick="importJsonArticle()">✅ 确认渲染并加入目录</button>
+                </div>
+            </div>
+
+            <!-- Tab 2: 网上抓取预留位 -->
+            <div class="tab-panel" id="mpanel-1">
+                <div class="hint-box">
+                    <strong>接口预留位（目前由 Agent 联网抓取后生成 JSON 传入）：</strong><br>
+                    后续接入 Rust / Python 后端爬虫或 CORS 代理后，可直接在此输入雅思真题或外刊 URL 自动抓取正文。
+                </div>
+                <input type="text" class="url-input" placeholder="https://www.economist.com/... (接口预留，敬请期待)" disabled>
+                <button class="btn" disabled>🌐 抓取并解析（接口预留）</button>
+            </div>
+
+            <!-- Tab 3: 打开本地文件预留位 -->
+            <div class="tab-panel" id="mpanel-2">
+                <div class="hint-box">
+                    <strong>接口预留位（支持本地 .txt / .md / .json 词书导入）：</strong><br>
+                    后续可在此直接选择本地文本文档或批量导出的 JSON 词书文件。
+                </div>
+                <input type="file" accept=".txt,.md,.json" style="margin: 10px 0;" disabled>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ================= 核心数据仓库（AI 每次只需新增这里的 JSON 对象即可） =================
+    const DEFAULT_ARTICLES = [
+        {
+            id: "art-1",
+            category: "1. Chapter 1 自然地理与生态 List 1",
+            titleEn: "Tropical Rainforests: Fragile Ecosystems",
+            titleCn: "热带雨林：脆弱的生态系统",
+            wordCount: 68,
+            paragraphs: [
+                {
+                    tokens: [
+                        { text: "Tropical", gloss: "热带的", tier: "normal" },
+                        { text: "rainforests", gloss: "雨林", tier: "normal" },
+                        { text: "harbor", gloss: "庇护，孕育", tier: "red" },
+                        { text: "an", gloss: "一个", tier: "func" },
+                        { text: "astonishing", gloss: "惊人的", tier: "normal" },
+                        { text: "diversity", gloss: "多样性", tier: "red" },
+                        { text: "of", gloss: "……的", tier: "func" },
+                        { text: "terrestrial", gloss: "陆生的", tier: "red" },
+                        { text: "species,", gloss: "物种", tier: "normal" },
+                        { text: "functioning", gloss: "起作用", tier: "normal" },
+                        { text: "as", gloss: "作为", tier: "func" },
+                        { text: "vital", gloss: "至关重要的", tier: "normal" },
+                        { text: "carbon sinks", gloss: "碳汇", tier: "red", isPhrase: true },
+                        { text: "that", gloss: "（引导定语从句）", tier: "func" },
+                        { text: "regulate", gloss: "调节", tier: "red" },
+                        { text: "global", gloss: "全球的", tier: "normal" },
+                        { text: "climate.", gloss: "气候", tier: "normal" }
+                    ],
+                    translation: "热带雨林孕育着惊人丰富的陆生物种多样性，并作为至关重要的“碳汇”调节着全球气候。"
+                },
+                {
+                    tokens: [
+                        { text: "However,", gloss: "然而", tier: "normal" },
+                        { text: "relentless", gloss: "持续不断的", tier: "red" },
+                        { text: "deforestation", gloss: "滥伐森林", tier: "red" },
+                        { text: "accelerates", gloss: "加速", tier: "red" },
+                        { text: "habitat fragmentation", gloss: "栖息地碎片化", tier: "red", isPhrase: true },
+                        { text: "and", gloss: "并且", tier: "func" },
+                        { text: "triggers", gloss: "引发", tier: "normal" },
+                        { text: "irreversible", gloss: "不可逆转的", tier: "red" },
+                        { text: "ecological", gloss: "生态的", tier: "normal" },
+                        { text: "collapse.", gloss: "崩溃", tier: "normal" }
+                    ],
+                    translation: "然而，持续不断的滥伐森林正在加速栖息地碎片化，并引发不可逆转的生态崩溃。"
+                }
+            ],
+            vocabulary: [
+                { word: "tropical", ipa: "['trɒpɪkl]", level: "basic", defs: [{ pos: "adj.", meaning: "热带的；炎热的" }] },
+                { word: "rainforest", ipa: "['reɪnfɒrɪst]", level: "basic", defs: [{ pos: "n.", meaning: "（热带）雨林" }] },
+                { word: "harbor", ipa: "['hɑːrbər]", level: "core", defs: [{ pos: "vt.", meaning: "庇护；蕴藏；怀有（想法）" }, { pos: "n.", meaning: "海港，避难所" }] },
+                { word: "an", ipa: "[ən; æn]", level: "basic", defs: [{ pos: "art.", meaning: "一（个/件），用于元音音素前" }] },
+                { word: "astonishing", ipa: "[ə'stɒnɪʃɪŋ]", level: "core", defs: [{ pos: "adj.", meaning: "惊人的，令人惊讶的" }] },
+                { word: "diversity", ipa: "[daɪ'vɜːrsəti]", level: "core", defs: [{ pos: "n.", meaning: "多样性，差异" }] },
+                { word: "of", ipa: "[əv; ɒv]", level: "basic", defs: [{ pos: "prep.", meaning: "属于……的；关于；……之中" }] },
+                { word: "terrestrial", ipa: "[tə'restriəl]", level: "core", defs: [{ pos: "adj.", meaning: "陆生的，陆地的；地球的" }] },
+                { word: "species", ipa: "['spiːʃiːz]", level: "basic", defs: [{ pos: "n.", meaning: "物种，种类（单复同形）" }] },
+                { word: "function", ipa: "['fʌŋkʃn]", level: "basic", defs: [{ pos: "vi.", meaning: "起作用，运转" }, { pos: "n.", meaning: "功能，职责" }] },
+                { word: "as", ipa: "[æz; əz]", level: "basic", defs: [{ pos: "prep.", meaning: "作为，当作" }, { pos: "conj.", meaning: "当……时；因为" }] },
+                { word: "vital", ipa: "['vaɪtl]", level: "core", defs: [{ pos: "adj.", meaning: "至关重要的，生死攸关的" }] },
+                { word: "carbon sink", ipa: "['kɑːrbən sɪŋk]", level: "core", defs: [{ pos: "n.", meaning: "碳汇（能吸收并储存二氧化碳的自然系统）" }] },
+                { word: "regulate", ipa: "['reɡjuleɪt]", level: "core", defs: [{ pos: "vt.", meaning: "调节，控制；管理" }] },
+                { word: "relentless", ipa: "[rɪ'lentləs]", level: "core", defs: [{ pos: "adj.", meaning: "持续不断的；无情的" }] },
+                { word: "deforestation", ipa: "[ˌdiːˌfɒrɪ'steɪʃn]", level: "core", defs: [{ pos: "n.", meaning: "滥伐森林，砍伐林木" }] },
+                { word: "accelerate", ipa: "[ək'seləreɪt]", level: "core", defs: [{ pos: "v.", meaning: "（使）加速，加快" }] },
+                { word: "irreversible", ipa: "[ˌɪrɪ'vɜːrsəbl]", level: "core", defs: [{ pos: "adj.", meaning: "不可逆转的，无法挽回的" }] }
+            ]
+        }
+    ];
+
+    // 从本地存储读取已追加的文章，实现持久化
+    let articlesDB = JSON.parse(localStorage.getItem('ielts_articles_v3')) || DEFAULT_ARTICLES;
+    let currentIndex = 0;
+    let isFullVocabMode = true; // 默认开启“全词详尽版”
+
+    // ================= 统一渲染引擎 =================
+    function renderApp() {
+        renderDrawer();
+        renderArticle(articlesDB[currentIndex]);
+    }
+
+    function renderDrawer() {
+        document.getElementById('articleCount').textContent = articlesDB.length;
+        const list = document.getElementById('drawerList');
+        list.innerHTML = articlesDB.map((art, idx) => `
+<button class="drawer-item ${idx === currentIndex ? 'active' : ''}" onclick="selectArticle(${idx})">
+${idx + 1}. ${art.titleCn}
+<small>${art.titleEn}</small>
+</button>
+`).join('');
+    }
+
+    function renderArticle(art) {
+        if (!art) return;
+        const parasHtml = art.paragraphs.map(p => {
+            const rubies = p.tokens.map(t => {
+                const tierClass = `tier-${t.tier || 'normal'}`;
+                return `<ruby class="${tierClass}" onclick="speakText('${t.text.replace(/'/g, "\\'")}')">${t.text}<rt>${t.gloss || ''}</rt></ruby>`;
+            }).join(' ');
+            return `
+<p class="gloss-paragraph">${rubies}</p>
+<div class="full-translation">${p.translation}</div>
+`;
+        }).join('');
+
+        const vocabHtml = art.vocabulary.map(v => {
+            const defsHtml = v.defs.map(d => `<div><span class="pos-tag">${d.pos}</span> ${d.meaning}</div>`).join('');
+            return `
+<div class="vocab-item" data-level="${v.level || 'core'}">
+<div class="vocab-head" onclick="speakText('${v.word.replace(/'/g, "\\'")}')">
+<span><span class="vocab-word">${v.word}</span> <span class="vocab-ipa">${v.ipa || ''}</span></span>
+<span style="font-size:11px;opacity:0.5;">🔊</span>
+</div>
+<div class="vocab-def">${defsHtml}</div>
+</div>
+`;
+        }).join('');
+
+        document.getElementById('readerRoot').innerHTML = `
+<header class="top-banner">
+<div class="badge-box">雅思</div>
+<div class="banner-titles">
+<h1>短文精读与全词解析真经</h1>
+<div class="chapter-info">${art.category || '精选阅读单元'}</div>
+</div>
+</header>
+<div class="meta-bar">
+<span>单词数：${art.wordCount || '--'}个</span>
+<span>DATE: _______________</span>
+</div>
+<div class="main-grid">
+<main class="left-column">
+<div class="article-header">
+<div class="en-title">${art.titleEn}</div>
+<div class="cn-title">${art.titleCn}</div>
+</div>
+${parasHtml}
+</main>
+<aside class="right-column">
+<div class="vocab-list">${vocabHtml}</div>
+</aside>
+</div>
+`;
+    }
+
+    // ================= 交互控制逻辑 =================
+    function toggleDrawer(open) {
+        document.getElementById('tocDrawer').classList.toggle('open', open);
+        document.getElementById('drawerBackdrop').classList.toggle('open', open);
+    }
+
+    function selectArticle(idx) {
+        currentIndex = idx;
+        renderApp();
+        toggleDrawer(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 切换“全词详尽版”与“核心高频词版”
+    function toggleVocabDepth() {
+        isFullVocabMode = !isFullVocabMode;
+        document.body.classList.toggle('vocab-core-only', !isFullVocabMode);
+        const btn = document.getElementById('vocabDepthBtn');
+        btn.textContent = isFullVocabMode ? '📖 词汇详解：全词详尽版' : '📖 词汇详解：仅核心高频词';
+        btn.classList.toggle('active-toggle', isFullVocabMode);
+    }
+
+    function toggleQuizMode() {
+        const isQuiz = document.body.classList.toggle('quiz-mode');
+        const btn = document.getElementById('quizBtn');
+        btn.textContent = isQuiz ? '👁️ 自测遮罩：开' : '👁️ 自测遮罩：关';
+        btn.classList.toggle('active-toggle', isQuiz);
+    }
+
+    function setTheme(themeClass, btn) {
+        document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+        document.body.classList.add(themeClass);
+        if (!isFullVocabMode) document.body.classList.add('vocab-core-only');
+        document.querySelectorAll('.theme-pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function speakText(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const clean = text.replace(/[.,!?;:"'()]/g, '').trim();
+        if (!clean) return;
+        const u = new SpeechSynthesisUtterance(clean);
+        u.lang = 'en-US';
+        u.rate = 0.92;
+        window.speechSynthesis.speak(u);
+    }
+
+    // ================= 导入弹窗与数据追加 =================
+    function openImportModal() { document.getElementById('importModal').classList.add('open'); }
+    function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
+
+    function switchModalTab(idx, btn) {
+        document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`mpanel-${idx}`).classList.add('active');
+    }
+
+    function importJsonArticle() {
+        const raw = document.getElementById('jsonInput').value.trim();
+        if (!raw) return alert('请先粘贴 AI 生成的 JSON 数据！');
+        try {
+            const cleaned = raw.replace(/^```json\s*/i, '').replace(/```\s*$/, '');
+            const obj = JSON.parse(cleaned);
+            if (!obj.titleEn || !obj.paragraphs) throw new Error('JSON 缺少 titleEn 或 paragraphs 字段');
+            articlesDB.push(obj);
+            localStorage.setItem('ielts_articles_v3', JSON.stringify(articlesDB));
+            currentIndex = articlesDB.length - 1;
+            renderApp();
+            closeImportModal();
+            document.getElementById('jsonInput').value = '';
+        } catch (e) {
+            alert('JSON 格式解析失败，请检查是否完整复制：\n' + e.message);
+        }
+    }
+
+    // 若直接粘贴纯英文原文，先做基础分词渲染占位，提示可用 AI 补全全词释义
+    function quickRawPreview() {
+        const raw = document.getElementById('jsonInput').value.trim();
+        if (!raw || raw.startsWith('{')) return alert('请在文本框粘贴纯英文文章段落后再点此按钮！');
+        const paras = raw.split(/\n+/).filter(Boolean).map(line => ({
+            tokens: line.split(/\s+/).map(w => ({ text: w, gloss: "待AI解析", tier: w.length > 6 ? "red" : "normal" })),
+            translation: "（纯原文快速导入模式：请将此段发给挂载 Skill 的 AI 获取完整全词 JSON 释义）"
+        }));
+        articlesDB.push({
+            id: 'raw-' + Date.now(),
+            category: '快速导入预览单元',
+            titleEn: 'Custom Imported Article',
+            titleCn: '自定义导入文章（待 AI 全词解析）',
+            wordCount: raw.split(/\s+/).length,
+            paragraphs: paras,
+            vocabulary: []
+        });
+        localStorage.setItem('ielts_articles_v3', JSON.stringify(articlesDB));
+        currentIndex = articlesDB.length - 1;
+        renderApp();
+        closeImportModal();
+        document.getElementById('jsonInput').value = '';
+    }
+
+    // 初始化首屏渲染
+    renderApp();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[
+  {
+    "_说明": "把本文件复制成 dicts.local.json，按需要增删条目，导入脚本会自动合并。code 相同的会覆盖内置配置的同名字段。",
+    "code": "collins",
+    "name": "柯林斯 COBUILD 高阶英汉双解学习词典",
+    "short": "柯林斯",
+    "profile": "generic",
+    "mdx": "F:\\EnglishReaderDataDict\\Collins\\collins.mdx",
+    "css": "collins.css",
+    "order": 50
+  }
+]

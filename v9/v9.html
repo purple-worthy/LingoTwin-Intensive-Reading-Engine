@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全格式电子书与极速 Ollama/ECDICT 精读引擎 v9.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style id="base-theme-styles">
+        body.theme-green {
+            --bg-outer: #e5e7eb; --bg-paper: #ffffff; --banner-bg: #4a5d54; --meta-bg: #6b7f75;
+            --title-color: #2c4a3e; --tier-red-color: #1f3a2e; --tier-red-bg: #e3ede8;
+            --tier-normal-color: #222222; --tier-normal-bg: #f1f3f2; --func-color: #374151;
+            --rt-color: #4b5563; --trans-bg: #f3f5f4; --trans-border: #6b7f75;
+            --dashed-color: #88968f; --vocab-def-bg: #f6f8f7; --pos-color: #2c4a3e; --text-sub: #4b5563;
+        }
+        body.theme-red {
+            --bg-outer: #e2e4e8; --bg-paper: #fcfcfc; --banner-bg: #58636d; --meta-bg: #79848e;
+            --title-color: #2b3a42; --tier-red-color: #9e2a2b; --tier-red-bg: #f9ebeb;
+            --tier-normal-color: #2d3134; --tier-normal-bg: #eef0f2; --func-color: #374151;
+            --rt-color: #4a5056; --trans-bg: #eff1f3; --trans-border: #8c969e;
+            --dashed-color: #7a8288; --vocab-def-bg: #f2f4f7; --pos-color: #9e2a2b; --text-sub: #4b5563;
+        }
+        body.theme-sepia {
+            --bg-outer: #dfd8c8; --bg-paper: #fbf7ed; --banner-bg: #6d594a; --meta-bg: #8c7665;
+            --title-color: #4a3525; --tier-red-color: #a63a2b; --tier-red-bg: #f4e6d8;
+            --tier-normal-color: #362e28; --tier-normal-bg: #f2ece1; --func-color: #4a4036;
+            --rt-color: #695c50; --trans-bg: #f3ede0; --trans-border: #a38f7d;
+            --dashed-color: #9e8e7e; --vocab-def-bg: #f4eee2; --pos-color: #8c3b2b; --text-sub: #5c4d3c;
+        }
+    </style>
+    <style id="dynamic-theme-plugins-css"></style>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-outer);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            padding: 16px; transition: background-color 0.25s ease;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+
+        .top-bar {
+            max-width: 1200px; margin: 0 auto 14px auto;
+            display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        }
+        .top-left, .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+        .icon-btn {
+            height: 36px; padding: 0 12px; border-radius: 7px;
+            border: 1px solid #cbd5e1; background: #ffffff; color: #1e293b;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: inline-flex; align-items: center; gap: 6px; transition: all 0.15s;
+        }
+        .icon-btn:hover { background: #f8fafc; transform: translateY(-1px); }
+        .icon-btn.primary { background: var(--banner-bg); color: #ffffff; border-color: var(--banner-bg); }
+        .icon-btn.ai-btn { background: #0f766e; color: #ffffff; border-color: #0f766e; }
+        .icon-btn.stop-btn { background: #dc2626; color: #ffffff; border-color: #dc2626; }
+        .icon-btn:disabled { background: #94a3b8; border-color: #94a3b8; cursor: not-allowed; transform: none; }
+
+        .status-pill {
+            font-size: 12px; padding: 4px 10px; border-radius: 14px; font-weight: 600;
+            background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5;
+        }
+        .status-pill.connected { background: #dcfce7; color: #166534; border-color: #86efac; }
+
+        .backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.35); z-index: 1000; display: none; }
+        .backdrop.open { display: block; }
+
+        .drawer-left, .drawer-right {
+            position: fixed; top: 0; bottom: 0; background: #ffffff; z-index: 1001;
+            box-shadow: 0 0 24px rgba(0,0,0,0.15); transition: transform 0.22s ease;
+            display: flex; flex-direction: column;
+        }
+        .drawer-left { left: 0; width: 360px; transform: translateX(-100%); }
+        .drawer-left.open { transform: translateX(0); }
+        .drawer-right { right: 0; width: 420px; transform: translateX(100%); }
+        .drawer-right.open { transform: translateX(0); }
+
+        .drawer-header {
+            padding: 14px 16px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 15px; color: #0f172a;
+            cursor: pointer; user-select: none; background: #f8fafc;
+        }
+        .drawer-header:hover { background: #f1f5f9; }
+
+        .tree-toolbar {
+            padding: 8px 12px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center; background: #ffffff;
+        }
+        .mini-btn {
+            border: 1px solid #cbd5e1; background: #f8fafc; color: #334155;
+            padding: 4px 9px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer;
+        }
+        .mini-btn:hover { background: #e2e8f0; }
+
+        .tree-container { padding: 8px; overflow-y: auto; flex: 1; }
+        .tree-node { margin-bottom: 2px; }
+        .node-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 7px 8px; border-radius: 6px; cursor: pointer;
+            font-size: 13px; color: #1e293b; transition: background 0.12s;
+        }
+        .node-row:hover { background: #f1f5f9; }
+        .node-row.active { background: var(--banner-bg); color: #ffffff; font-weight: 600; }
+        .node-main { display: flex; align-items: center; gap: 6px; overflow: hidden; flex: 1; }
+        .node-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .node-meta { font-size: 10.5px; opacity: 0.7; display: block; margin-top: 1px; }
+        .node-actions { display: none; gap: 3px; flex-shrink: 0; }
+        .node-row:hover .node-actions { display: flex; }
+        .act-icon {
+            border: none; background: rgba(0,0,0,0.08); color: inherit;
+            padding: 2px 5px; border-radius: 4px; font-size: 11px; cursor: pointer;
+        }
+        .node-row.active .act-icon { background: rgba(255,255,255,0.2); }
+        .node-children { padding-left: 14px; border-left: 1px dashed #cbd5e1; margin-left: 9px; }
+
+        .setting-body { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; }
+        .setting-group h4 {
+            font-size: 12px; color: #64748b; letter-spacing: 0.5px;
+            margin-bottom: 9px; border-bottom: 1px solid #f1f5f9; padding-bottom: 5px;
+        }
+        .option-grid { display: flex; flex-direction: column; gap: 7px; }
+        .radio-card {
+            border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 9px 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            font-size: 12.5px; font-weight: 600; color: #334155;
+        }
+        .radio-card.active { border-color: var(--banner-bg); background: #f8fafc; color: #0f172a; }
+        .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+
+        .switch { position: relative; display: inline-block; width: 38px; height: 20px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1;
+            transition: .25s; border-radius: 20px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+            background-color: white; transition: .25s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        .plugin-item-card {
+            border: 1px solid #e2e8f0; border-radius: 8px; padding: 9px 12px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            background: #ffffff;
+        }
+        .config-card {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+            padding: 11px 12px; font-size: 12px; color: #334155; display: flex; flex-direction: column; gap: 8px;
+        }
+        .config-row { display: flex; gap: 6px; align-items: center; }
+        .config-label { width: 68px; font-weight: 600; color: #475569; flex-shrink: 0; font-size: 11.5px; }
+        .config-input, .config-select {
+            flex: 1; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 5px; font-size: 12px; background: #fff; min-width: 0;
+        }
+
+        .page-container {
+            max-width: 1200px; margin: 0 auto 30px auto;
+            background: var(--bg-paper); box-shadow: 0 10px 30px rgba(0,0,0,0.09);
+            padding: 32px 38px; border-radius: 6px;
+        }
+        .top-banner {
+            display: flex; align-items: center; background-color: var(--banner-bg);
+            color: #ffffff; padding: 11px 18px; border-radius: 3px; margin-bottom: 8px;
+        }
+        .badge-box { border: 2px solid #ffffff; padding: 3px 10px; font-size: 20px; font-weight: 800; letter-spacing: 2px; margin-right: 16px; }
+        .banner-titles h1 { font-size: 18px; font-weight: 700; }
+        .banner-titles .chapter-info { font-size: 13px; color: #e2e8f0; margin-top: 2px; }
+        .meta-bar { display: flex; justify-content: space-between; background-color: var(--meta-bg); color: #ffffff; font-size: 12px; padding: 5px 14px; margin-bottom: 20px; font-weight: 600; }
+
+        .main-grid { display: grid; grid-template-columns: 66% 34%; }
+        .left-column { padding-right: 24px; border-right: 1.5px dashed var(--dashed-color); }
+        .right-column { padding-left: 20px; }
+
+        body.view-horizontal .page-container {
+            height: calc(100vh - 90px); overflow-x: auto; overflow-y: hidden;
+            scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 24px 32px;
+        }
+        body.view-horizontal .main-grid {
+            display: block; height: calc(100% - 95px);
+            column-count: 2; column-gap: 48px; column-rule: 1.5px dashed var(--dashed-color); column-fill: auto;
+        }
+        body.view-horizontal .left-column, body.view-horizontal .right-column { padding: 0; border: none; }
+        body.view-horizontal .right-column { break-before: column; margin-top: 10px; }
+
+        .pager-controls {
+            display: none; position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.88); color: #ffffff; padding: 7px 16px;
+            border-radius: 20px; gap: 14px; align-items: center; font-size: 13px; z-index: 900;
+        }
+        body.view-horizontal .pager-controls { display: flex; }
+        .pager-btn { background: rgba(255,255,255,0.16); border: none; color: #fff; padding: 4px 12px; border-radius: 12px; cursor: pointer; font-weight: 600; }
+
+        .para-block { position: relative; margin-bottom: 24px; break-inside: avoid; }
+        .para-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .para-index-tag {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+            color: var(--banner-bg); background: rgba(0,0,0,0.05);
+            padding: 2px 8px; border-radius: 4px; border-left: 3px solid var(--banner-bg);
+        }
+        .done-badge { background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 3px; font-size: 10px; }
+        .gloss-paragraph { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 2.65; margin-bottom: 8px; text-align: justify; }
+
+        ruby { ruby-position: under; -webkit-ruby-position: after; margin: 0 1.5px; cursor: pointer; border-radius: 3px; }
+        ruby.tier-red { color: var(--tier-red-color); background-color: var(--tier-red-bg); font-weight: 700; padding: 1px 4px; }
+        ruby.tier-normal { color: var(--tier-normal-color); background-color: var(--tier-normal-bg); font-weight: 500; padding: 1px 3px; }
+        ruby.tier-func { color: var(--func-color); padding: 0 2px; }
+        rt { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 11px; color: var(--rt-color); font-weight: 500; line-height: 1.15; padding-top: 2px; user-select: none; }
+
+        body.vocab-core-only ruby.tier-func rt { display: none; }
+        body.quiz-mode rt { opacity: 0; }
+        body.quiz-mode ruby:hover rt { opacity: 1; color: #ef4444; font-weight: 700; }
+        body.quiz-mode .trans-text { filter: blur(5px); }
+        body.quiz-mode .full-translation:hover .trans-text { filter: none; }
+
+        .full-translation {
+            background-color: var(--trans-bg); padding: 10px 14px; border-radius: 5px;
+            font-size: 13px; line-height: 1.7; color: var(--tier-normal-color);
+            border-left: 3.5px solid var(--trans-border);
+            display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+        }
+        .para-copy-btns { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
+        .copy-chip {
+            border: 1px solid rgba(128,128,128,0.3); background: rgba(255,255,255,0.85);
+            color: #334155; font-size: 11px; padding: 2px 7px; border-radius: 4px;
+            cursor: pointer; white-space: nowrap; font-weight: 600;
+        }
+        .copy-chip:hover { background: #ffffff; border-color: #0f172a; }
+        .copy-chip.ai { background: #ccfbf1; color: #0f766e; border-color: #5eead4; }
+        .copy-chip.ai:hover { background: #99f6e4; }
+
+        .article-header { margin-bottom: 18px; break-inside: avoid; }
+        .en-title { font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 700; color: var(--title-color); line-height: 1.3; margin-bottom: 4px; }
+        .cn-title { font-size: 14.5px; font-weight: 700; color: var(--text-sub); }
+
+        .vocab-list { display: flex; flex-direction: column; gap: 9px; }
+        .vocab-item { border-bottom: 1px solid rgba(128,128,128,0.18); padding-bottom: 7px; break-inside: avoid; }
+        body.vocab-core-only .vocab-item[data-level="basic"] { display: none; }
+        .vocab-head { font-family: Georgia, "Times New Roman", serif; font-size: 14px; margin-bottom: 3px; cursor: pointer; display: flex; justify-content: space-between; }
+        .vocab-word { font-weight: 700; color: var(--tier-red-color); }
+        .vocab-item[data-level="basic"] .vocab-word { color: var(--tier-normal-color); }
+        .vocab-ipa { font-size: 11.5px; color: var(--text-sub); margin-left: 5px; }
+        .vocab-def { font-size: 12px; line-height: 1.45; color: var(--tier-normal-color); background-color: var(--vocab-def-bg); padding: 4px 8px; border-radius: 3px; }
+        .pos-tag { font-weight: 700; color: var(--pos-color); margin-right: 3px; }
+
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px; }
+        .modal-backdrop.open { display: flex; }
+        .modal-box { background: #fff; width: 100%; max-width: 660px; border-radius: 10px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-header { padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; font-weight: 700; }
+        .modal-tabs { display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9; }
+        .m-tab { flex: 1; padding: 10px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; }
+        .m-tab.active { background: #fff; color: #0f172a; border-bottom: 2px solid var(--banner-bg); }
+        .modal-body { padding: 18px 20px; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .input-area { width: 100%; height: 135px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 12.5px; margin: 8px 0 12px 0; }
+        .form-row { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+        .form-row select { flex: 1; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        .hint-box { background: #f8fafc; border-left: 3px solid #64748b; padding: 10px 12px; font-size: 12.5px; color: #475569; line-height: 1.6; margin-bottom: 10px; }
+        .status-msg { font-size: 12.5px; color: #0f766e; font-weight: 600; margin-top: 8px; }
+
+        .toast-bar {
+            position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+            background: #0f172a; color: #fff; padding: 8px 18px; border-radius: 20px;
+            font-size: 13px; font-weight: 600; z-index: 3000; display: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="theme-red view-vertical">
+
+<div class="toast-bar" id="toastBar"></div>
+
+<!-- 1. 顶部极简导航栏 -->
+<header class="top-bar">
+    <div class="top-left">
+        <button class="icon-btn" onclick="toggleLeftDrawer(true)">☰ 目录</button>
+        <button class="icon-btn primary" onclick="openImportModal()">📥 导入文章 / 电子书</button>
+        <span class="status-pill" id="ollamaStatusPill">🔴 Ollama 未连接</span>
+        <button class="icon-btn ai-btn" id="btnOllamaChapter" disabled onclick="analyzeChapterResume()">⚡ 词库秒配 + Ollama 续译未译段</button>
+        <button class="icon-btn stop-btn" id="btnStopOllama" style="display:none;" onclick="abortOllamaTask()">⏹️ 停止</button>
+        <div id="plugin-slot-toolbar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+    <div class="top-right">
+        <button class="icon-btn" onclick="toggleRightDrawer(true)">⚙️ Setting</button>
+    </div>
+</header>
+
+<!-- 2. 左侧 5 层目录树抽屉 -->
+<div class="backdrop" id="globalBackdrop" onclick="closeAllDrawers()"></div>
+<aside class="drawer-left" id="leftDrawer">
+    <div class="drawer-header" title="点击此处收起目录" onclick="closeAllDrawers()">
+        <span>📚 书籍与章节目录</span>
+        <span style="font-size:16px;color:#64748b;">✕</span>
+    </div>
+    <div class="tree-toolbar">
+        <button class="mini-btn" onclick="createFolder(null)">📁+ 新建一级文件夹</button>
+        <span style="font-size:11px;color:#0f766e;font-weight:600;" id="dictCountBadge">本地词库: 0词</span>
+    </div>
+    <div class="tree-container" id="directoryTreeRoot"></div>
+</aside>
+
+<!-- 3. 右侧 Setting 统一设置中心 -->
+<aside class="drawer-right" id="rightDrawer">
+    <div class="drawer-header" onclick="closeAllDrawers()">
+        <span>⚙️ Setting 引擎、存储与 MySQL 配置</span>
+        <span style="font-size:16px;color:#64748b;">✕</span>
+    </div>
+    <div class="setting-body">
+        <!-- 设置 1：本地 Ollama 服务连接 -->
+        <div class="setting-group">
+            <h4>1. 本地 Ollama 极速翻译配置</h4>
+            <div class="config-card">
+                <div class="config-row">
+                    <span class="config-label">服务地址：</span>
+                    <input type="text" class="config-input" id="ollamaUrlInput" value="http://localhost:11434">
+                    <button class="mini-btn" style="background:#0f766e;color:#fff;border-color:#0f766e;" onclick="fetchOllamaModels()">🔌 连接探测</button>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">选择模型：</span>
+                    <select class="config-select" id="ollamaModelSelect" disabled onchange="saveOllamaConfig()">
+                        <option value="">-- 请先点击“连接探测” --</option>
+                    </select>
+                </div>
+                <div id="ollamaDiagMsg" style="font-size:11px;color:#64748b;line-height:1.45;">
+                    ⚡ <strong>极速双引擎模式</strong>：所有单词音标、词性与字下注释由本地 <code>ECDICT 5万词库</code> 0毫秒秒填；Ollama 仅负责生成流畅中文译文，且自动跳过已译段落（支持断点续译）。
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置 2：本地 MySQL 数据库与桥接服务完整配置 -->
+        <div class="setting-group">
+            <h4>2. 本地 MySQL / ECDICT 数据库连接配置</h4>
+            <div class="config-card">
+                <div style="font-size:11px;color:#475569;line-height:1.45;">
+                    浏览器的网页沙盒无法直接走 TCP 连 3306 端口，需通过本地轻量 API 网关中转读写 MySQL 的 <code>ecdict</code> 库：
+                </div>
+                <div class="config-row">
+                    <span class="config-label">桥接网关：</span>
+                    <input type="text" class="config-input" id="dbApiUrl" placeholder="http://localhost:8080/api/ecdict">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">主机/端口：</span>
+                    <input type="text" class="config-input" id="dbHost" value="127.0.0.1" placeholder="Host">
+                    <input type="text" class="config-input" id="dbPort" value="3306" style="max-width:65px;" placeholder="Port">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">数据库名：</span>
+                    <input type="text" class="config-input" id="dbName" value="ecdict" placeholder="Database">
+                </div>
+                <div class="config-row">
+                    <span class="config-label">账号/密码：</span>
+                    <input type="text" class="config-input" id="dbUser" value="root" placeholder="User">
+                    <input type="password" class="config-input" id="dbPass" placeholder="Password">
+                </div>
+                <div class="config-row" style="justify-content:flex-end;">
+                    <button class="mini-btn" style="background:#0284c7;color:#fff;border-color:#0284c7;" onclick="saveMysqlConfig()">💾 保存 MySQL 配置</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置 3：自定义本地磁盘存储路径 & 词典备份 -->
+        <div class="setting-group">
+            <h4>3. 本地磁盘直写与 ECDICT 词典管理</h4>
+            <div class="config-card">
+                <div class="config-row">
+                    <button class="mini-btn" style="flex:1;background:#0284c7;color:#fff;border-color:#0284c7;" onclick="bindLocalDirectory()">📂 绑定指定磁盘文件夹</button>
+                    <button class="mini-btn" onclick="syncAllToDiskFolder()">💾 立即同步落盘</button>
+                </div>
+                <div id="diskFolderStatus" style="font-size:11px;color:#0f766e;font-weight:600;">当前模式：浏览器内置 IndexedDB</div>
+                <div class="config-row" style="margin-top:4px;border-top:1px solid #e2e8f0;padding-top:6px;">
+                    <button class="mini-btn" style="flex:1;" onclick="exportFullDatabase()">📤 导出全库备份 (.json)</button>
+                    <button class="mini-btn" style="flex:1;" onclick="document.getElementById('restoreDbInput').click()">📥 导入备份 / ECDICT JSON</button>
+                    <input type="file" id="restoreDbInput" accept=".json" style="display:none;" onchange="importFullDatabase(this)">
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置 4：排版样式 -->
+        <div class="setting-group">
+            <h4>4. 排版样式 (Theme Plugins)</h4>
+            <div class="option-grid" id="themeOptions">
+                <div class="radio-card" data-val="theme-green" onclick="applyTheme('theme-green', this)">
+                    <span><span class="dot" style="background:#2c4a3e"></span>样式1：黑灰绿（沉稳学术）</span><span>✓</span>
+                </div>
+                <div class="radio-card active" data-val="theme-red" onclick="applyTheme('theme-red', this)">
+                    <span><span class="dot" style="background:#9e2a2b"></span>样式2：真经暗红（原图高亮）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="theme-sepia" onclick="applyTheme('theme-sepia', this)">
+                    <span><span class="dot" style="background:#d4b886"></span>样式3：暖纸护眼（纸书质感）</span><span>✓</span>
+                </div>
+            </div>
+            <div class="config-card" style="margin-top:8px;">
+                <strong>🎨 加载外部样式插件 (.js / .json)</strong>
+                <input type="file" accept=".js,.json" onchange="loadExternalThemePlugin(this)">
+            </div>
+        </div>
+
+        <!-- 设置 5：功能插件管理 -->
+        <div class="setting-group">
+            <h4>5. 功能插件与开关 (Feature Plugins)</h4>
+            <div class="option-grid" id="featurePluginList"></div>
+            <div class="config-card" style="margin-top:8px;">
+                <strong>🧩 加载外部功能插件 (.js)</strong>
+                <input type="file" accept=".js" onchange="loadExternalFeaturePlugin(this)">
+            </div>
+        </div>
+
+        <!-- 设置 6：显示样式与词汇深度 -->
+        <div class="setting-group">
+            <h4>6. 显示样式与词汇颗粒度</h4>
+            <div class="option-grid">
+                <div class="radio-card active" data-val="view-vertical" onclick="applyView('view-vertical', this)">
+                    <span>1. 单页面显示（屏幕从上到下滚动）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="view-horizontal" onclick="applyView('view-horizontal', this)">
+                    <span>2. 双页面显示（屏幕左右滚动翻页）</span><span>✓</span>
+                </div>
+                <div class="radio-card active" data-val="full" onclick="applyVocab('full', this)">
+                    <span>词汇：全词详尽版（含虚词/基础词）</span><span>✓</span>
+                </div>
+                <div class="radio-card" data-val="core" onclick="applyVocab('core', this)">
+                    <span>词汇：仅核心高频词（进阶冲刺）</span><span>✓</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- 4. 主体书籍阅读区 -->
+<div class="page-container" id="readerRoot"></div>
+
+<div class="pager-controls">
+    <button class="pager-btn" onclick="scrollHorizontal(-1)">◀ 上一页</button>
+    <span>左右滚动 / 方向键翻页</span>
+    <button class="pager-btn" onclick="scrollHorizontal(1)">下一页 ▶</button>
+</div>
+
+<!-- 5. 导入模态框 -->
+<div class="modal-backdrop" id="importModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <span>📥 导入文章或全格式电子书</span>
+            <button style="border:none;background:none;font-size:18px;cursor:pointer;" onclick="closeImportModal()">✕</button>
+        </div>
+        <div class="modal-tabs">
+            <button class="m-tab active" onclick="switchModalTab(0, this)">📚 打开本地电子书 (EPUB/PDF/MOBI/AZW3/TXT)</button>
+            <button class="m-tab" onclick="switchModalTab(1, this)">✍️ 粘贴 AI JSON / 英文原文</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <label style="font-weight:700;color:#334155;">📂 导入目标位置：</label>
+                <select id="importTargetFolder"></select>
+            </div>
+            <div class="tab-panel active" id="mpanel-0">
+                <div class="hint-box">
+                    <strong>支持格式：</strong><code>.epub</code>、<code>.pdf</code>、<code>.mobi / .azw / .azw3</code>、<code>.txt</code>。导入后自动匹配本地 5 万 ECDICT 词库标注所有单词音标与词义。
+                </div>
+                <input type="file" id="multiBookInput" accept=".epub,.pdf,.mobi,.azw,.azw3,.txt" onchange="handleMultiFormatEbook(this)">
+                <div class="status-msg" id="ebookParseStatus"></div>
+            </div>
+            <div class="tab-panel" id="mpanel-1">
+                <div class="hint-box">粘贴云端 AI 返回的 <strong>纯 JSON</strong>，或直接粘贴纯英文原文：</div>
+                <textarea class="input-area" id="jsonInput" placeholder='在此粘贴 JSON 数据或纯英文段落...'></textarea>
+                <div style="display:flex; justify-content:space-between;">
+                    <button class="icon-btn" onclick="quickRawPreview()">⚡ 仅粘贴纯英文快速预览</button>
+                    <button class="icon-btn primary" onclick="importJsonArticle()">✅ 确认渲染并入库</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showToast(msg, duration = 3000) {
+        const el = document.getElementById('toastBar');
+        el.textContent = msg;
+        el.style.display = 'block';
+        clearTimeout(el._timer);
+        el._timer = setTimeout(() => { el.style.display = 'none'; }, duration);
+    }
+
+    /* =========================================================================
+       一、 存储引擎与本地 ECDICT 0毫秒查词引擎
+       ========================================================================= */
+    let boundDirHandle = null;
+    let memoryDictCache = null; // 内存级哈希表 Map<word, dictEntry>，实现 0.1ms 查词
+
+    async function bindLocalDirectory() {
+        if (!window.showDirectoryPicker) return alert('请使用新版 Chrome 或 Edge 浏览器。');
+        try {
+            boundDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+            document.getElementById('diskFolderStatus').textContent = `✅ 已绑定目录：${boundDirHandle.name}`;
+            await syncAllToDiskFolder();
+        } catch (e) { if (e.name !== 'AbortError') alert('绑定失败：' + e.message); }
+    }
+
+    async function syncAllToDiskFolder() {
+        if (!boundDirHandle) return;
+        try {
+            const payload = {
+                updatedAt: new Date().toISOString(),
+                nodes: await LocalDB.getAll('nodes'),
+                articles: await LocalDB.getAll('articles'),
+                plugins: await LocalDB.getAll('plugins')
+            };
+            const fh = await boundDirHandle.getFileHandle('ielts_reader_workspace.json', { create: true });
+            const w = await fh.createWritable();
+            await w.write(JSON.stringify(payload, null, 2));
+            await w.close();
+            showToast(`💾 已实时同步至本地目录 [${boundDirHandle.name}]`);
+        } catch (e) {}
+    }
+
+    const LocalDB = {
+        dbName: 'IeltsReaderDB_v9',
+        version: 1,
+        db: null,
+        async init() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(this.dbName, this.version);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('nodes')) db.createObjectStore('nodes', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('articles')) db.createObjectStore('articles', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('plugins')) db.createObjectStore('plugins', { keyPath: 'id' });
+                    if (!db.objectStoreNames.contains('global_dict')) db.createObjectStore('global_dict', { keyPath: 'word' });
+                };
+                req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        },
+        async getAll(store) {
+            return new Promise((r) => {
+                const req = this.db.transaction(store, 'readonly').objectStore(store).getAll();
+                req.onsuccess = () => r(req.result || []);
+            });
+        },
+        async get(store, key) {
+            return new Promise((r) => {
+                const req = this.db.transaction(store, 'readonly').objectStore(store).get(key);
+                req.onsuccess = () => r(req.result);
+            });
+        },
+        async put(store, item) {
+            return new Promise((r) => {
+                const tx = this.db.transaction(store, 'readwrite');
+                tx.objectStore(store).put(item);
+                tx.oncomplete = () => { if (boundDirHandle && store !== 'global_dict') syncAllToDiskFolder(); r(); };
+            });
+        },
+        async bulkPutDict(items) {
+            return new Promise((r) => {
+                const tx = this.db.transaction('global_dict', 'readwrite');
+                const store = tx.objectStore('global_dict');
+                items.forEach(it => { if (it && it.word) store.put(it); });
+                tx.oncomplete = () => r();
+            });
+        },
+        async delete(store, key) {
+            return new Promise((r) => {
+                const tx = this.db.transaction(store, 'readwrite');
+                tx.objectStore(store).delete(key);
+                tx.oncomplete = () => { if (boundDirHandle) syncAllToDiskFolder(); r(); };
+            });
+        }
+    };
+
+    async function ensureMemoryDictLoaded() {
+        if (memoryDictCache) return memoryDictCache;
+        const all = await LocalDB.getAll('global_dict');
+        memoryDictCache = new Map(all.map(item => [item.word.toLowerCase(), item]));
+        document.getElementById('dictCountBadge').textContent = `本地词库: ${memoryDictCache.size}词`;
+        return memoryDictCache;
+    }
+
+    // 简易词形还原辅助（匹配复数 -s/-es、过去式 -ed、进行时 -ing）
+    function lookupWordInDict(rawToken, dictMap) {
+        const clean = rawToken.replace(/[.,!?;:"'()—\[\]]/g, '').toLowerCase().trim();
+        if (!clean) return null;
+        if (dictMap.has(clean)) return dictMap.get(clean);
+        if (clean.endsWith('s') && dictMap.has(clean.slice(0, -1))) return dictMap.get(clean.slice(0, -1));
+        if (clean.endsWith('es') && dictMap.has(clean.slice(0, -2))) return dictMap.get(clean.slice(0, -2));
+        if (clean.endsWith('ed') && dictMap.has(clean.slice(0, -2))) return dictMap.get(clean.slice(0, -2));
+        if (clean.endsWith('ed') && dictMap.has(clean.slice(0, -1))) return dictMap.get(clean.slice(0, -1));
+        if (clean.endsWith('ing') && dictMap.has(clean.slice(0, -3))) return dictMap.get(clean.slice(0, -3));
+        if (clean.endsWith('ing') && dictMap.has(clean.slice(0, -3) + 'e')) return dictMap.get(clean.slice(0, -3) + 'e');
+        return null;
+    }
+
+    // 0毫秒本地词库自动标注全篇单词（不消耗任何大模型算力）
+    async function autoAnnotateTokensWithLocalDict(art) {
+        const dictMap = await ensureMemoryDictLoaded();
+        if (dictMap.size === 0) return art;
+        const vocabSet = new Set((art.vocabulary || []).map(v => v.word.toLowerCase()));
+        art.vocabulary = art.vocabulary || [];
+
+        art.paragraphs.forEach(p => {
+            p.tokens.forEach(t => {
+                const hit = lookupWordInDict(t.text, dictMap);
+                if (hit) {
+                    if (!t.gloss) t.gloss = hit.defaultGloss || '';
+                    t.tier = hit.tier || (hit.level === 'core' ? 'red' : 'normal');
+                    if (!vocabSet.has(hit.word)) {
+                        vocabSet.add(hit.word);
+                        art.vocabulary.push(hit);
+                    }
+                }
+            });
+        });
+        return art;
+    }
+
+    /* =========================================================================
+       二、 本地 Ollama 极速翻译 + 断点续译引擎（跳过已译段落 + 可手动中止）
+       ========================================================================= */
+    let isOllamaConnected = false;
+    let currentAbortController = null;
+
+    function setOllamaUIState(connected, modelName = '', diagText = '') {
+        isOllamaConnected = connected;
+        const pill = document.getElementById('ollamaStatusPill');
+        const topBtn = document.getElementById('btnOllamaChapter');
+        const sel = document.getElementById('ollamaModelSelect');
+        const diag = document.getElementById('ollamaDiagMsg');
+
+        if (connected) {
+            pill.className = 'status-pill connected';
+            pill.textContent = `🟢 Ollama 已连接 (${modelName})`;
+            topBtn.disabled = false;
+            sel.disabled = false;
+            if (diagText) diag.innerHTML = `<span style="color:#166534;font-weight:600;">${diagText}</span>`;
+        } else {
+            pill.className = 'status-pill';
+            pill.textContent = '🔴 Ollama 未连接';
+            topBtn.disabled = true;
+            sel.disabled = true;
+            sel.innerHTML = '<option value="">-- 请先点击“连接探测” --</option>';
+            if (diagText) diag.innerHTML = `<span style="color:#dc2626;font-weight:600;">${diagText}</span>`;
+        }
+        if (window.ReaderApp.currentArticle) renderArticleView(window.ReaderApp.currentArticle);
+    }
+
+    function saveOllamaConfig() {
+        const url = document.getElementById('ollamaUrlInput').value.trim().replace(/\/$/, '');
+        const model = document.getElementById('ollamaModelSelect').value;
+        localStorage.setItem('ollama_cfg_v9', JSON.stringify({ url, model }));
+        if (isOllamaConnected && model) setOllamaUIState(true, model);
+    }
+
+    async function fetchOllamaModels(silent = false) {
+        const url = document.getElementById('ollamaUrlInput').value.trim().replace(/\/$/, '');
+        try {
+            if (!silent) showToast('🔌 正在探测本地 Ollama 服务...');
+            const resp = await fetch(`${url}/api/tags`);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const models = (data.models || []).map(m => m.name);
+            if (!models.length) {
+                setOllamaUIState(false, '', '连接成功，但本地未安装任何模型。');
+                return;
+            }
+            const sel = document.getElementById('ollamaModelSelect');
+            const saved = JSON.parse(localStorage.getItem('ollama_cfg_v9') || '{}');
+            sel.innerHTML = models.map(m => `<option value="${m}">${m}</option>`).join('');
+            if (saved.model && models.includes(saved.model)) sel.value = saved.model;
+            else if (models.some(m => m.includes('qwen3:4b'))) sel.value = models.find(m => m.includes('qwen3:4b'));
+            saveOllamaConfig();
+            setOllamaUIState(true, sel.value, `✅ 已连接 Ollama，共读取 ${models.length} 个模型！`);
+            if (!silent) showToast(`✅ 成功连接 Ollama (${sel.value})！`);
+        } catch (e) {
+            setOllamaUIState(false, '', `❌ 连接失败：${e.message}。请确认 Ollama 已启动且配置了 OLLAMA_ORIGINS=*。`);
+        }
+    }
+
+    function abortOllamaTask() {
+        if (currentAbortController) {
+            currentAbortController.abort();
+            currentAbortController = null;
+            showToast('⏹️ 已手动停止翻译（已完成的段落均已自动保存，下次可断点续译）');
+        }
+    }
+
+    // 极速翻译指定段落列表（跳过已翻译段落，除非 forceRetranslate=true）
+    async function translateParagraphsFast(targetIndices, forceRetranslate = false) {
+        if (!isOllamaConnected) return alert('请先在 Setting 中连接本地 Ollama！');
+        const art = window.ReaderApp.currentArticle;
+        if (!art) return;
+
+        // 过滤出尚未翻译的段落（实现断点续传）
+        const pendingIndices = forceRetranslate
+            ? targetIndices
+            : targetIndices.filter(idx => !art.paragraphs[idx]?.isTranslated);
+
+        if (pendingIndices.length === 0) {
+            return showToast('✅ 本章所有段落均已翻译完毕，无需重复翻译！');
+        }
+
+        const url = document.getElementById('ollamaUrlInput').value.trim().replace(/\/$/, '');
+        const model = document.getElementById('ollamaModelSelect').value;
+        const btnStart = document.getElementById('btnOllamaChapter');
+        const btnStop = document.getElementById('btnStopOllama');
+
+        btnStart.disabled = true;
+        btnStop.style.display = 'inline-flex';
+        currentAbortController = new AbortController();
+
+        try {
+            // 1. 先用本地 ECDICT 5万词库 0 毫秒瞬间标出所有单词释义与音标
+            await autoAnnotateTokensWithLocalDict(art);
+            await LocalDB.put('articles', art);
+            renderArticleView(art);
+
+            // 2. 逐段调用 Ollama 只输出纯中文译文（不输出 JSON，速度提升 5~8 倍，防截断）
+            for (let i = 0; i < pendingIndices.length; i++) {
+                if (currentAbortController.signal.aborted) break;
+                const pIdx = pendingIndices[i];
+                const para = art.paragraphs[pIdx];
+                const rawEn = para.tokens.map(t => t.text).join(' ');
+
+                showToast(`⚡ [${model}] 正在极速翻译第 ${pIdx + 1} 段（剩余 ${pendingIndices.length - i} 段）...`, 10000);
+
+                const resp = await fetch(`${url}/api/generate`, {
+                    method: 'POST',
+                    signal: currentAbortController.signal,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: model,
+                        system: "你是一个专业英汉翻译引擎。直接输出流畅自然的简体中文翻译，严禁输出任何解释、拼音、标签或多余废话。",
+                        prompt: `请将以下英文翻译成简体中文：\n${rawEn}`,
+                        stream: false,
+                        options: { temperature: 0.1, num_predict: 1024 }
+                    })
+                });
+
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                const cnText = (data.response || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+
+                if (cnText) {
+                    para.translation = cnText;
+                    para.isTranslated = true; // 标记该段已完成，下次断点续译直接跳过
+                    art.isUnparsed = false;
+                    // 每翻译完一段立即落盘，即使中途打断也绝不丢失进度
+                    await LocalDB.put('articles', art);
+                    renderArticleView(art);
+                }
+            }
+            if (!currentAbortController?.signal.aborted) {
+                showToast('✅ 全部待译段落翻译完成！');
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                alert(`翻译中断：${err.message}\n（已翻译的段落已保存，再次点击将从断点自动继续）`);
+            }
+        } finally {
+            currentAbortController = null;
+            btnStart.disabled = !isOllamaConnected;
+            btnStop.style.display = 'none';
+        }
+    }
+
+    function analyzeChapterResume() {
+        const art = window.ReaderApp.currentArticle;
+        if (!art) return;
+        translateParagraphsFast(art.paragraphs.map((_, i) => i), false);
+    }
+
+    /* =========================================================================
+       三、 MySQL 连接配置保存 & 全库备份/ECDICT 导入
+       ========================================================================= */
+    function saveMysqlConfig() {
+        const cfg = {
+            apiUrl: document.getElementById('dbApiUrl').value.trim(),
+            host: document.getElementById('dbHost').value.trim(),
+            port: document.getElementById('dbPort').value.trim(),
+            database: document.getElementById('dbName').value.trim(),
+            user: document.getElementById('dbUser').value.trim(),
+            pass: document.getElementById('dbPass').value
+        };
+        localStorage.setItem('mysql_full_cfg_v9', JSON.stringify(cfg));
+        showToast('✅ MySQL 数据库及桥接配置已保存！');
+    }
+
+    function loadMysqlConfig() {
+        const cfg = JSON.parse(localStorage.getItem('mysql_full_cfg_v9') || '{}');
+        if (cfg.apiUrl) document.getElementById('dbApiUrl').value = cfg.apiUrl;
+        if (cfg.host) document.getElementById('dbHost').value = cfg.host;
+        if (cfg.port) document.getElementById('dbPort').value = cfg.port;
+        if (cfg.database) document.getElementById('dbName').value = cfg.database;
+        if (cfg.user) document.getElementById('dbUser').value = cfg.user;
+        if (cfg.pass) document.getElementById('dbPass').value = cfg.pass;
+    }
+
+    async function exportFullDatabase() {
+        const payload = {
+            exportedAt: new Date().toISOString(),
+            nodes: await LocalDB.getAll('nodes'),
+            articles: await LocalDB.getAll('articles'),
+            plugins: await LocalDB.getAll('plugins')
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `ielts_reader_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        showToast('✅ 书籍与精读记录备份已导出！');
+    }
+
+    async function importFullDatabase(input) {
+        const file = input.files[0]; if (!file) return;
+        try {
+            showToast('⏳ 正在导入词典/备份数据，请稍候...', 10000);
+            const data = JSON.parse(await file.text());
+            if (Array.isArray(data)) {
+                await LocalDB.bulkPutDict(data);
+                memoryDictCache = null; // 刷新内存词库缓存
+                await ensureMemoryDictLoaded();
+                if (window.ReaderApp.currentArticle) {
+                    await autoAnnotateTokensWithLocalDict(window.ReaderApp.currentArticle);
+                    renderArticleView(window.ReaderApp.currentArticle);
+                }
+                showToast(`✅ 成功导入 ${data.length} 条 ECDICT 词典数据！`);
+            } else {
+                for (const n of (data.nodes || [])) await LocalDB.put('nodes', n);
+                for (const a of (data.articles || [])) await LocalDB.put('articles', a);
+                for (const p of (data.plugins || [])) await LocalDB.put('plugins', p);
+                if (data.global_dict) {
+                    await LocalDB.bulkPutDict(data.global_dict);
+                    memoryDictCache = null;
+                    await ensureMemoryDictLoaded();
+                }
+                await refreshDirectoryTree();
+                showToast('✅ 全库备份恢复成功！');
+            }
+        } catch (e) { alert('导入失败：' + e.message); }
+    }
+
+    /* =========================================================================
+       四、 5 层目录树与手动 JSON 导入（防覆盖选择）
+       ========================================================================= */
+    let allNodes = [], activeArticleId = null;
+
+    function formatTime(ts) {
+        const d = new Date(ts);
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+    function getFolderDepth(fid) {
+        let d = 0, c = allNodes.find(n => n.id === fid);
+        while (c && c.parentId) { d++; c = allNodes.find(n => n.id === c.parentId); }
+        return c ? d + 1 : 0;
+    }
+    function getNextOrderIndex(pid) {
+        const s = allNodes.filter(n => (n.parentId || null) === (pid || null));
+        return s.length ? Math.max(...s.map(x => x.orderIndex || 0)) + 1 : 1;
+    }
+    function generateDefaultLbookName(pid) {
+        const s = allNodes.filter(n => (n.parentId || null) === (pid || null));
+        let max = 0;
+        s.forEach(x => { const m = x.title.match(/^lbook(\d+)$/i); if (m) max = Math.max(max, parseInt(m[1], 10)); });
+        return `lbook${max + 1}`;
+    }
+
+    async function createFolder(pid) {
+        if (pid && getFolderDepth(pid) >= 5) return alert('最多支持 5 层嵌套文件夹！');
+        const name = prompt('请输入文件夹名称：', '新建学习文件夹');
+        if (!name || !name.trim()) return;
+        await LocalDB.put('nodes', { id: 'fld-' + Date.now(), parentId: pid || null, type: 'folder', title: name.trim(), orderIndex: getNextOrderIndex(pid), createdAt: Date.now(), expanded: true });
+        await refreshDirectoryTree();
+    }
+
+    async function moveNodeOrder(id, dir, e) {
+        e.stopPropagation();
+        const node = allNodes.find(n => n.id === id); if (!node) return;
+        const sibs = allNodes.filter(n => (n.parentId || null) === (node.parentId || null)).sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        const idx = sibs.findIndex(s => s.id === id), tidx = idx + dir;
+        if (tidx < 0 || tidx >= sibs.length) return;
+        [sibs[idx], sibs[tidx]] = [sibs[tidx], sibs[idx]];
+        for (let i = 0; i < sibs.length; i++) { sibs[i].orderIndex = i + 1; await LocalDB.put('nodes', sibs[i]); }
+        await refreshDirectoryTree();
+    }
+
+    async function renameNode(id, e) {
+        e.stopPropagation();
+        const node = allNodes.find(n => n.id === id); if (!node) return;
+        const n = prompt('请输入新名称：', node.title);
+        if (n && n.trim()) { node.title = n.trim(); await LocalDB.put('nodes', node); await refreshDirectoryTree(); }
+    }
+
+    async function deleteNodeRecursive(id, e) {
+        e.stopPropagation();
+        if (!confirm('确定删除此项及所有子内容吗？')) return;
+        const del = [id];
+        const collect = (pid) => allNodes.filter(n => n.parentId === pid).forEach(c => { del.push(c.id); collect(c.id); });
+        collect(id);
+        for (const nid of del) { await LocalDB.delete('nodes', nid); await LocalDB.delete('articles', nid); }
+        await refreshDirectoryTree();
+    }
+
+    async function toggleNodeExpand(id) {
+        const node = allNodes.find(n => n.id === id); if (!node) return;
+        node.expanded = !node.expanded; await LocalDB.put('nodes', node); renderTreeDOM();
+    }
+
+    async function refreshDirectoryTree() {
+        allNodes = await LocalDB.getAll('nodes');
+        renderTreeDOM();
+        populateFolderSelect();
+    }
+
+    function renderTreeDOM() {
+        const rootEl = document.getElementById('directoryTreeRoot');
+        const buildHtml = (pid) => {
+            const children = allNodes.filter(n => (n.parentId || null) === pid).sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+            if (!children.length) return '';
+            return children.map(node => {
+                const isContainer = node.type === 'folder' || node.type === 'book';
+                const icon = node.type === 'folder' ? (node.expanded ? '📂' : '📁') : node.type === 'book' ? (node.expanded ? '📖' : '📕') : '📄';
+                const isActive = node.id === activeArticleId ? 'active' : '';
+                const clickHandler = isContainer ? `toggleNodeExpand('${node.id}')` : `openArticleById('${node.id}')`;
+                const addSubBtn = node.type === 'folder' ? `<button class="act-icon" title="新建子文件夹" onclick="event.stopPropagation();createFolder('${node.id}')">+📁</button>` : '';
+                return `
+          <div class="tree-node">
+            <div class="node-row ${isActive}" onclick="${clickHandler}">
+              <div class="node-main">
+                <span>${icon}</span>
+                <div style="overflow:hidden;"><div class="node-title" title="${node.title}">${node.title}</div><span class="node-meta">${formatTime(node.createdAt)}</span></div>
+              </div>
+              <div class="node-actions">
+                <button class="act-icon" onclick="moveNodeOrder('${node.id}', -1, event)">⬆️</button>
+                <button class="act-icon" onclick="moveNodeOrder('${node.id}', 1, event)">⬇️</button>
+                ${addSubBtn}
+                <button class="act-icon" onclick="renameNode('${node.id}', event)">✏️</button>
+                <button class="act-icon" onclick="deleteNodeRecursive('${node.id}', event)">🗑️</button>
+              </div>
+            </div>
+            ${isContainer && node.expanded ? `<div class="node-children">${buildHtml(node.id)}</div>` : ''}
+          </div>`;
+            }).join('');
+        };
+        rootEl.innerHTML = buildHtml(null) || '<div style="padding:20px;text-align:center;color:#94a3b8;font-size:13px;">目录为空</div>';
+    }
+
+    function populateFolderSelect() {
+        const sel = document.getElementById('importTargetFolder');
+        const opts = ['<option value="">默认位置：第一级根目录</option>'];
+        const walk = (pid, prefix) => {
+            allNodes.filter(n => n.type === 'folder' && (n.parentId || null) === pid).sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
+                .forEach(f => { opts.push(`<option value="${f.id}">${prefix}📁 ${f.title}</option>`); walk(f.id, prefix + ' '); });
+        };
+        walk(null, '');
+        sel.innerHTML = opts.join('');
+    }
+
+    async function importJsonArticle() {
+        const raw = document.getElementById('jsonInput').value.trim(); if (!raw) return alert('请粘贴 JSON 数据！');
+        const targetFolderId = document.getElementById('importTargetFolder').value || null;
+        try {
+            const obj = JSON.parse(raw.replace(/^```json\s*/i, '').replace(/```\s*$/, ''));
+            (obj.paragraphs || []).forEach(p => { if (p.translation) p.isTranslated = true; });
+            const cur = window.ReaderApp.currentArticle;
+
+            // 防覆盖确认机制：若当前章节已有内容，让用户自主决定“覆盖当前章”还是“另存为新版本”
+            if (cur && activeArticleId) {
+                const overwrite = confirm(`检测到当前正在阅读《${cur.titleEn}》。\n\n点击【确定】：直接覆盖更新当前章节内容；\n点击【取消】：保留当前本地翻译，将粘贴的 JSON 另存为独立新文章。`);
+                if (overwrite) {
+                    obj.id = activeArticleId;
+                    await LocalDB.put('articles', obj);
+                    await openArticleById(activeArticleId);
+                    closeImportModal(); document.getElementById('jsonInput').value = '';
+                    return;
+                }
+            }
+
+            const newId = 'art-' + Date.now();
+            const title = obj.titleCn || obj.titleEn || generateDefaultLbookName(targetFolderId);
+            obj.id = newId;
+            await LocalDB.put('nodes', { id: newId, parentId: targetFolderId, type: 'article', title, orderIndex: getNextOrderIndex(targetFolderId), createdAt: Date.now() });
+            await LocalDB.put('articles', obj);
+            await refreshDirectoryTree(); await openArticleById(newId);
+            closeImportModal(); document.getElementById('jsonInput').value = '';
+        } catch (e) { alert('JSON 格式有误：\n' + e.message); }
+    }
+
+    async function quickRawPreview() {
+        const raw = document.getElementById('jsonInput').value.trim(); if (!raw || raw.startsWith('{')) return alert('请先粘贴纯英文段落！');
+        const targetFolderId = document.getElementById('importTargetFolder').value || null;
+        const defaultTitle = generateDefaultLbookName(targetFolderId);
+        const newId = 'raw-' + Date.now();
+        const paras = raw.split(/\n+/).filter(Boolean).map(line => ({
+            isTranslated: false,
+            tokens: line.split(/\s+/).map(w => ({ text: w, gloss: "", tier: w.length > 6 ? "red" : "normal" })),
+            translation: "（待翻译：点击顶部 [⚡ 词库秒配 + Ollama 续译未译段] 即可秒级生成）"
+        }));
+        const artObj = { id: newId, isUnparsed: true, category: '独立文章精读', titleEn: defaultTitle, titleCn: `${defaultTitle}`, wordCount: raw.split(/\s+/).length, paragraphs: paras, vocabulary: [] };
+        await autoAnnotateTokensWithLocalDict(artObj);
+        await LocalDB.put('nodes', { id: newId, parentId: targetFolderId, type: 'article', title: defaultTitle, orderIndex: getNextOrderIndex(targetFolderId), createdAt: Date.now() });
+        await LocalDB.put('articles', artObj);
+        await refreshDirectoryTree(); await openArticleById(newId); closeImportModal(); document.getElementById('jsonInput').value = '';
+    }
+
+    /* =========================================================================
+       五、 多格式电子书解析器（导入时自动用本地 5 万词库秒标词义）
+       ========================================================================= */
+    if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    function sanitizeText(str) { return str ? str.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFD]/g, '').replace(/\s+/g, ' ').trim() : ''; }
+
+    async function handleMultiFormatEbook(input) {
+        const file = input.files[0]; if (!file) return;
+        const statusEl = document.getElementById('ebookParseStatus');
+        const targetFolderId = document.getElementById('importTargetFolder').value || null;
+        const ext = file.name.split('.').pop().toLowerCase();
+        let rawBookTitle = sanitizeText(file.name.replace(/\.[^/.]+$/, '').replace(/\([^)]*(?:z-lib|1lib|anna)[^)]*\)/gi, '')) || generateDefaultLbookName(targetFolderId);
+
+        statusEl.style.color = '#0f766e';
+        statusEl.textContent = `⏳ 正在解析《${rawBookTitle}》并匹配本地 ECDICT 词库...`;
+
+        try {
+            let bookMetaTitle = rawBookTitle, chapters = [];
+            if (ext === 'epub') { const res = await parseEpubClean(file); if (res.bookTitle) bookMetaTitle = res.bookTitle; chapters = res.chapters; }
+            else if (ext === 'pdf') chapters = await parsePdfClean(file);
+            else if (ext === 'mobi' || ext === 'azw' || ext === 'azw3') chapters = await parseMobiAzwClean(file);
+            else chapters = splitPlainTextToChapters(await file.text());
+
+            if (!chapters.length) throw new Error('未能提取到有效文本内容。');
+
+            const now = Date.now();
+            const bookNodeId = 'book-' + now;
+            await LocalDB.put('nodes', { id: bookNodeId, parentId: targetFolderId, type: 'book', title: bookMetaTitle, orderIndex: getNextOrderIndex(targetFolderId), createdAt: now, expanded: true });
+
+            let firstChapId = null;
+            for (let i = 0; i < chapters.length; i++) {
+                const ch = chapters[i];
+                const chapId = `chap-${now}-${String(i + 1).padStart(4, '0')}`;
+                if (i === 0) firstChapId = chapId;
+                const cleanChapTitle = sanitizeText(ch.title) || `Chapter ${i + 1}`;
+
+                await LocalDB.put('nodes', { id: chapId, parentId: bookNodeId, type: 'chapter', title: `${i + 1}. ${cleanChapTitle}`, orderIndex: i + 1, createdAt: now });
+
+                const paras = ch.paragraphs.map(pText => ({
+                    isTranslated: false,
+                    tokens: pText.split(/\s+/).filter(Boolean).map(w => ({ text: w, gloss: "", tier: w.length > 6 ? "red" : "normal" })),
+                    translation: "（待翻译：点击顶部 [⚡ 词库秒配 + Ollama 续译未译段] 自动生成）"
+                }));
+
+                const artObj = {
+                    id: chapId, isUnparsed: true, category: `《${bookMetaTitle}》`,
+                    titleEn: cleanChapTitle, titleCn: `第 ${i + 1} 章 · ${cleanChapTitle}`,
+                    wordCount: ch.paragraphs.join(' ').split(/\s+/).filter(Boolean).length,
+                    paragraphs: paras, vocabulary: []
+                };
+                await autoAnnotateTokensWithLocalDict(artObj);
+                await LocalDB.put('articles', artObj);
+            }
+
+            await refreshDirectoryTree();
+            if (firstChapId) await openArticleById(firstChapId);
+            statusEl.textContent = `✅ 成功拆分 ${chapters.length} 章并完成本地词库预标注！`;
+            setTimeout(() => { closeImportModal(); statusEl.textContent = ''; input.value = ''; }, 900);
+        } catch (err) {
+            statusEl.style.color = '#dc2626'; statusEl.textContent = `❌ 解析失败：${err.message}`;
+        }
+    }
+
+    async function parseEpubClean(file) {
+        const zip = await JSZip.loadAsync(file);
+        const parser = new DOMParser();
+        const containerXml = await zip.file('META-INF/container.xml').async('string');
+        const opfPath = containerXml.match(/full-path="([^"]+)"/)[1];
+        const opfDir = opfPath.includes('/') ? opfPath.substring(0, opfPath.lastIndexOf('/') + 1) : '';
+        const opfDoc = parser.parseFromString(await zip.file(opfPath).async('string'), 'text/xml');
+        const titleNode = opfDoc.querySelector('metadata title, dc\\:title');
+        const bookTitle = titleNode ? sanitizeText(titleNode.textContent) : '';
+
+        const manifest = {}; let ncxHref = null;
+        opfDoc.querySelectorAll('manifest > item').forEach(item => {
+            const id = item.getAttribute('id'), href = decodeURIComponent(item.getAttribute('href') || '');
+            manifest[id] = opfDir + href;
+            if ((item.getAttribute('media-type') || '').includes('ncx') || href.endsWith('.ncx')) ncxHref = opfDir + href;
+        });
+
+        const tocTitleMap = {};
+        if (ncxHref && zip.file(ncxHref)) {
+            const ncxDoc = parser.parseFromString(await zip.file(ncxHref).async('string'), 'text/xml');
+            ncxDoc.querySelectorAll('navPoint').forEach(np => {
+                const label = sanitizeText(np.querySelector('navLabel > text')?.textContent);
+                const srcClean = decodeURIComponent((np.querySelector('content')?.getAttribute('src') || '').split('#')[0]);
+                if (label && srcClean) tocTitleMap[opfDir + srcClean] = label;
+            });
+        }
+
+        const chapters = [];
+        for (const ref of opfDoc.querySelectorAll('spine > itemref')) {
+            const href = manifest[ref.getAttribute('idref')];
+            if (!href || !zip.file(href)) continue;
+            const bytes = await zip.file(href).async('uint8array');
+            const doc = parser.parseFromString(new TextDecoder('utf-8').decode(bytes), 'text/html');
+            let chTitle = tocTitleMap[href] || sanitizeText(doc.querySelector('h1, h2, h3, .chapter-title, .title')?.textContent) || '';
+            const paras = Array.from(doc.querySelectorAll('p, div.para')).map(p => sanitizeText(p.textContent)).filter(t => t.length > 15 && /[a-zA-Z]{2,}/.test(t));
+            if (!paras.length) continue;
+            const totalWords = paras.join(' ').split(/\s+/).length;
+            if (totalWords > 2200) {
+                const chunkSize = 15;
+                for (let k = 0; k < paras.length; k += chunkSize) chapters.push({ title: chTitle ? `${chTitle} (Part ${Math.floor(k/chunkSize)+1})` : `Section ${chapters.length + 1}`, paragraphs: paras.slice(k, k + chunkSize) });
+            } else {
+                chapters.push({ title: chTitle || `Chapter ${chapters.length + 1}`, paragraphs: paras });
+            }
+        }
+        return { bookTitle, chapters };
+    }
+
+    async function parsePdfClean(file) {
+        const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+        const chapters = [];
+        for (let i = 1; i <= pdf.numPages; i += 3) {
+            let chunkParas = []; const endPage = Math.min(i + 2, pdf.numPages);
+            for (let p = i; p <= endPage; p++) {
+                const content = await (await pdf.getPage(p)).getTextContent();
+                const pageText = sanitizeText(content.items.map(item => item.str).join(' '));
+                if (pageText.length > 20) chunkParas.push(pageText);
+            }
+            if (chunkParas.length) chapters.push({ title: `Pages ${i} - ${endPage}`, paragraphs: chunkParas });
+        }
+        return chapters;
+    }
+
+    async function parseMobiAzwClean(file) {
+        const rawStr = new TextDecoder('utf-8', { fatal: false }).decode(new Uint8Array(await file.arrayBuffer()));
+        const htmlMatches = rawStr.match(/<p[^>]*>[\s\S]*?<\/p>/gi) || [];
+        const cleanParas = htmlMatches.map(h => sanitizeText(h.replace(/<[^>]+>/g, ' '))).filter(t => t.length > 25 && /[a-zA-Z]{3,}/.test(t));
+        const chapters = [];
+        for (let i = 0; i < cleanParas.length; i += 15) chapters.push({ title: `Chapter ${Math.floor(i / 15) + 1}`, paragraphs: cleanParas.slice(i, i + 15) });
+        return chapters;
+    }
+
+    function splitPlainTextToChapters(text) {
+        return text.split(/\n(?=(?:Chapter|CHAPTER)\s+\d+|^[IVXLC]+\.\s)/m).filter(c => c.trim().length > 40).map((b, i) => {
+            const lines = b.trim().split(/\n+/).map(l => sanitizeText(l)).filter(Boolean);
+            return { title: lines[0].slice(0, 60) || `Chapter ${i + 1}`, paragraphs: lines.slice(1).length ? lines.slice(1) : lines };
+        });
+    }
+
+    /* =========================================================================
+       六、 主阅读器视图与插件总线
+       ========================================================================= */
+    window.ReaderApp = {
+        currentArticle: null,
+        getCurrentArticle() { return this.currentArticle; },
+        speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const clean = text.replace(/[.,!?;:"'()—]/g, '').trim();
+            if (!clean) return;
+            const u = new SpeechSynthesisUtterance(clean);
+            u.lang = 'en-US'; u.rate = 0.92;
+            window.speechSynthesis.speak(u);
+        }
+    };
+
+    async function openArticleById(id) {
+        const art = await LocalDB.get('articles', id);
+        if (!art) return;
+        activeArticleId = id;
+        window.ReaderApp.currentArticle = art;
+        renderTreeDOM();
+        renderArticleView(art);
+    }
+
+    function speakParagraph(pIdx) {
+        const art = window.ReaderApp.currentArticle;
+        if (!art || !art.paragraphs[pIdx]) return;
+        window.ReaderApp.speak(art.paragraphs[pIdx].tokens.map(t => t.text).join(' '));
+        showToast(`🔊 正在朗读第 ${pIdx + 1} 段...`);
+    }
+
+    function copySinglePara(pIdx, includeTrans) {
+        const art = window.ReaderApp.currentArticle;
+        if (!art || !art.paragraphs[pIdx]) return;
+        const p = art.paragraphs[pIdx];
+        const enText = p.tokens.map(t => t.text).join(' ');
+        navigator.clipboard.writeText(includeTrans ? `${enText}\n${p.translation}` : enText).then(() => {
+            showToast(includeTrans ? `✅ 已复制第 ${pIdx + 1} 段双语！` : `✅ 已复制第 ${pIdx + 1} 段英文！`);
+        });
+    }
+
+    function renderArticleView(art) {
+        const totalParas = art.paragraphs.length;
+        const doneCount = art.paragraphs.filter(p => p.isTranslated).length;
+
+        const parasHtml = art.paragraphs.map((p, idx) => {
+            const rubies = p.tokens.map(t =>
+                `<ruby class="tier-${t.tier || 'normal'}" onclick="ReaderApp.speak('${t.text.replace(/'/g, "\\'")}')">${t.text}<rt>${t.gloss || ''}</rt></ruby>`
+            ).join(' ');
+            return `
+        <div class="para-block">
+          <div class="para-header-row">
+            <div class="para-index-tag">
+              第 ${idx + 1} / ${totalParas} 段
+              ${p.isTranslated ? '<span class="done-badge">✓ 已译（续译将自动跳过）</span>' : ''}
+            </div>
+          </div>
+          <p class="gloss-paragraph">${rubies}</p>
+          <div class="full-translation">
+            <span class="trans-text">${p.translation}</span>
+            <div class="para-copy-btns">
+              <button class="copy-chip" onclick="speakParagraph(${idx})">🔊 朗读</button>
+              <button class="copy-chip ai" ${isOllamaConnected ? '' : 'disabled style="opacity:0.5;"'} onclick="translateParagraphsFast([${idx}], true)">⚡ ${p.isTranslated ? '重译本段' : 'Ollama译本段'}</button>
+              <button class="copy-chip" onclick="copySinglePara(${idx}, false)">📋 复制英文</button>
+              <button class="copy-chip" onclick="copySinglePara(${idx}, true)">📋 双语</button>
+            </div>
+          </div>
+        </div>
+      `;
+        }).join('');
+
+        const vocabHtml = (art.vocabulary || []).map(v => {
+            const defsHtml = (v.defs || []).map(d => `<div><span class="pos-tag">${d.pos}</span> ${d.meaning}</div>`).join('');
+            return `
+        <div class="vocab-item" data-level="${v.level || 'core'}">
+          <div class="vocab-head" onclick="ReaderApp.speak('${v.word.replace(/'/g, "\\'")}')">
+            <span><span class="vocab-word">${v.word}</span> <span class="vocab-ipa">${v.ipa || ''}</span></span>
+            <span style="font-size:11px;opacity:0.5;">🔊</span>
+          </div>
+          <div class="vocab-def">${defsHtml}</div>
+        </div>
+      `;
+        }).join('');
+
+        document.getElementById('readerRoot').innerHTML = `
+      <header class="top-banner">
+        <div class="badge-box">精读</div>
+        <div class="banner-titles">
+          <h1>全格式电子书与极速 Ollama/ECDICT 精读引擎</h1>
+          <div class="chapter-info">${art.category || '默认书架'} · 翻译进度：${doneCount} / ${totalParas} 段</div>
+        </div>
+      </header>
+      <div class="meta-bar">
+        <span>本篇词数：${art.wordCount || '--'}词</span>
+        <span>DATE: _______________</span>
+      </div>
+      <div class="main-grid">
+        <main class="left-column">
+          <div class="article-header">
+            <div class="en-title">${art.titleEn}</div>
+            <div class="cn-title">${art.titleCn}</div>
+          </div>
+          ${parasHtml}
+        </main>
+        <aside class="right-column">
+          <div class="vocab-list">${vocabHtml || '<div style="color:var(--text-sub);font-size:13px;line-height:1.6;">尚未匹配到词条。<br>请先在 Setting 中导入 <code>ecdict_50k_ready.json</code>，即可 0 毫秒自动标出全篇音标与释义！</div>'}</div>
+        </aside>
+      </div>
+    `;
+    }
+
+    /* 插件系统与基础交互 */
+    window.ReaderFeaturePlugins = {
+        registry: new Map(), states: {},
+        register(pluginDef) {
+            if (!pluginDef || !pluginDef.id) return;
+            this.registry.set(pluginDef.id, pluginDef);
+            if (this.states[pluginDef.id] === undefined) this.states[pluginDef.id] = pluginDef.defaultEnabled !== false;
+            this.renderPluginUI();
+        },
+        async toggle(id, enabled) {
+            this.states[id] = enabled;
+            const saved = await LocalDB.get('plugins', id);
+            if (saved) { saved.enabled = enabled; await LocalDB.put('plugins', saved); }
+            this.renderPluginUI();
+        },
+        renderPluginUI() {
+            const toolbarSlot = document.getElementById('plugin-slot-toolbar');
+            const settingList = document.getElementById('featurePluginList');
+            toolbarSlot.innerHTML = ''; settingList.innerHTML = '';
+            this.registry.forEach((plg, id) => {
+                const isEnabled = !!this.states[id];
+                const card = document.createElement('div');
+                card.className = 'plugin-item-card';
+                card.innerHTML = `
+          <div><div style="font-size:13px;font-weight:700;color:#1e293b;">${plg.name}</div><div style="font-size:11px;color:#64748b;">${plg.description || ''}</div></div>
+          <label class="switch"><input type="checkbox" ${isEnabled ? 'checked' : ''} onchange="ReaderFeaturePlugins.toggle('${id}', this.checked)"><span class="slider"></span></label>
+        `;
+                settingList.appendChild(card);
+                if (isEnabled && typeof plg.renderToolbar === 'function') {
+                    const wrap = document.createElement('div');
+                    wrap.innerHTML = plg.renderToolbar(window.ReaderApp);
+                    toolbarSlot.appendChild(wrap);
+                    if (typeof plg.onMount === 'function') plg.onMount(wrap, window.ReaderApp);
+                }
+            });
+        }
+    };
+
+    window.ReaderThemePlugins = {
+        register(themeObj) {
+            if (!themeObj || !themeObj.id || !themeObj.cssVars) return;
+            const styleTag = document.getElementById('dynamic-theme-plugins-css');
+            const varsStr = Object.entries(themeObj.cssVars).map(([k, v]) => `${k}: ${v};`).join(' ');
+            if (!styleTag.textContent.includes(`body.${themeObj.id}`)) styleTag.textContent += `\nbody.${themeObj.id} { ${varsStr} }\n${themeObj.extraCss || ''}\n`;
+            const grid = document.getElementById('themeOptions');
+            if (!grid.querySelector(`[data-val="${themeObj.id}"]`)) {
+                const div = document.createElement('div');
+                div.className = 'radio-card'; div.setAttribute('data-val', themeObj.id);
+                div.onclick = () => applyTheme(themeObj.id, div);
+                div.innerHTML = `<span><span class="dot" style="background:${themeObj.dotColor || '#3b82f6'}"></span>${themeObj.name}</span><span>✓</span>`;
+                grid.appendChild(div);
+            }
+        }
+    };
+
+    async function loadExternalThemePlugin(input) {
+        const file = input.files[0]; if (!file) return;
+        const code = await file.text();
+        try { new Function(code)(); await LocalDB.put('plugins', { id: 'theme-' + Date.now(), kind: 'theme', code, enabled: true }); showToast('✅ 样式插件已加载！'); }
+        catch (e) { alert('样式插件错误：' + e.message); }
+    }
+
+    async function loadExternalFeaturePlugin(input) {
+        const file = input.files[0]; if (!file) return;
+        const code = await file.text();
+        try {
+            const orig = window.ReaderFeaturePlugins.register.bind(window.ReaderFeaturePlugins);
+            let cid = 'feat-' + Date.now();
+            window.ReaderFeaturePlugins.register = (def) => { cid = def.id || cid; orig(def); };
+            new Function(code)();
+            window.ReaderFeaturePlugins.register = orig;
+            await LocalDB.put('plugins', { id: cid, kind: 'feature', code, enabled: true });
+            showToast('✅ 功能插件已加载！');
+        } catch (e) { alert('功能插件错误：' + e.message); }
+    }
+
+    function toggleLeftDrawer(open) { closeAllDrawers(); if (open) { document.getElementById('leftDrawer').classList.add('open'); document.getElementById('globalBackdrop').classList.add('open'); } }
+    function toggleRightDrawer(open) { closeAllDrawers(); if (open) { document.getElementById('rightDrawer').classList.add('open'); document.getElementById('globalBackdrop').classList.add('open'); } }
+    function closeAllDrawers() { document.getElementById('leftDrawer').classList.remove('open'); document.getElementById('rightDrawer').classList.remove('open'); document.getElementById('globalBackdrop').classList.remove('open'); }
+    function applyTheme(id, el) { el.parentElement.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active')); el.classList.add('active'); document.body.className = document.body.className.replace(/theme-[\w-]+/g, '').trim() + ' ' + id; }
+    function applyView(id, el) { el.parentElement.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active')); el.classList.add('active'); document.body.className = document.body.className.replace(/view-[\w-]+/g, '').trim() + ' ' + id; }
+    function applyVocab(m, el) { el.parentElement.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active')); el.classList.add('active'); document.body.classList.toggle('vocab-core-only', m === 'core'); }
+    function scrollHorizontal(dir) { const c = document.getElementById('readerRoot'); c.scrollBy({ left: dir * (c.clientWidth * 0.85), behavior: 'smooth' }); }
+    document.getElementById('readerRoot').addEventListener('wheel', (e) => { if (document.body.classList.contains('view-horizontal') && Math.abs(e.deltaY) > Math.abs(e.deltaX)) { e.preventDefault(); e.currentTarget.scrollLeft += e.deltaY; } }, { passive: false });
+    function openImportModal() { populateFolderSelect(); document.getElementById('importModal').classList.add('open'); }
+    function closeImportModal() { document.getElementById('importModal').classList.remove('open'); }
+    function switchModalTab(idx, btn) { document.querySelectorAll('.m-tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active')); btn.classList.add('active'); document.getElementById(`mpanel-${idx}`).classList.add('active'); }
+
+    /* 初始化启动 */
+    (async function bootstrap() {
+        await LocalDB.init();
+        loadMysqlConfig();
+        const savedCfg = JSON.parse(localStorage.getItem('ollama_cfg_v9') || '{"url":"http://localhost:11434"}');
+        if (savedCfg.url) document.getElementById('ollamaUrlInput').value = savedCfg.url;
+
+        await ensureMemoryDictLoaded();
+        fetchOllamaModels(true);
+
+        window.ReaderFeaturePlugins.register({
+            id: 'builtin-quiz-mask', name: '自测遮罩模式开关', description: '隐藏中文释义与译文，鼠标悬停偷看自测', defaultEnabled: true,
+            renderToolbar() { return `<button class="icon-btn" id="btn-quiz-mask">👁️ 自测遮罩：关</button>`; },
+            onMount(el) { el.querySelector('#btn-quiz-mask').onclick = (e) => { const on = document.body.classList.toggle('quiz-mode'); e.target.textContent = on ? '👁️ 自测遮罩：开' : '👁️ 自测遮罩：关'; }; }
+        });
+
+        window.ReaderFeaturePlugins.register({
+            id: 'builtin-copy-chapter', name: '整章一键复制按钮', description: '一键复制当前章节英文原文发给云端 AI', defaultEnabled: true,
+            renderToolbar() { return `<button class="icon-btn" id="btn-copy-chap">📋 复制本章给 AI</button>`; },
+            onMount(el, app) {
+                el.querySelector('#btn-copy-chap').onclick = () => {
+                    const art = app.getCurrentArticle(); if (!art) return;
+                    const txt = art.titleEn + '\n\n' + art.paragraphs.map(p => p.tokens.map(t => t.text).join(' ')).join('\n\n');
+                    navigator.clipboard.writeText(txt).then(() => showToast('✅ 已复制本章英文原文！'));
+                };
+            }
+        });
+
+        for (const plg of await LocalDB.getAll('plugins')) {
+            try {
+                if (plg.kind === 'theme') new Function(plg.code)();
+                else if (plg.kind === 'feature') { window.ReaderFeaturePlugins.states[plg.id] = plg.enabled; new Function(plg.code)(); }
+            } catch (e) {}
+        }
+
+        let nodes = await LocalDB.getAll('nodes');
+        if (nodes.length === 0) {
+            const demoBookId = 'demo-book-lp', demoChapId = 'demo-chap-lp-1', now = Date.now();
+            await LocalDB.put('nodes', { id: demoBookId, parentId: null, type: 'book', title: 'The Little Prince (小王子)', orderIndex: 1, createdAt: now, expanded: true });
+            await LocalDB.put('nodes', { id: demoChapId, parentId: demoBookId, type: 'chapter', title: '1. Chapter 1 (蟒蛇吞象的画)', orderIndex: 1, createdAt: now });
+            const demoArt = {
+                id: demoChapId, category: '世界名著精读 · 《小王子》', titleEn: 'The Little Prince — Chapter 1', titleCn: '小王子 · 第一章（蟒蛇吞象的画）', wordCount: 54,
+                paragraphs: [{
+                    isTranslated: true,
+                    tokens: [
+                        { text: "Once", gloss: "曾经", tier: "normal" }, { text: "when", gloss: "当……时", tier: "func" }, { text: "I", gloss: "我", tier: "func" },
+                        { text: "was", gloss: "是", tier: "func" }, { text: "six", gloss: "六", tier: "normal" }, { text: "years", gloss: "岁", tier: "normal" },
+                        { text: "old", gloss: "……大的", tier: "normal" }, { text: "I", gloss: "我", tier: "func" }, { text: "saw", gloss: "看见", tier: "normal" },
+                        { text: "a", gloss: "一幅", tier: "func" }, { text: "magnificent", gloss: "壮丽的，宏伟的", tier: "red" }, { text: "picture", gloss: "图画", tier: "normal" },
+                        { text: "in", gloss: "在……里", tier: "func" }, { text: "a", gloss: "一本", tier: "func" }, { text: "book", gloss: "书", tier: "normal" },
+                        { text: "about", gloss: "关于", tier: "func" }, { text: "the", gloss: "这片", tier: "func" }, { text: "primeval forest.", gloss: "原始森林", tier: "red", isPhrase: true }
+                    ],
+                    translation: "当我六岁的时候，在一本描写原始森林的书里，看见了一幅壮丽的图画。"
+                }],
+                vocabulary: [
+                    { word: "magnificent", ipa: "[mæɡ'nɪfɪsnt]", level: "core", defs: [{ pos: "adj.", meaning: "壮丽的，宏伟的，极好的" }] },
+                    { word: "primeval", ipa: "[praɪ'miːvl]", level: "core", defs: [{ pos: "adj.", meaning: "原始的，远古的，太古的" }] }
+                ]
+            };
+            await LocalDB.put('articles', demoArt);
+        }
+
+        await refreshDirectoryTree();
+        const firstReadable = allNodes.sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0)).find(n => n.type === 'chapter' || n.type === 'article');
+        if (firstReadable) await openArticleById(firstReadable.id);
+    })();
+</script>
+</body>
+</html>

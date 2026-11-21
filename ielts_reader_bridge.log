@@ -1,0 +1,1001 @@
+2026-11-17 12:13:44 | INFO     | 2mysql_bridge_server.py:1266 | <module> | 🚀 MySQL 桥接服务启动，监听 127.0.0.1:8080
+2026-11-17 12:13:44 | DEBUG    | 2mysql_bridge_server.py:415 | init_business_tables | 业务表初始化/检查完成（库 ecdict），本次进程内后续请求跳过
+2026-11-17 12:13:47 | INFO     | 2mysql_bridge_server.py:1260 | _warmup | ✅ 启动预热完成：词库 3397227 词，池内空闲 1 条
+2026-11-17 12:13:50 | INFO     | 2mysql_bridge_server.py:483 | get_stardict_meta | [meta] 库 ecdict stardict 列=['bnc', 'collins', 'definition', 'exchange', 'frq', 'oxford', 'phonetic', 'pos', 'tag', 'translation', 'word']，lemma索引表=True
+2026-11-17 12:13:50 | ERROR    | 2mysql_bridge_server.py:1107 | analyze_paragraph | [/api/dict/analyze_paragraph] 处理异常
+Traceback (most recent call last):
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 1020, in analyze_paragraph
+    resolved = resolve_lemmas(
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 546, in resolve_lemmas
+    cur.execute(
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\cursors.py", line 170, in execute
+    result = self._query(query)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\cursors.py", line 335, in _query
+    conn.query(q)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 591, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 867, in _read_query_result
+    result.read()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 1300, in read
+    first_packet = self.connection._read_packet()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 820, in _read_packet
+    packet.raise_for_error()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1")
+2026-11-17 12:14:00 | ERROR    | 2mysql_bridge_server.py:1107 | analyze_paragraph | [/api/dict/analyze_paragraph] 处理异常
+Traceback (most recent call last):
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 1020, in analyze_paragraph
+    resolved = resolve_lemmas(
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 546, in resolve_lemmas
+    cur.execute(
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\cursors.py", line 170, in execute
+    result = self._query(query)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\cursors.py", line 335, in _query
+    conn.query(q)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 591, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 867, in _read_query_result
+    result.read()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 1300, in read
+    first_packet = self.connection._read_packet()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\connections.py", line 820, in _read_packet
+    packet.raise_for_error()
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\Software\python3.10.9\lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.ProgrammingError: (1064, "You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1")
+2026-11-17 12:14:17 | INFO     | 2mysql_bridge_server.py:1264 | <module> | 🚀 MySQL 桥接服务启动，监听 127.0.0.1:8080
+2026-11-17 12:14:17 | DEBUG    | 2mysql_bridge_server.py:415 | init_business_tables | 业务表初始化/检查完成（库 ecdict），本次进程内后续请求跳过
+2026-11-17 12:14:20 | INFO     | 2mysql_bridge_server.py:1258 | _warmup | ✅ 启动预热完成：词库 3397227 词，池内空闲 1 条
+2026-11-17 12:14:20 | INFO     | 2mysql_bridge_server.py:483 | get_stardict_meta | [meta] 库 ecdict stardict 列=['bnc', 'collins', 'definition', 'exchange', 'frq', 'oxford', 'phonetic', 'pos', 'tag', 'translation', 'word']，lemma索引表=True
+2026-11-17 12:14:20 | INFO     | 2mysql_bridge_server.py:1091 | analyze_paragraph | [/api/dict/analyze_paragraph] 文本 215 字，候选 19，返回难点 15，翻译=OK
+2026-11-17 12:19:26 | INFO     | 2mysql_bridge_server.py:1265 | <module> | 🚀 MySQL 桥接服务启动，监听 127.0.0.1:8080
+2026-11-17 12:19:27 | DEBUG    | 2mysql_bridge_server.py:415 | init_business_tables | 业务表初始化/检查完成（库 ecdict），本次进程内后续请求跳过
+2026-11-17 12:19:29 | INFO     | 2mysql_bridge_server.py:1259 | _warmup | ✅ 启动预热完成：词库 3397227 词，池内空闲 1 条
+2026-11-17 12:19:32 | INFO     | 2mysql_bridge_server.py:483 | get_stardict_meta | [meta] 库 ecdict stardict 列=['bnc', 'collins', 'definition', 'exchange', 'frq', 'oxford', 'phonetic', 'pos', 'tag', 'translation', 'word']，lemma索引表=True
+2026-11-17 12:19:32 | INFO     | 2mysql_bridge_server.py:1092 | analyze_paragraph | [/api/dict/analyze_paragraph] 文本 215 字，候选 19，返回难点 15，翻译=OK
+2026-11-17 12:20:19 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:20:19 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1115 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1123 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=fld-srs-2026-11-17
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=fld-srs-2026-11-17 保存成功
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 221
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-clothes
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-clothes 保存成功
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-clothes
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-clothes 保存成功
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 221
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-shopping
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-shopping 保存成功
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1217 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1224 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-shopping
+2026-11-17 12:21:35 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-shopping 保存成功
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-because
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-because 保存成功
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-because
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-because 保存成功
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-assignment
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-assignment 保存成功
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-assignment
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-assignment 保存成功
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 221
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1134 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 12:21:36 | INFO     | 2mysql_bridge_server.py:1144 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791835830
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791835830 保存成功
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791256777
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791256777 保存成功
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791835830
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791835830 保存成功
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791835830
+2026-11-17 12:21:45 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791835830 保存成功
+2026-11-17 12:21:48 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791256777
+2026-11-17 12:21:48 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791256777 保存成功
+2026-11-17 12:21:50 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=fld-dict-archive
+2026-11-17 12:21:50 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=fld-dict-archive 保存成功
+2026-11-17 12:21:51 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=book-1794791256777
+2026-11-17 12:21:51 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=book-1794791256777 保存成功
+2026-11-17 12:21:53 | INFO     | 2mysql_bridge_server.py:1217 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0017
+2026-11-17 12:21:54 | INFO     | 2mysql_bridge_server.py:1224 | get_article | [/api/articles/get] id=chap-1794791256777-0017，存在=True
+2026-11-17 12:22:14 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:14 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:14 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] exciting 命中 4 本词典
+2026-11-17 12:22:21 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:22 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:22 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonyms 命中 2 本词典
+2026-11-17 12:22:25 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:26 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:26 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonym 命中 4 本词典
+2026-11-17 12:22:26 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 221
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=dict-word-synonym
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=dict-word-synonym 保存成功
+2026-11-17 12:22:27 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonym 命中 4 本词典
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonym 命中 4 本词典
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=dict-word-synonym
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=dict-word-synonym 保存成功
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:28 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=dict-word-synonym
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=dict-word-synonym 保存成功
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=dict-word-synonym
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=dict-word-synonym 保存成功
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=dict-word-synonym
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=dict-word-synonym 保存成功
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=dict-word-synonym
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=dict-word-synonym 保存成功
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonym 命中 4 本词典
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:29 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:33 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:22:35 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=dict-word-synonym
+2026-11-17 12:22:35 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=dict-word-synonym 保存成功
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=dict-word-synonym
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=dict-word-synonym 保存成功
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] synonym 命中 4 本词典
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:22:37 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:23:04 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:23:04 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:23:05 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] opportunity 命中 4 本词典
+2026-11-17 12:23:10 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:23:10 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:23:10 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] conference 命中 4 本词典
+2026-11-17 12:23:18 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:23:21 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:23:21 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] delegates 命中 2 本词典
+2026-11-17 12:23:51 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:23:51 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:23:51 | INFO     | 2mysql_bridge_server.py:735 | dict_multi | [/api/dict/multi] delegate 命中 4 本词典
+2026-11-17 12:23:51 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:23:51 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 222
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1176 | save_node | [/api/nodes/save] 保存节点 id=dict-word-delegate
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1185 | save_node | [/api/nodes/save] 节点 id=dict-word-delegate 保存成功
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1236 | save_article | [/api/articles/save] 保存文章 id=dict-word-delegate
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1242 | save_article | [/api/articles/save] 文章 id=dict-word-delegate 保存成功
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1155 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:23:52 | INFO     | 2mysql_bridge_server.py:1164 | list_nodes | [/api/nodes/list] 返回节点数: 223
+2026-11-17 12:28:50 | INFO     | 2mysql_bridge_server.py:1324 | <module> | 🚀 MySQL 桥接服务启动，监听 127.0.0.1:8080
+2026-11-17 12:28:50 | DEBUG    | 2mysql_bridge_server.py:415 | init_business_tables | 业务表初始化/检查完成（库 ecdict），本次进程内后续请求跳过
+2026-11-17 12:28:53 | INFO     | 2mysql_bridge_server.py:1318 | _warmup | ✅ 启动预热完成：词库 3397227 词，池内空闲 1 条
+2026-11-17 12:28:53 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] delegates 命中 2 本词典，别名自动解析 2 本
+2026-11-17 12:28:53 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] happier 命中 2 本词典，别名自动解析 2 本
+2026-11-17 12:29:47 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:29:47 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:33:57 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 223
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 223
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 12:34:01 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 12:34:05 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0006
+2026-11-17 12:34:05 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0006，存在=True
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 223
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:483 | get_stardict_meta | [meta] 库 ecdict stardict 列=['bnc', 'collins', 'definition', 'exchange', 'frq', 'oxford', 'phonetic', 'pos', 'tag', 'translation', 'word']，lemma索引表=True
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-carefully
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-carefully 保存成功
+2026-11-17 12:34:09 | ERROR    | 2mysql_bridge_server.py:803 | dict_multi | [/api/dict/multi] 处理异常
+Traceback (most recent call last):
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 784, in dict_multi
+    out = _follow_alias(conn, it, word)
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 756, in _follow_alias
+    nxt = next((r["redirect_to"] for r in rows if r["isRedirect"] and r["redirect_to"]), None)
+  File "F:\EnglishReaderDataDict\2mysql_bridge_server.py", line 756, in <genexpr>
+    nxt = next((r["redirect_to"] for r in rows if r["isRedirect"] and r["redirect_to"]), None)
+KeyError: 'redirect_to'
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-carefully
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-carefully 保存成功
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 224
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 224
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-opinion
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-opinion 保存成功
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] opinion 命中 4 本词典，别名自动解析 0 本
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-opinion
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-opinion 保存成功
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:34:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:34:42 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:34:42 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:34:42 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] attitudes 命中 2 本词典，别名自动解析 2 本
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-carefully
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-carefully 保存成功
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-opinion
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-opinion 保存成功
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-opinion
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-opinion 保存成功
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 12:38:27 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 12:38:28 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 12:38:28 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 12:38:56 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0001
+2026-11-17 12:38:56 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0001，存在=True
+2026-11-17 12:39:06 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0032
+2026-11-17 12:39:06 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0032，存在=True
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 0，原形回退命中 0，未命中 1
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-technology_
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-technology_ 保存成功
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] technology' 命中 0 本词典，别名自动解析 0 本
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-technology_
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-technology_ 保存成功
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:39:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 226
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1255 | delete_nodes | [/api/nodes/delete] 删除节点/文章 ids=['srs-2026-11-17-technology_']
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1264 | delete_nodes | [/api/nodes/delete] 删除完成，ids=['srs-2026-11-17-technology_']
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] technology 命中 4 本词典，别名自动解析 0 本
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:39:13 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 225
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-partner
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-partner 保存成功
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] partner 命中 4 本词典，别名自动解析 0 本
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-partner
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-partner 保存成功
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:40:02 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 226
+2026-11-17 12:46:57 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 226
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 226
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 12:47:01 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 12:47:03 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0010
+2026-11-17 12:47:03 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0010，存在=True
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 226
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=srs-2026-11-17-though
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=srs-2026-11-17-though 保存成功
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] though 命中 4 本词典，别名自动解析 0 本
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=srs-2026-11-17-though
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=srs-2026-11-17-though 保存成功
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 12:47:08 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 13:28:17 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 13:28:19 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 13:28:20 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 14:31:49 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 227
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 14:32:05 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 14:32:06 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 14:32:06 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 14:33:26 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 14:33:26 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 14:33:26 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:33:26 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 228
+2026-11-17 14:33:28 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794689556544
+2026-11-17 14:33:28 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794689556544 保存成功
+2026-11-17 14:33:29 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-srs-root
+2026-11-17 14:33:29 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-srs-root 保存成功
+2026-11-17 14:33:30 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 14:33:30 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794897228116-0001
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794897228116-0001 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1819
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1555，原形回退命中 0，未命中 264
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794897228116-0001
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794897228116-0001 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794897228116-0002
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794897228116-0002 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 470
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 431，原形回退命中 0，未命中 39
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794897228116-0002
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794897228116-0002 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794897228116-0003
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794897228116-0003 保存成功
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 360
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 329，原形回退命中 0，未命中 31
+2026-11-17 14:33:48 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794897228116-0003
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794897228116-0003 保存成功
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794897228116-0004
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794897228116-0004 保存成功
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 43
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 38，原形回退命中 0，未命中 5
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794897228116-0004
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794897228116-0004 保存成功
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794897228116-0001
+2026-11-17 14:33:49 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794897228116-0001，存在=True
+2026-11-17 14:34:50 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 14:34:50 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 14:34:57 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 14:35:00 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 14:35:00 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 14:35:01 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 14:35:01 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 14:35:02 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 14:35:02 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 14:35:02 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794897228116-0001
+2026-11-17 14:35:02 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794897228116-0001，存在=True
+2026-11-17 14:35:05 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794897228116-0002
+2026-11-17 14:35:05 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794897228116-0002，存在=True
+2026-11-17 14:35:17 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794897228116-0003
+2026-11-17 14:35:17 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794897228116-0003，存在=True
+2026-11-17 17:21:28 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:21:32 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:22:04 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 17:22:04 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 17:22:05 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 17:22:05 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 17:22:06 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 17:22:06 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 17:22:08 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=fld-1794897206409
+2026-11-17 17:22:08 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=fld-1794897206409 保存成功
+2026-11-17 17:22:09 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:09 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:10 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:10 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:10 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:10 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:12 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:12 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:12 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:12 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:13 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:13 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:14 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794897228116-0001
+2026-11-17 17:22:14 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794897228116-0001，存在=True
+2026-11-17 17:22:17 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794897228116
+2026-11-17 17:22:17 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794897228116 保存成功
+2026-11-17 17:22:19 | INFO     | 2mysql_bridge_server.py:1255 | delete_nodes | [/api/nodes/delete] 删除节点/文章 ids=['book-1794897228116', 'chap-1794897228116-0001', 'chap-1794897228116-0002', 'chap-1794897228116-0003', 'chap-1794897228116-0004']
+2026-11-17 17:22:19 | INFO     | 2mysql_bridge_server.py:1264 | delete_nodes | [/api/nodes/delete] 删除完成，ids=['book-1794897228116', 'chap-1794897228116-0001', 'chap-1794897228116-0002', 'chap-1794897228116-0003', 'chap-1794897228116-0004']
+2026-11-17 17:22:19 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:22:19 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 228
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 228
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 228
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:22:24 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794907354273
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794907354273 保存成功
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907354273-0001
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907354273-0001 保存成功
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1819
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1555，原形回退命中 0，未命中 264
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907354273-0001
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907354273-0001 保存成功
+2026-11-17 17:22:34 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907354273-0002
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907354273-0002 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 470
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 431，原形回退命中 0，未命中 39
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907354273-0002
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907354273-0002 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907354273-0003
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907354273-0003 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 360
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 329，原形回退命中 0，未命中 31
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907354273-0003
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907354273-0003 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907354273-0004
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907354273-0004 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 43
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 38，原形回退命中 0，未命中 5
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907354273-0004
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907354273-0004 保存成功
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907354273-0001
+2026-11-17 17:22:35 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907354273-0001，存在=True
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 233
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794689575606-0001
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794689575606-0001，存在=True
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:23:25 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:23:32 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794907354273
+2026-11-17 17:23:32 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794907354273 保存成功
+2026-11-17 17:23:35 | INFO     | 2mysql_bridge_server.py:1255 | delete_nodes | [/api/nodes/delete] 删除节点/文章 ids=['book-1794907354273', 'chap-1794907354273-0001', 'chap-1794907354273-0002', 'chap-1794907354273-0003', 'chap-1794907354273-0004']
+2026-11-17 17:23:35 | INFO     | 2mysql_bridge_server.py:1264 | delete_nodes | [/api/nodes/delete] 删除完成，ids=['book-1794907354273', 'chap-1794907354273-0001', 'chap-1794907354273-0002', 'chap-1794907354273-0003', 'chap-1794907354273-0004']
+2026-11-17 17:23:35 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:23:35 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 228
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=book-1794907423663
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=book-1794907423663 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0001
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0001 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 369
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 327，原形回退命中 0，未命中 42
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0001
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0001 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0002
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0002 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 33
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 32，原形回退命中 0，未命中 1
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0002
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0002 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0003
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0003 保存成功
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 501
+2026-11-17 17:23:43 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 437，原形回退命中 0，未命中 64
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0003
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0003 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0004
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0004 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 470
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 416，原形回退命中 0，未命中 54
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0004
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0004 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0005
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0005 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 442
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 389，原形回退命中 0，未命中 53
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0005
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0005 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0006
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0006 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 480
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 429，原形回退命中 0，未命中 51
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0006
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0006 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0007
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0007 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 470
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 431，原形回退命中 0，未命中 39
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0007
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0007 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0008
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0008 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 315
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 288，原形回退命中 0，未命中 27
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0008
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0008 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0009
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0009 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 71
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 66，原形回退命中 0，未命中 5
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0009
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0009 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1235 | save_node | [/api/nodes/save] 保存节点 id=chap-1794907423663-0010
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1244 | save_node | [/api/nodes/save] 节点 id=chap-1794907423663-0010 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 43
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 38，原形回退命中 0，未命中 5
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1295 | save_article | [/api/articles/save] 保存文章 id=chap-1794907423663-0010
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1301 | save_article | [/api/articles/save] 文章 id=chap-1794907423663-0010 保存成功
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0001
+2026-11-17 17:23:44 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0001，存在=True
+2026-11-17 17:23:49 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0001
+2026-11-17 17:23:49 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0001，存在=True
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:26:57 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:27:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0001
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0001，存在=True
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:13 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0001
+2026-11-17 17:27:13 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0001，存在=True
+2026-11-17 17:27:13 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:13 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:18 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:18 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0005
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0005，存在=True
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0005
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0005，存在=True
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:22 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0006
+2026-11-17 17:27:22 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0006，存在=True
+2026-11-17 17:27:22 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:22 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:25 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:25 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:31 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:31 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:35 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:35 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:36 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:36 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:39 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:39 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:27:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:27:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:31:23 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:31:23 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:31:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:31:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:31:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:31:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:31:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:31:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:31:33 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:31:33 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:32:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:32:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:32:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:32:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:32:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:32:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:32:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:32:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:32:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:32:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:33:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:33:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:39 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:39 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:39 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:39 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:45 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:45 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:51 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:51 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:34:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:34:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:18 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:18 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:35:33 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:35:33 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:39:29 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:39:29 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:39:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:39:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:39:39 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794791256777-0006
+2026-11-17 17:39:42 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794791256777-0006，存在=True
+2026-11-17 17:39:43 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:39:43 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:40:04 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-17 17:40:04 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-17 17:40:04 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] lingo 命中 4 本词典，别名自动解析 0 本
+2026-11-17 17:40:43 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:43 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:45 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:45 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:49 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:49 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:50 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:50 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:51 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:51 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:40:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:40:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:08 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:08 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:18 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:18 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:22 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0001
+2026-11-17 17:41:22 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0001，存在=True
+2026-11-17 17:41:23 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:23 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:33 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:33 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:36 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:36 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:39 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:39 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:45 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:45 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:51 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:51 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:41:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:41:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:07 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0002
+2026-11-17 17:42:07 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0002，存在=True
+2026-11-17 17:42:07 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:07 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:29 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:29 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:33 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:33 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:36 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:36 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:39 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:39 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:42 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:42 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:45 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:45 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:51 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:51 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:42:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:42:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:43:00 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:43:00 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:43:03 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:43:03 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:43:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:43:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:44:46 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:44:46 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:44:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:44:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:45:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:45:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:47:59 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:48:02 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0002
+2026-11-17 17:52:20 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0002，存在=True
+2026-11-17 17:52:21 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-17 17:52:21 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-17 17:52:26 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:26 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:26 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:26 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:28 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:28 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:29 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:29 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:29 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:29 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:32 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:32 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:32 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:32 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:35 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:35 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:38 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:38 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:41 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:41 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:44 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:44 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:47 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:47 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:48 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0003
+2026-11-17 17:52:48 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0003，存在=True
+2026-11-17 17:52:48 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:48 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:50 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:50 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:54 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:54 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:57 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:57 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:52:59 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:52:59 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:02 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:02 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:08 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:08 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:11 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:11 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:14 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:14 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:17 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:17 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:23 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:23 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:26 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:26 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:29 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:29 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:32 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:32 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:35 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:35 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:38 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:38 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:41 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:41 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:44 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:44 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:47 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:47 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:50 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:50 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:53 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:53 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:56 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:56 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:53:59 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:53:59 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:54:14 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:54:14 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:54:17 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:54:17 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:54:20 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:54:20 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:54:23 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:54:23 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-17 17:56:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-17 17:56:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 12:36:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 12:36:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 12:37:46 | INFO     | 2mysql_bridge_server.py:591 | lookup_words | [/api/dict/lookup] 查询词条数量: 1
+2026-11-18 12:37:46 | INFO     | 2mysql_bridge_server.py:617 | lookup_words | [/api/dict/lookup] 直接命中 1，原形回退命中 0，未命中 0
+2026-11-18 12:37:46 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] tailored 命中 4 本词典，别名自动解析 1 本
+2026-11-18 13:43:32 | INFO     | 2mysql_bridge_server.py:791 | dict_multi | [/api/dict/multi] tailored 命中 4 本词典，别名自动解析 1 本
+2026-11-18 13:45:00 | INFO     | 2mysql_bridge_server.py:428 | ping_db | [/api/ping] 请求进来（使用服务端 DB 配置）
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:433 | ping_db | [/api/ping] 成功，词库总数: 3397227
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1174 | get_settings | [/api/settings/get] 获取配置
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1182 | get_settings | [/api/settings/get] 读取到配置项数量: 1
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:04 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1276 | get_article | [/api/articles/get] 获取文章 id=chap-1794907423663-0003
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1283 | get_article | [/api/articles/get] id=chap-1794907423663-0003，存在=True
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1193 | save_settings | [/api/settings/save] 保存配置 key=user_prefs
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1203 | save_settings | [/api/settings/save] key=user_prefs 保存成功
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:05 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:06 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:06 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:09 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:09 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:12 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:12 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:15 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:15 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:18 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:18 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:19 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:19 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:21 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:21 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:24 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:24 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:27 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:27 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:30 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:30 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:33 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:33 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
+2026-11-18 13:45:36 | INFO     | 2mysql_bridge_server.py:1214 | list_nodes | [/api/nodes/list] 查询目录节点
+2026-11-18 13:45:36 | INFO     | 2mysql_bridge_server.py:1223 | list_nodes | [/api/nodes/list] 返回节点数: 239
