@@ -437,6 +437,11 @@
         ruby.tier-func { color: var(--func-color); padding: 0 2px; }
         rt { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 11px; color: var(--rt-color); font-weight: 500; line-height: 1.15; padding-top: 3px; user-select: none; white-space: nowrap; position: relative; z-index: 1; }
 
+        /* 双击/划词选中的紧凑高亮（替代浏览器原生大块选区）：
+           原生 selection 背景高度=整行行盒(≈45px)，会遮挡上下行的行间释义；
+           JS 取词后清原生选区并给 ruby 加本 class，高度与正常词块完全一致 */
+        ruby.word-selected { background-color: #2563eb !important; color: #ffffff !important; }
+
         body.vocab-core-only ruby.tier-func rt { display: none; }
         body.quiz-mode rt { opacity: 0; }
         body.quiz-mode ruby:hover rt { opacity: 1; color: #ef4444; font-weight: 700; }
@@ -2453,6 +2458,25 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     /** 打开右侧查词面板（兼容旧调用） */
     function openWordLookup(rawWord) { return navigateWlp('word', rawWord); }
 
+    /* ---------- 紧凑选中高亮：替代浏览器原生大块选区 ----------
+       原生 selection 背景高度 = 整个文本行盒(line-height 2.65 ≈ 45px)，CSS 无法缩小
+       (::selection 只能改颜色)，会向上盖住上一行释义、向下盖住本词释义。
+       方案：取词完成后清掉原生选区，给选中的 ruby 加 .word-selected 紧凑蓝块
+       (高度与正常词块一致)。 */
+    function clearSelectedWordMark() {
+        document.querySelectorAll('ruby.word-selected').forEach(el => el.classList.remove('word-selected'));
+    }
+    function markWordsInSelection(sel) {
+        clearSelectedWordMark();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return;
+        const range = sel.getRangeAt(0);
+        const view = document.querySelector('.reading-view');
+        if (!view) return;
+        view.querySelectorAll('ruby').forEach(rb => {
+            if (range.intersectsNode(rb)) rb.classList.add('word-selected');
+        });
+    }
+
     /** 在正文里划词/双击时浮出查词按钮 */
     function initSelectionLookup() {
         if (window._lookupBound) return;
@@ -2472,23 +2496,37 @@ img{max-width:100%;height:auto;vertical-align:middle;}
 
             const rect = sel.getRangeAt(0).getBoundingClientRect();
             showLookupChip(rect.left + rect.width / 2 - 60, rect.bottom + 6, text, para ? 'paragraph' : 'word');
+            // 原生大块选区太高会遮挡上下行释义：换紧凑高亮并清掉原生选区(文本已捕获到 chip)
+            markWordsInSelection(sel);
+            sel.removeAllRanges();
         });
 
         document.addEventListener('dblclick', (e) => {
             if (!e.target.closest || !e.target.closest('.reading-view')) return;
             if (e.target.closest('#wordLookupPanel') || e.target.closest('#lookupChip')) return;
             const w = pickSelectionOrWord(e, document);
-            if (w) { hideLookupChip(); navigateWlp('word', w); }
+            if (w) {
+                hideLookupChip(); navigateWlp('word', w);
+                // 紧凑高亮：双击第二次 mouseup 已清掉原生选区(它先于 dblclick 触发)，
+                // 所以这里不依赖选区，直接标记双击目标所在的 ruby
+                clearSelectedWordMark();
+                const rb = e.target.closest ? e.target.closest('ruby') : null;
+                if (rb) rb.classList.add('word-selected');
+                const s = window.getSelection();
+                if (s) s.removeAllRanges();
+            }
         });
 
         document.addEventListener('mousedown', (e) => {
             if (e.target && (e.target.id === 'lookupChip' || e.target.closest('#lookupChip'))) return;
             hideLookupChip();
+            if (!e.target.closest || !e.target.closest('ruby.word-selected')) clearSelectedWordMark();
         });
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 hideLookupChip();
+                clearSelectedWordMark();
                 const p = document.getElementById('wordLookupPanel');
                 if (p) p.classList.remove('open');
             }
