@@ -4330,6 +4330,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         },
         /** 探活：30 秒内复用结果，避免每次点喇叭都打一次 /health */
         _probeCache: { at: 0, res: null },
+        _lastOkState: null,   // ⭐ 上一次探活结果：服务恢复/再次掉线时给用户明确提示，避免"音源自己乱切"的困惑
         async probe(force) {
             const now = Date.now();
             if (!force && this._probeCache.res && now - this._probeCache.at < 30000) return this._probeCache.res;
@@ -4341,6 +4342,12 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             } catch (e) {
                 res = { ok: false, error: String((e && e.message) || e) };
             }
+            // 状态转换提示：恢复(kokoro 上线) / 掉线(kokoro 下线) 各提示一次，不刷屏
+            if (this._lastOkState !== null && res.ok !== this._lastOkState) {
+                if (res.ok) showToast('🎙️ 本地发音服务已恢复，句子朗读回到 Kokoro 离线真人音', 3200);
+                else showToast('ℹ️ 本地发音服务失联，句子朗读临时改用在线音（服务恢复后会自动切回）', 3200);
+            }
+            this._lastOkState = res.ok;
             this._probeCache = { at: now, res: res };
             return res;
         },
@@ -4365,7 +4372,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             const speed = isWord ? 1 : this._kokoroSpeed();
             const rate = isWord ? this._userRate() : this._kokoroPlaybackRate();
             this._playChunks(chunks, c => this._kokoroUrl(c, lang, speed), rate, token, btn,
-                rest => onBail(rest || text), 6000);
+                rest => onBail(rest || text), 15000);
         },
         _userRate() {
             return Math.min(2, Math.max(0.25, parseFloat((window.ReaderApp && ReaderApp.speechRate) || 1) || 1));
