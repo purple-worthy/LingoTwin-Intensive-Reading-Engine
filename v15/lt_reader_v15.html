@@ -327,6 +327,55 @@
         .hero-defs { margin-top: 10px; }
         .dict-history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
 
+        /* 中文词条卡片 */
+        .zh-defs ol { list-style: none; padding: 0; margin: 10px 0 0; }
+        .zh-def {
+            display: flex; gap: 10px; align-items: baseline;
+            font-size: 14px; line-height: 1.75; color: #1e293b;
+            padding: 4px 0; border-bottom: 1px dashed #eef2f7;
+        }
+        .zh-def:last-child { border-bottom: 0; }
+        .zh-def b { flex: 0 0 16px; color: #0f766e; font-size: 11.5px; }
+        .zh-tip { margin-top: 12px; font-size: 11px; color: #94a3b8; }
+
+        /* 例句行：句子 + 朗读喇叭 */
+        .ex-row { display: flex; gap: 9px; align-items: flex-start; padding: 2px 0; }
+        .ex-row .ex-body { flex: 1; min-width: 0; }
+        .ex-spk { flex: 0 0 auto; opacity: .55; }
+        .ex-spk:hover { opacity: 1; }
+
+        /* ===== 整段翻译页 ===== */
+        .tr-view { display: none; }
+        .tr-view.active { display: block; }
+        .tr-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+        .tr-toolbar .search-submit-btn { height: 38px; padding: 0 18px; font-size: 13.5px; }
+        .tr-meta { font-size: 11.5px; color: #94a3b8; margin-left: auto; }
+        .tr-src {
+            width: 100%; min-height: 132px; resize: vertical; box-sizing: border-box;
+            border: 1.5px solid #cbd5e1; border-radius: 9px; padding: 12px 14px;
+            font-size: 14px; line-height: 1.7; font-family: inherit; outline: none;
+            transition: border-color .15s;
+        }
+        .tr-src:focus { border-color: var(--banner-bg); }
+        .tr-out {
+            margin-top: 12px; min-height: 96px; background: #f8fafc;
+            border: 1px dashed #cbd5e1; border-radius: 9px; padding: 12px 14px;
+            font-size: 14.5px; line-height: 1.85; color: #0f172a; white-space: pre-wrap;
+        }
+        .tr-empty { color: #94a3b8; font-size: 13px; }
+        .tr-history { margin-top: 24px; border-top: 1.5px dashed #cbd5e1; padding-top: 14px; }
+        .tr-filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0 12px; font-size: 12px; color: #475569; }
+        .tr-filters input[type=date], .tr-filters input[type=text] {
+            border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 12px;
+        }
+        .tr-filters input[type=text] { flex: 1; min-width: 180px; }
+        .tr-log-list { display: flex; flex-direction: column; gap: 6px; max-height: 430px; overflow-y: auto; }
+        .tr-log { border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 11px; cursor: pointer; background: #fff; }
+        .tr-log:hover { background: #f8fafc; border-color: #94a3b8; }
+        .tr-log-top { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: #94a3b8; }
+        .tr-log-src { font-size: 13px; color: #0f172a; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .tr-log-dst { font-size: 12px; color: #64748b; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
         .main-grid { display: grid; grid-template-columns: 66% 34%; align-items: start; }
         .left-column { padding-right: 24px; border-right: 1.5px dashed var(--dashed-color); }
         .right-column { padding-left: 20px; }
@@ -646,7 +695,9 @@
             font-size: 11px; font-weight: 700; color: #0f766e;
             background: #ccfbf1; border-radius: 5px; padding: 2px 8px; white-space: nowrap;
         }
-        .auth-phon { font-family: 'Lucida Sans Unicode', sans-serif; font-size: 12.5px; color: #475569; }
+        .auth-phon { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; font-family: 'Lucida Sans Unicode', sans-serif; font-size: 12.5px; color: #475569; }
+        .auth-phon .ap-tag { font-style: normal; font-family: inherit; font-size: 10px; font-weight: 700; color: #0f766e; background: #ccfbf1; border-radius: 3px; padding: 0 3px; }
+        .auth-phon .pron-spk.mini { width: 17px; height: 17px; font-size: 9px; margin-left: 2px; }
         .auth-pos { font-size: 11.5px; color: #64748b; }
         .auth-meta { font-size: 11px; color: #94a3b8; margin-left: auto; white-space: nowrap; }
         .auth-caret { font-size: 10px; color: #94a3b8; transition: transform 0.18s; }
@@ -772,6 +823,7 @@
         <button class="icon-btn" onclick="toggleLeftDrawer(true)">☰ 目录</button>
         <button class="icon-btn tab-active" id="tabReadingBtn" onclick="switchMainPage('reading')">📖 精读正文</button>
         <button class="icon-btn" id="tabDictBtn" onclick="switchMainPage('dict')">🔍 独立查词</button>
+        <button class="icon-btn" id="tabTranslateBtn" onclick="switchMainPage('translate')">📄 整段翻译</button>
         <button class="icon-btn" id="tabRecentBtn" onclick="toggleRecentDrawer(true)">🕒 最近阅读</button>
         <button class="icon-btn primary" onclick="openImportModal()">📥 导入</button>
         <span class="status-pill" id="mysqlStatusPill">⚪ MySQL 未连接</span>
@@ -822,7 +874,7 @@
         <div class="setting-group">
             <h4>1. 词库服务 (MySQL 340万词 · 凭据已移至后端)</h4>
             <div class="config-card">
-                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:8080"></div>
+                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:37701"></div>
                 <div class="config-row" style="justify-content:space-between;margin-top:4px;">
                     <span id="mysqlDiagMsg" style="font-size:11px;color:#64748b;">未连接（使用浏览器缓存）</span>
                     <button class="mini-btn" style="background:#0284c7;color:#fff;border-color:#0284c7;" onclick="connectAndSyncMysql()">🔌 连接词库服务</button>
@@ -859,7 +911,7 @@
             <div class="config-card">
                 <div class="config-row">
                     <span class="config-label">服务地址：</span>
-                    <input type="text" class="config-input" id="ttsUrlInput" value="http://127.0.0.1:8081">
+                    <input type="text" class="config-input" id="ttsUrlInput" value="http://127.0.0.1:37702">
                     <button class="mini-btn" style="background:#0f766e;color:#fff;border-color:#0f766e;" onclick="probeTtsService()">🔌 检测</button>
                 </div>
                 <div class="config-row" style="margin-top:7px;">
@@ -986,7 +1038,7 @@
 <div class="page-container dict-search-view" id="dictSearchView">
     <div class="dict-search-hero">
         <div class="dict-search-row">
-            <input type="text" class="search-word-input" id="dictQueryInput" placeholder="输入英文单词或短语，回车立即查询并归档…" onkeydown="if(event.key==='Enter') executeDictLookup()">
+            <input type="text" class="search-word-input" id="dictQueryInput" placeholder="英文单词 / 中文词（如 坚持），回车即查…" onkeydown="if(event.key==='Enter') executeDictLookup()">
             <button class="search-submit-btn" onclick="executeDictLookup()">🔍 查询并归档</button>
         </div>
         <div class="dict-search-hint">本地 340 万词库直连 · 生词由 Ollama 兜底 · 结果自动归档到「📁 单词查询归档」</div>
@@ -1002,6 +1054,33 @@
     <div style="margin-top:20px;">
         <h3 style="font-size:15px;color:#334155;border-bottom:1.5px dashed #cbd5e1;padding-bottom:8px;">🕒 本次会话最近查询记录（已自动归档至目录树「📁 单词查询归档」）</h3>
         <div class="dict-history-grid" id="dictRecentHistoryGrid"></div>
+    </div>
+</div>
+
+<!-- 4C. 页面视图三：整段文本翻译 -->
+<div class="page-container tr-view" id="translateView">
+    <div class="tr-toolbar">
+        <select id="trDirection" class="config-select" style="max-width:120px;">
+            <option value="zh">英 → 中</option>
+            <option value="en">中 → 英</option>
+        </select>
+        <button class="search-submit-btn" id="trRunBtn" onclick="runTranslate()">⚡ 翻译并保存</button>
+        <button class="mini-btn" onclick="document.getElementById('trSrc').value='';document.getElementById('trOut').innerHTML='<span class=&quot;tr-empty&quot;>译文会显示在这里</span>';document.getElementById('trMeta').textContent='';">清空</button>
+        <span class="tr-meta" id="trMeta"></span>
+    </div>
+    <textarea id="trSrc" class="tr-src" placeholder="粘贴要翻译的英文段落（切到「中 → 英」则粘中文）… Ctrl+Enter 直接翻译"></textarea>
+    <div class="tr-out" id="trOut"><span class="tr-empty">译文会显示在这里</span></div>
+
+    <div class="tr-history">
+        <h3 style="font-size:15px;color:#334155;">🕒 翻译日志（已自动落库到 MySQL）</h3>
+        <div class="tr-filters">
+            <label>开始 <input type="date" id="trStart"></label>
+            <label>结束 <input type="date" id="trEnd"></label>
+            <input type="text" id="trKeyword" placeholder="搜索原文或译文里的内容…" onkeydown="if(event.key==='Enter') queryTranslateLogs()">
+            <button class="mini-btn" style="background:#0f766e;color:#fff;border-color:#0f766e;" onclick="queryTranslateLogs()">🔍 查询</button>
+            <button class="mini-btn" onclick="resetTranslateFilters()">本月</button>
+        </div>
+        <div class="tr-log-list" id="trLogList"></div>
     </div>
 </div>
 
@@ -1062,27 +1141,39 @@
         _pageScroll[which] = { y: window.scrollY, x: window.scrollX, top: el.scrollTop, left: el.scrollLeft };
     }
     function restorePageScroll(which, el) {
-        const s = _pageScroll[which];
+        const s = _pageScroll[which] || {};
         if (document.body.classList.contains('view-horizontal')) { el.scrollTop = s.top || 0; el.scrollLeft = s.left || 0; }
         else window.scrollTo(s.x || 0, s.y || 0);
     }
     function switchMainPage(page) {
-        const readView = document.getElementById('readerRoot');
-        const dictView = document.getElementById('dictSearchView');
-        const btnRead = document.getElementById('tabReadingBtn');
-        const btnDict = document.getElementById('tabDictBtn');
-        if (page === 'dict') {
-            if (!dictView.classList.contains('active')) savePageScroll('reading', readView);
-            readView.classList.add('hidden'); dictView.classList.add('active');
-            btnRead.classList.remove('tab-active'); btnDict.classList.add('tab-active');
-            restorePageScroll('dict', dictView);
-            setTimeout(() => document.getElementById('dictQueryInput').focus(), 50);
-        } else {
-            if (dictView.classList.contains('active')) savePageScroll('dict', dictView);
-            dictView.classList.remove('active'); readView.classList.remove('hidden');
-            btnDict.classList.remove('tab-active'); btnRead.classList.add('tab-active');
-            restorePageScroll('reading', readView);
-        }
+        const map = [
+            ['reading', 'readerRoot', 'tabReadingBtn'],
+            ['dict', 'dictSearchView', 'tabDictBtn'],
+            ['translate', 'translateView', 'tabTranslateBtn']
+        ];
+        // 先记住"当前这一页"的滚动位置
+        map.forEach(([key, id]) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const visible = key === 'reading' ? !el.classList.contains('hidden') : el.classList.contains('active');
+            if (visible) savePageScroll(key, el);
+        });
+        // 再切换显隐
+        map.forEach(([key, id, btnId]) => {
+            const el = document.getElementById(id);
+            const btn = document.getElementById(btnId);
+            const on = key === page;
+            if (el) {
+                if (key === 'reading') el.classList.toggle('hidden', !on);
+                else el.classList.toggle('active', on);
+            }
+            if (btn) btn.classList.toggle('tab-active', on);
+        });
+        const hit = map.find(m => m[0] === page);
+        const target = hit && document.getElementById(hit[1]);
+        if (target) restorePageScroll(page, target);
+        if (page === 'dict') setTimeout(() => { const i = document.getElementById('dictQueryInput'); if (i) i.focus(); }, 50);
+        if (page === 'translate' && typeof initTranslateView === 'function') initTranslateView();
     }
 
     const POS_CODE_MAP = {
@@ -1266,7 +1357,7 @@
             : '';
         const aiExHtml = !authEx.length
             ? (entry.example
-                ? `<div class="dict-example"><strong>📖 例句：</strong>${entry.example}</div>`
+                ? `<div class="dict-example"><strong>📖 例句：</strong>${entry.example}<button class="pron-spk ex-spk" title="朗读例句" onclick="event.stopPropagation();ReaderApp.speak('${String(entry.example || '').replace(/\\/g, '').replace(/'/g, "\\'").replace(/"/g, '&quot;')}','en-US', this)">🔊</button></div>`
                 : (isOllamaConnected
                     ? '<div style="margin-top:10px;"><button class="copy-chip ai" onclick="requestDictExample(this)">🤖 让 AI 生成双语例句</button></div>'
                     : ''))
@@ -1448,7 +1539,11 @@ Rules: include every common part of speech; keep "meaning" in Simplified Chinese
         if (!ex) return '';
         const en = typeof ex === 'string' ? ex : (ex.en || '');
         const zh = typeof ex === 'string' ? '' : (ex.zh || '');
-        return `<li><div>${escHtml(en)}</div>${zh ? `<div class="ex-zh">${escHtml(zh)}</div>` : ''}</li>`;
+        if (!en) return '';
+        // 例句后挂一个小喇叭，点了整句朗读（美音）
+        const safe = String(en).replace(/\\/g, '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const spk = `<button class="pron-spk ex-spk" title="朗读例句" onclick="event.stopPropagation();ReaderApp.speak('${safe}','en-US', this)">🔊</button>`;
+        return `<li class="ex-row"><div class="ex-body"><div>${escHtml(en)}</div>${zh ? `<div class="ex-zh">${escHtml(zh)}</div>` : ''}</div>${spk}</li>`;
     }
 
     /** 词性胶囊：带中文名和义项占比 */
@@ -1476,8 +1571,12 @@ Rules: include every common part of speech; keep "meaning" in Simplified Chinese
                   || items.find(x => (x.definitionsZh && x.definitionsZh.length) || (x.definitions && x.definitions.length))
                   || items.find(x => !x.isRedirect);
         if (!main) return '';
-        const uk = main.phoneticUk || main.phonetic || '';
-        const us = main.phoneticUs || '';
+        // ★ 基础需求 11：主词条若只有英式音标（朗文/麦克米伦常见），从其他词典借美音补全
+        const uk = main.phoneticUk || main.phonetic
+                 || (items.find(x => x.phoneticUk || x.phonetic) || {}).phoneticUk
+                 || (items.find(x => x.phonetic) || {}).phonetic || '';
+        const us = main.phoneticUs || (items.find(x => x.phoneticUs) || {}).phoneticUs || '';
+        const usBorrowed = !main.phoneticUs && !!us;
         const zh = (main.definitionsZh || []).slice(0, 8);
         const list = zh.length ? zh : (main.definitions || []).slice(0, 5);
         const exs = (main.examples || []).slice(0, 4);
@@ -1496,7 +1595,7 @@ Rules: include every common part of speech; keep "meaning" in Simplified Chinese
               </span>
               <span class="hero-pron">
                 <i class="pron-tag">美</i>
-                <b class="pron-ipa">${us ? '/' + escHtml(us) + '/' : (uk ? '<span title="该词库只有英式音标">英 /' + escHtml(uk) + '/</span>' : '—')}</b>
+                <b class="pron-ipa" ${usBorrowed ? 'title="美音音标借自其他词典"' : ''}>${us ? '/' + escHtml(us) + '/' : (uk ? '<span title="该词库只有英式音标">英 /' + escHtml(uk) + '/</span>' : '—')}</b>
                 <button class="pron-spk" title="美音朗读" onclick="speakWord('${safeWord}','en-US', this)">🔊</button>
               </span>
             </div>
@@ -1532,14 +1631,32 @@ Rules: include every common part of speech; keep "meaning" in Simplified Chinese
     function renderAuthorityPanel(word, items, meta, opts) {
         const hero = (opts && opts.hero === false) ? '' : renderWordHero(word, items, meta);
 
+        // ★ 音标补全（基础需求 11）：朗文6 / 麦克米伦 / 麦同义 只收英式音标，
+        // 缺的美音从同词其他词典（通常牛津10）借，避免"点美音却显示英式音标"的错配。
+        const ukSrc = items.find(x => x.phoneticUk || x.phonetic);
+        const usSrc = items.find(x => x.phoneticUs);
+        const fbUk = ukSrc ? (ukSrc.phoneticUk || ukSrc.phonetic) : '';
+        const fbUs = usSrc ? usSrc.phoneticUs : '';
+
         const cards = items.map(it => {
             const mode = authModeOf(it.source);
             // 后端已经把别名跟随到原型词：有实际释义就直接显示原型内容，不再留空白
             const resolved = !!(it.resolvedWord && (it.definitions.length || it.definitionsEn.length || it.definitionsZh.length));
             const displayWord = it.resolvedWord || word;
+            const sw = String(displayWord).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+
+            // 每本词典都显示英/美两个音标 + 两个小喇叭；缺的那个用借来的补全并标注来源
+            const uk = it.phoneticUk || it.phonetic || fbUk;
+            const us = it.phoneticUs || fbUs;
+            const ukBorrowed = !(it.phoneticUk || it.phonetic) && !!fbUk;
+            const usBorrowed = !it.phoneticUs && !!fbUs;
+            const phonHtml = [
+                uk ? `<span class="auth-phon" title="${ukBorrowed ? '本词典未收英式音标，借自其他词典' : '本词典英式音标'}"><i class="ap-tag">英</i>/${escHtml(uk)}/<button class="pron-spk mini" title="英音朗读" onclick="event.stopPropagation();speakWord('${sw}','en-GB',this)">🔊</button></span>` : '',
+                us ? `<span class="auth-phon" title="${usBorrowed ? '本词典未收美式音标，借自牛津等词典' : '本词典美式音标'}"><i class="ap-tag">美</i>/${escHtml(us)}/<button class="pron-spk mini" title="美音朗读" onclick="event.stopPropagation();speakWord('${sw}','en-US',this)">🔊</button></span>` : ''
+            ].join('');
             const headInner = `
               <span class="auth-badge">${escHtml(it.shortName)}</span>
-              ${it.phonetic ? `<span class="auth-phon">/${escHtml(it.phonetic)}/</span>` : ''}
+              ${phonHtml}
               ${it.pos ? `<span class="auth-pos">${escHtml(it.pos)}</span>` : ''}
               <span class="auth-meta">${it.isRedirect ? '别名 → ' + escHtml(displayWord) : it.definitions.length + ' 义'}</span>
               ${it.hasRaw ? `<button class="auth-mode-btn" onclick="event.stopPropagation();switchAuthMode(this)">${mode === 'orig' ? '文本' : '原版排版'}</button>` : ''}
@@ -2010,8 +2127,9 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         while ((node = walker.nextNode())) {
             if (node.parentElement && (node.parentElement.tagName === 'RT' || node.parentElement.tagName === 'RP')) continue;
             const s = node.nodeValue || '';
-            if (!/[A-Za-z]/.test(s)) continue;
-            const re = /[A-Za-z][A-Za-z'\-]*/g;
+            if (!/[A-Za-z]/.test(s) && !/[\u4e00-\u9fa5]/.test(s)) continue;
+            // 英文按词；中文按连续汉字段（词典查词也是整段匹配）
+            const re = /[A-Za-z][A-Za-z'\-]*|[\u4e00-\u9fa5]{1,16}/g;
             let m;
             while ((m = re.exec(s))) {
                 const r = document.createRange();
@@ -2019,12 +2137,23 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 r.setEnd(node, m.index + m[0].length);
                 const b = r.getBoundingClientRect();
                 if (!b.width && !b.height) continue;
+                const isZh = /^[\u4e00-\u9fa5]/.test(m[0]);
+                let picked = m[0];
+                if (isZh && b.width > 0) {
+                    // 中文按点击位置记录字偏移，交给服务端"从点击的字开始分词"
+                    const per = b.width / m[0].length;
+                    const ci = Math.max(0, Math.min(m[0].length - 1, Math.floor((x - b.left) / per)));
+                    window.__wLastZhOffset = ci;
+                } else {
+                    picked = wExpand(node, m.index, m.index + m[0].length);
+                    window.__wLastZhOffset = -1;
+                }
                 if (y >= b.top - 1 && y <= b.bottom + 1 && x >= b.left - 1 && x <= b.right + 1) {
-                    return wExpand(node, m.index, m.index + m[0].length);
+                    return picked;
                 }
                 if (y >= b.top && y <= b.bottom) {
                     const d = x < b.left ? b.left - x : (x > b.right ? x - b.right : 0);
-                    if (d < bestDist) { bestDist = d; best = wExpand(node, m.index, m.index + m[0].length); }
+                    if (d < bestDist) { bestDist = d; best = picked; }
                 }
             }
         }
@@ -2114,7 +2243,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     }
 
     /** 统一入口：把当前结果压栈，再用新结果覆盖 */
-    async function navigateWlp(kind, rawText) {
+    async function navigateWlp(kind, rawText, opts) {
         ensureLookupPanel();
         if (_wlpPinned) { notifyWlpPinned(); return; }
         const text = String(rawText || '').trim();
@@ -2136,6 +2265,20 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 html = renderParagraphResult(res, text);
             } catch (e) {
                 html = '<div style="color:#dc2626;font-size:13px;">段落分析失败：' + escHtml(e.message || e) + '</div>';
+            }
+        } else if (/[\u4e00-\u9fa5]/.test(text)) {
+            // 中文词 → CC-CEDICT（cedict 表）。mode=segment：中文没有分词边界，
+            // 双击选中的常是整段，服务端按"点击的字 → 最长前缀 + 整段贪心扫描"挑词
+            try {
+                const res = await callMysqlApi('/api/dict/zh', {
+                    word: text, mode: 'segment', offset: (opts && opts.offset) || 0
+                });
+                const items = (res && res.items) || [];
+                html = items.length
+                    ? items.map(renderZhCard).join('')
+                    : `<div class="auth-loading" style="padding:18px;">❌ 没查到「${escHtml(text)}」（CC-CEDICT 收词和词组）</div>`;
+            } catch (e) {
+                html = '<div style="color:#dc2626;font-size:13px;">中文词库查询失败：' + escHtml(e.message || e) + '</div>';
             }
         } else {
             const word = text.toLowerCase().replace(/[^a-z'\- ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -2461,7 +2604,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
 
     async function connectAndSyncMysql(silent = false) {
         // 只持久化服务地址，顺便覆盖掉旧版本可能残留的明文密码
-        localStorage.setItem('mysql_conn_boot_v14', JSON.stringify({ apiUrl: getBridgeUrl() }));
+        localStorage.setItem('mysql_conn_boot_v15', JSON.stringify({ apiUrl: getBridgeUrl() }));
         try {
             if (!silent) showToast('🔌 正在连接词库服务...');
             const pingRes = await callMysqlApi('/api/ping');
@@ -2490,6 +2633,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             ollamaUrl: document.getElementById('ollamaUrlInput').value.trim(),
             ollamaModel: document.getElementById('ollamaModelSelect').value,
             speechRate: window.ReaderApp.speechRate,
+            speechLang: window.ReaderApp.speechLang,
             vocabLayout: vocabLayoutPref,
             dictRender: dictRenderPrefs,
             theme: Array.from(document.body.classList).find(c => c.startsWith('theme-')) || 'theme-red',
@@ -2510,6 +2654,12 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             window.ReaderApp.speechRate = parseFloat(prefs.speechRate);
             const rateSel = document.getElementById('speechRateSelect');
             if (rateSel) rateSel.value = String(prefs.speechRate);
+        }
+        // ★ 基础需求 12：默认口音必须跟语速一样持久化，否则刷新就悄悄回到美音
+        if (prefs.speechLang) {
+            window.ReaderApp.speechLang = prefs.speechLang === 'en-GB' ? 'en-GB' : 'en-US';
+            const langSel = document.getElementById('speechLangSelect');
+            if (langSel) langSel.value = window.ReaderApp.speechLang;
         }
         if (prefs.vocabLayout) {
             // 一律走 applyVocabLayout：它在恢复阶段会以插件真实状态为准，不会被 prefs 反向覆盖
@@ -2690,10 +2840,217 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         return folder.id;
     }
 
+    /* ---------- 中文查词：CC-CEDICT（cedict 表，12.5 万条） ----------
+       英文走 340 万词库，中文走这张汉英表；渲染成"拼音 + 英文释义"的卡片。 */
+    async function executeZhLookup(raw) {
+        const resArea = document.getElementById('dictCurrentResultArea');
+        _dictCurrentQuery = raw;
+        if (resArea) resArea.innerHTML = `<div class="dict-result-card">⏳ 正在查中文「${escHtml(raw)}」…</div>`;
+        let items = [], mode = '';
+        try {
+            const res = await callMysqlApi('/api/dict/zh', { word: raw });
+            items = (res && res.items) || [];
+            mode = (res && res.mode) || '';
+        } catch (e) {
+            if (resArea) resArea.innerHTML = `<div class="dict-result-card" style="color:#dc2626;">中文词库查询失败：${escHtml(e.message || e)}</div>`;
+            return;
+        }
+        if (!items.length) {
+            if (resArea) resArea.innerHTML = `<div class="dict-result-card" style="color:#dc2626;">❌ 没查到「${escHtml(raw)}」。CC-CEDICT 收的是词和词组，不是每句话都有，换个更短的词试试。</div>`;
+            return;
+        }
+        if (resArea) resArea.innerHTML = items.map(renderZhCard).join('');
+        await archiveZhEntry(items[0]);          // 归档到「📁 单词查询归档」，和英文查词一致
+        showToast(`✅ 命中 ${items.length} 条中文词条，已归档`);
+    }
+
+    /** 中文词条归档：目录树里生成一张"汉英词条卡"，点开能看拼音和全部英文释义 */
+    async function archiveZhEntry(item) {
+        try {
+            const key = String((item && item.simp) || '').trim();
+            if (!key) return;
+            const defs = (item.defs || []).filter(Boolean);
+            const pinyin = item.pinyin || '';
+            const meanShort = (defs[0] || '').slice(0, 24);
+            const archiveFolderId = await ensureQueryArchiveFolder();
+            const nodeId = 'dict-zh-' + key.replace(/[^\u4e00-\u9fa5A-Za-z0-9]/g, '_');
+            await LocalDB.put('nodes', {
+                id: nodeId,
+                parentId: archiveFolderId,
+                type: 'article',
+                title: `${key}${pinyin ? ' · ' + pinyin : ''}${meanShort ? ' · ' + meanShort : ''}`,
+                orderIndex: getNextOrderIndex(archiveFolderId),
+                createdAt: Date.now()
+            });
+            await LocalDB.put('articles', {
+                id: nodeId,
+                category: '中文查词归档 · 汉英词条（CC-CEDICT）',
+                titleEn: `${key}${pinyin ? '  [' + pinyin + ']' : ''}`,
+                titleCn: meanShort || key,
+                wordCount: key.length,
+                paragraphs: [{
+                    isTranslated: true,
+                    tokens: [{ text: key, gloss: meanShort, tier: 'red' }],
+                    translation: `【汉英词条 · CC-CEDICT】${pinyin ? '拼音：' + pinyin + '；' : ''}`
+                        + (defs.length ? defs.map((d, i) => `${i + 1}. ${d}`).join('；') : '（无释义）')
+                }],
+                vocabulary: [{
+                    word: key,
+                    ipa: pinyin,
+                    level: 'core',
+                    defs: defs.map(d => ({ pos: '', meaning: d }))
+                }]
+            });
+            await refreshDirectoryTree();
+        } catch (e) {
+            console.warn('中文词条归档失败', e);
+        }
+    }
+
+    function renderZhCard(it) {
+        const defs = (it.defs || []).map((d, i) =>
+            `<li class="zh-def"><b>${i + 1}</b><span>${escHtml(d)}</span></li>`).join('');
+        const safe = String(it.simp || '').replace(/'/g, "\\'");
+        const trad = it.trad && it.trad !== it.simp ? `<i class="auth-chip">繁体 ${escHtml(it.trad)}</i>` : '';
+        return `<div class="dict-result-card zh-card">
+            <div class="hero-head">
+                <span class="hero-word">${escHtml(it.simp || '')}</span>
+                <span class="hero-chips"><i class="auth-chip">CC-CEDICT</i>${trad}</span>
+            </div>
+            <div class="hero-prons">
+                <span class="hero-pron">
+                    <i class="pron-tag">拼音</i>
+                    <b class="pron-ipa">${escHtml(it.pinyin || '—')}</b>
+                    <button class="pron-spk" title="朗读中文" onclick="ReaderApp.speak('${safe}','zh-CN', this)">🔊</button>
+                </span>
+            </div>
+            <div class="zh-defs"><ol>${defs || '<li class="zh-def"><b>·</b><span>（无释义）</span></li>'}</ol></div>
+            <div class="zh-tip">英文释义来自 CC-CEDICT 汉英词典；点 🔊 用系统中文音色朗读</div>
+        </div>`;
+    }
+
+    /* ============================================================
+       整段翻译页：调用桥接 /api/translate/run 翻译并落库，
+       下面按「时间范围 + 关键词」查日志（时间范围走索引，关键词 LIKE）
+       ============================================================ */
+    function trDateStr(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+    function initTranslateView() {
+        const s = document.getElementById('trStart');
+        const e = document.getElementById('trEnd');
+        const now = new Date();
+        if (s && !s.value) s.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-01';
+        if (e && !e.value) e.value = trDateStr(now);
+        const src = document.getElementById('trSrc');
+        if (src && !src._bound) {
+            src._bound = true;
+            src.addEventListener('keydown', ev => {
+                if ((ev.ctrlKey || ev.metaKey) && ev.key === 'Enter') { ev.preventDefault(); runTranslate(); }
+            });
+        }
+        // 双击/划词查词：textarea 用原生选区，译文区用几何命中（中英文都支持）
+        const trView = document.getElementById('translateView');
+        if (trView && !trView._pickBound) {
+            trView._pickBound = true;
+            trView.addEventListener('dblclick', e => {
+                let w = '';
+                window.__wLastZhOffset = -1;
+                if (e.target && e.target.id === 'trSrc') {
+                    const ta = e.target;
+                    const a = ta.selectionStart, b = ta.selectionEnd;
+                    const sel = a !== b ? ta.value.slice(a, b) : '';
+                    const mm = sel.match(/[A-Za-z][A-Za-z'\-]*|[\u4e00-\u9fa5]{1,16}/);
+                    w = mm ? mm[0] : '';
+                } else {
+                    w = wAtPoint(e.clientX, e.clientY);
+                }
+                w = (w || '').trim();
+                if (!w) return;
+                navigateWlp('word', w, { offset: window.__wLastZhOffset >= 0 ? window.__wLastZhOffset : 0 });
+            });
+        }
+        queryTranslateLogs();
+    }
+    function resetTranslateFilters() {
+        const now = new Date();
+        document.getElementById('trStart').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-01';
+        document.getElementById('trEnd').value = trDateStr(now);
+        document.getElementById('trKeyword').value = '';
+        queryTranslateLogs();
+    }
+    async function runTranslate() {
+        const srcEl = document.getElementById('trSrc');
+        const btn = document.getElementById('trRunBtn');
+        const out = document.getElementById('trOut');
+        const meta = document.getElementById('trMeta');
+        const text = srcEl.value.trim();
+        if (!text) return showToast('⚠️ 先粘贴要翻译的内容');
+        const to = document.getElementById('trDirection').value;
+        const old = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ 翻译中…';
+        out.innerHTML = '<span class="tr-empty">正在调用本地 Ollama…</span>';
+        try {
+            const res = await callMysqlApi('/api/translate/run', { text, to });
+            if (!res || !res.ok) throw new Error((res && res.error) || '翻译失败');
+            out.textContent = res.dst;
+            meta.textContent = `${res.elapsed_ms || 0} ms · ${res.model || ''}${res.id ? ' · 已保存 #' + res.id : ''}`;
+            showToast('✅ 已翻译并保存到 MySQL');
+            queryTranslateLogs();
+        } catch (e) {
+            out.innerHTML = `<span style="color:#dc2626;">翻译失败：${escHtml(e.message || e)}</span>`;
+        } finally {
+            btn.disabled = false;
+            btn.textContent = old;
+        }
+    }
+    async function queryTranslateLogs() {
+        const list = document.getElementById('trLogList');
+        if (!list) return;
+        const start = document.getElementById('trStart').value;
+        const end = document.getElementById('trEnd').value;
+        const keyword = document.getElementById('trKeyword').value.trim();
+        list.innerHTML = '<div class="tr-empty">查询中…</div>';
+        try {
+            const res = await callMysqlApi('/api/translate/logs', { start, end, keyword });
+            const items = (res && res.items) || [];
+            if (!items.length) { list.innerHTML = '<div class="tr-empty">这个时间范围内没有记录</div>'; return; }
+            list.innerHTML = items.map(it => `
+                <div class="tr-log" onclick="openTranslateLog(${it.id})">
+                    <div class="tr-log-top">
+                        <span>${escHtml(it.created_at || '')}</span>
+                        <span>${escHtml(it.src_lang || '')}→${escHtml(it.dst_lang || '')} · ${it.char_count || 0} 字符 · ${it.elapsed_ms || 0}ms</span>
+                    </div>
+                    <div class="tr-log-src">${escHtml(it.src || '')}</div>
+                    <div class="tr-log-dst">${escHtml(it.dst || '')}</div>
+                </div>`).join('')
+                + `<div class="tr-empty" style="padding:6px 2px;">共 ${res.total || items.length} 条，显示最近 ${items.length} 条</div>`;
+        } catch (e) {
+            list.innerHTML = `<div class="tr-empty" style="color:#dc2626;">查询失败：${escHtml(e.message || e)}</div>`;
+        }
+    }
+    async function openTranslateLog(id) {
+        try {
+            const res = await callMysqlApi('/api/translate/get', { id });
+            if (!res || !res.ok) throw new Error((res && res.error) || '读取失败');
+            const it = res.item;
+            document.getElementById('trSrc').value = it.src_text || '';
+            document.getElementById('trOut').textContent = it.dst_text || '';
+            document.getElementById('trDirection').value = (it.src_lang === 'zh') ? 'en' : 'zh';
+            document.getElementById('trMeta').textContent = `${it.created_at || ''} · ${it.elapsed_ms || 0}ms · #${it.id}`;
+            showToast('已载入这条历史记录');
+        } catch (e) {
+            showToast('⚠️ ' + (e.message || e));
+        }
+    }
+
     async function executeDictLookupCore() {
         const inputEl = document.getElementById('dictQueryInput');
         const rawQuery = inputEl.value.trim();
-        if (!rawQuery) return showToast('⚠️ 请输入要查询的英文单词或短语！');
+        if (!rawQuery) return showToast('⚠️ 请输入要查询的单词或中文词！');
+        // 含中文 → 走 CC-CEDICT（cedict 表），英文 → 走原来的 340 万词库
+        if (/[\u4e00-\u9fa5]/.test(rawQuery)) return executeZhLookup(rawQuery);
 
         const cleanWord = rawQuery.toLowerCase().trim();
         _dictCurrentQuery = cleanWord;
@@ -3449,6 +3806,59 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             return 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(text) + '&type=' + (uk ? 1 : 2);
         },
 
+        /* ---------- 本地朗文6 真人音（mdd 抽取到 dict_assets，完全离线） ----------
+           文件名规范与 F:\EnglishReaderDataDict\extract_ldoce_audio.py 两端必须一致：
+           word.toLowerCase() 后 [^a-z0-9_-] -> _，按首字母分桶 */
+        _localWordUrl(word, lang) {
+            const acc = /en-gb/i.test(String(lang || '')) ? 'bre' : 'ame';
+            const w = String(word || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+            const c = /^[a-z]/.test(w) ? w[0] : '0';
+            let base = 'http://127.0.0.1:37701';
+            try {
+                const el = document.getElementById('dbApiUrl');
+                if (el && el.value.trim()) base = el.value.trim().replace(/\/+$/, '');
+            } catch (e) { }
+            return base + '/dict-assets/ldoce6/audio/' + acc + '/' + c + '/' + encodeURIComponent(w) + '.mp3';
+        },
+        _playLocalWord(text, lang, token) {
+            return new Promise(resolve => {
+                const el = new Audio();
+                el.preload = 'auto';
+                el.src = this._localWordUrl(text, lang);
+                this._regEl(el);
+                let settled = false, abandoned = false;
+                const done = ok => {
+                    if (settled) return;
+                    settled = true;
+                    clearTimeout(timer);
+                    if (!ok) this._unregEl(el);          // 失败不进池，别缓存坏条目
+                    resolve(ok);
+                };
+                const timer = setTimeout(() => {
+                    abandoned = true;
+                    try { el.pause(); el.currentTime = 0; } catch (e) { }
+                    done(false);
+                }, 1500);                                // 本地文件，1.5s 没声就放弃降级
+                el.onplaying = () => {
+                    if (abandoned || settled || token !== this._token) {
+                        try { el.pause(); } catch (e) { }
+                        return;
+                    }
+                    this._curAudio = el;
+                    this._markBtn(true);
+                    done(true);
+                };
+                el.onended = () => {
+                    this._unregEl(el);
+                    if (!abandoned && token === this._token) { this._markBtn(false); this.hideStopBar(); }
+                };
+                el.onerror = () => { this._unregEl(el); done(false); };
+                try {
+                    el.play().catch(() => done(false));
+                } catch (e) { done(false); }
+            });
+        },
+
         _getAudio(text, lang) {
             const key = (/en-gb/i.test(String(lang || '')) ? 'uk' : 'us') + '|' + text.toLowerCase();
             let el = this._audioPool.get(key);
@@ -3624,10 +4034,11 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         },
 
         /* ---------- 本地 Kokoro（首选：离线、真人音质、单词 ~0.35s） ---------- */
-        TTS_KEY: 'lt_tts_url_v151',
+        // KEY 升级 v152：丢弃浏览器里残留的旧端口(8081)记录，让新默认 37702 生效
+        TTS_KEY: 'lt_tts_url_v152',
         get ttsUrl() {
-            try { return (localStorage.getItem(this.TTS_KEY) || 'http://127.0.0.1:8081').replace(/\/+$/, ''); }
-            catch (e) { return 'http://127.0.0.1:8081'; }
+            try { return (localStorage.getItem(this.TTS_KEY) || 'http://127.0.0.1:37702').replace(/\/+$/, ''); }
+            catch (e) { return 'http://127.0.0.1:37702'; }
         },
         setTtsUrl(u) {
             try { localStorage.setItem(this.TTS_KEY, String(u || '').trim().replace(/\/+$/, '')); } catch (e) { }
@@ -3637,12 +4048,27 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             return /en-gb/i.test(String(lang || '')) ? p['en-gb'] : p['en-us'];
         },
 
-        /* ---------- 音色偏好（Setting 面板可换，默认 af_heart / bf_emma） ---------- */
+        /* ---------- 音色偏好（Setting 面板可换，默认 af_bella / bf_emma） ---------- */
         VOICE_KEY: 'lt_tts_voice_v152',
-        DEFAULT_VOICE: { 'en-us': 'af_heart', 'en-gb': 'bf_emma' },
+        MIGRATE_KEY: 'lt_tts_voice_migrated_v3',
+        // ★ v15.4 三次修订：Kokoro 对"美音音素串"的词首清塞音 /p/ 是模型级缺陷（词首 120ms 频谱相似度实测：
+        //   am_liam 发成 t、af_heart t+浊化、af_bella 浊化成 b，连 bf_emma 声线配美音音素也偏 t），
+        //   只有英音音素串+英音声线正确。单词已改"有道真人音优先"根治；句子美音默认 af_bella（b 化在句中最不刺耳）。
+        LEGACY_DEFAULTS: ['af_heart', 'am_liam'],
+        DEFAULT_VOICE: { 'en-us': 'af_bella', 'en-gb': 'bf_emma' },
         voicePrefs() {
             let p = {};
             try { p = JSON.parse(localStorage.getItem(this.VOICE_KEY) || '{}') || {}; } catch (e) { p = {}; }
+            // 一次性迁移：localStorage 里还是历届默认音色（或没存过）的，升级为当前默认。
+            // 迁移后用户在设置里手动选的音色不会被再次覆盖。
+            try {
+                if (!localStorage.getItem(this.MIGRATE_KEY)
+                    && (!p['en-us'] || this.LEGACY_DEFAULTS.indexOf(p['en-us']) >= 0)) {
+                    p['en-us'] = this.DEFAULT_VOICE['en-us'];
+                    localStorage.setItem(this.VOICE_KEY, JSON.stringify(p));
+                }
+                localStorage.setItem(this.MIGRATE_KEY, '1');
+            } catch (e) { }
             return {
                 'en-us': p['en-us'] || this.DEFAULT_VOICE['en-us'],
                 'en-gb': p['en-gb'] || this.DEFAULT_VOICE['en-gb']
@@ -3884,10 +4310,42 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             this.showStopBar(clean);                  // 工具条上的麦克风切到"发言中"
 
             const src = this.source;
+            // 中文：Kokoro 只有英文音色，读中文会串味 → 直接用系统中文音色（本机 Huihui）
+            if (/[\u4e00-\u9fa5]/.test(clean)) { this._speakTTS(clean, 'zh-CN', token, btn); return; }
             if (src === 'system') { this._speakTTS(clean, lang, token, btn); return; }
+
+            // ★ v15.4 二次修复：单词一律"有道真人音优先"。
+            //   实测（词首 120ms 频谱相似度聚类）Kokoro 对美音音素串的词首清塞音 /p/ 是模型级缺陷，
+            //   与声线无关：am_liam 发成 t（para~tensor 0.86）、af_heart t+浊化、af_bella 浊化成 b
+            //   （para~bar 0.87），连 bf_emma 声线配美音音素也偏 t；只有英音音素串+英音声线是对的。
+            //   单词是学发音的场景，必须精确 → 真人录音（0.27s）优先，失败无缝降级 Kokoro。
+            const isWord = /^[A-Za-z][A-Za-z'’\- ]{0,44}$/.test(clean) && clean.split(/\s+/).length <= 4;
+            if (isWord) {
+                // ① 本地朗文6 真人音（mdd 抽取，完全离线，~0.1s；抽取不到的词自动 404 降级）
+                this._playLocalWord(clean, lang, token).then(ok => {
+                    if (token !== this._token) return;
+                    if (ok) return;
+                    // ② 有道真人音（联网，0.3s）
+                    return this._playDictAudio(clean, lang, token).then(ok2 => {
+                        if (token !== this._token) return;
+                        if (ok2) { this._prefetchOtherAccent(clean, lang); return; }
+                        // ③ 本地 Kokoro 合成 → ④ 在线句 → ⑤ 系统
+                        this._speakKokoro(clean, lang, token, btn, rest => {
+                            if (token !== this._token) return;
+                            if (!this._warnedTts) {
+                                this._warnedTts = true;
+                                showToast('ℹ️ 真人音不可用，已用本地合成代替。双击 F:\\EnglishReaderDataDict\\start-all.bat 可启用离线发音', 5200);
+                            }
+                            this._fallbackOnline(rest || clean, lang, token, btn);
+                        });
+                    });
+                });
+                return;
+            }
+
             if (src === 'online') { this._fallbackOnline(clean, lang, token, btn); return; }
 
-            // 首选本地 Kokoro：服务没起来（没双击 bat / 端口不对）就自动降级
+            // 句子/段落仍 Kokoro 优先：有道整句要按句切块，慢且易断
             this._speakKokoro(clean, lang, token, btn, rest => {
                 if (token !== this._token) return;
                 if (!this._warnedTts) {
@@ -4309,7 +4767,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         bm_george: 'BBC 权威腔', bm_lewis: '低沉磁性', bm_daniel: '沉稳叙述', bm_fable: '讲故事'
     };
     const TTS_VOICE_FALLBACK = {
-        'en-us': ['af_heart', 'af_bella', 'af_nicole', 'af_sarah', 'am_michael', 'am_fenrir', 'am_onyx', 'am_puck'],
+        'en-us': ['af_bella', 'af_heart', 'af_nicole', 'af_sarah', 'am_michael', 'am_fenrir', 'am_onyx', 'am_puck'],
         'en-gb': ['bf_emma', 'bf_isabella', 'bm_george', 'bm_lewis', 'bm_daniel', 'bm_fable']
     };
 
@@ -4915,7 +5373,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 const opts = rates.map(r => `<option value="${r}" ${app.speechRate === r ? 'selected' : ''}>${r}x</option>`).join('');
                 const src = window.SpeechEngine ? SpeechEngine.source : 'kokoro';
                 return `<div class="speed-plugin-box"><span>🔊</span>`
-                    + `<select id="speechLangSelect" title="发音口音"><option value="en-US">美音</option><option value="en-GB">英音</option></select>`
+                    + `<select id="speechLangSelect" title="默认朗读口音：影响双击单词/正文句子/例句自动发音；词条上的英/美小喇叭不受影响，点哪个读哪个"><option value="en-US">默认美音</option><option value="en-GB">默认英音</option></select>`
                     + `<select id="speechRateSelect" title="朗读语速">${opts}</select>`
                     + `<select id="speechSourceSelect" title="本地Kokoro：离线真人音，最快约 0.3 秒（需先启动 tts 服务）；在线音：有道/Google，需联网；系统音：浏览器自带音色">`
                     + `<option value="kokoro" ${src === 'kokoro' ? 'selected' : ''}>本地Kokoro</option>`
@@ -4925,6 +5383,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             onMount(el, app) {
                 const sel = el.querySelector('#speechRateSelect'), langSel = el.querySelector('#speechLangSelect');
                 sel.value = String(app.speechRate);
+                if (langSel) langSel.value = app.speechLang;
                 sel.onchange = (e) => {
                     app.speechRate = parseFloat(e.target.value);
                     persistSettingsToStorage();
@@ -4933,7 +5392,11 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                     if (app.currentArticle && !busy) renderArticleView(app.currentArticle);
                     showToast(busy ? `🔊 语速 ${app.speechRate}x 将在下一段生效` : `🔊 朗读语速：${app.speechRate}x`);
                 };
-                langSel.onchange = (e) => { app.speechLang = e.target.value; showToast(`🔊 已切换为${e.target.value === 'en-GB' ? '英式发音' : '美式发音'}`); };
+                langSel.onchange = (e) => {
+                    app.speechLang = e.target.value;
+                    persistSettingsToStorage();
+                    showToast(`🔊 默认口音：${app.speechLang === 'en-GB' ? '英音' : '美音'}（词条小喇叭点哪个读哪个，不受影响）`);
+                };
                 const srcSel = el.querySelector('#speechSourceSelect');
                 if (srcSel) srcSel.onchange = (e) => {
                     if (window.SpeechEngine) SpeechEngine.setSource(e.target.value);
@@ -5514,7 +5977,8 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         window.ReaderFeaturePlugins.renderPluginUI();
 
         // 只恢复桥接服务地址（DB 凭据在后端，浏览器不再保存）
-        const bootDb = JSON.parse(localStorage.getItem('mysql_conn_boot_v14') || '{}');
+        // KEY 升级 v15：丢弃浏览器里可能残留的旧端口(8080)记录，让新默认 37701 生效
+        const bootDb = JSON.parse(localStorage.getItem('mysql_conn_boot_v15') || '{}');
         if (bootDb.apiUrl) document.getElementById('dbApiUrl').value = bootDb.apiUrl;
 
         const localPrefs = JSON.parse(localStorage.getItem('reader_prefs_v14') || '{}');
