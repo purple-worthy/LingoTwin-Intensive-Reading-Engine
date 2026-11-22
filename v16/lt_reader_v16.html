@@ -955,7 +955,7 @@ window.LTLog = (function () {
                     <button class="mini-btn" style="flex:1;" onclick="previewTtsVoice('en-GB')">▶ 试听英音</button>
                 </div>
                 <div id="ttsDiagMsg" style="font-size:11px;color:#64748b;line-height:1.55;margin-top:7px;">
-                    启动方法：双击 <code>F:\EnglishReaderDataDict\start-all.bat</code>（首次加载模型约 2 秒）。
+                    启动方法：双击 <code>F:\EnglishReaderDataDict\start-all.vbs</code>（首次加载模型约 2 秒）。
                     单词约 0.35s、整句约 0.9s，重复的词命中缓存后是 0 延迟。
                 </div>
             </div>
@@ -4320,7 +4320,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             this.stop(true);
             const token = ++this._token;
             this._speakKokoro('Real understanding comes from unexpected detours.', lang || 'en-US', token, null,
-                () => showToast('⚠️ 本地发音服务没启动，先双击 F:\\EnglishReaderDataDict\\start-all.bat'));
+                () => showToast('⚠️ 本地发音服务没启动，先双击 F:\\EnglishReaderDataDict\\start-all.vbs'));
         },
         _kokoroUrl(text, lang, speed) {
             return this.ttsUrl + '/tts?text=' + encodeURIComponent(text)
@@ -4563,7 +4563,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                                 if (token !== this._token) return;
                                 if (!this._warnedTts) {
                                     this._warnedTts = true;
-                                    showToast('ℹ️ 真人音不可用，已用本地合成代替。双击 F:\\EnglishReaderDataDict\\start-all.bat 可启用离线发音', 5200);
+                                    showToast('ℹ️ 真人音不可用，已用本地合成代替。双击 F:\\EnglishReaderDataDict\\start-all.vbs 可启用离线发音', 5200);
                                 }
                                 this._fallbackOnline(rest || clean, lang, token, btn);
                             });
@@ -4580,7 +4580,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 if (token !== this._token) return;
                 if (!this._warnedTts) {
                     this._warnedTts = true;
-                    showToast('ℹ️ 本地发音服务未启动，已用在线音代替。双击 F:\\EnglishReaderDataDict\\start-all.bat 可启用离线真人音', 5200);
+                    showToast('ℹ️ 本地发音服务未启动，已用在线音代替。双击 F:\\EnglishReaderDataDict\\start-all.vbs 可启用离线真人音', 5200);
                 }
                 this._fallbackOnline(rest || clean, lang, token, btn);
             });
@@ -5073,7 +5073,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             if (msg) msg.innerHTML = `✅ 已连接：${r.engine} · ${r.voices} 个音色 · ${r.sr}Hz`;
             showToast('✅ 本地发音服务正常');
         } else {
-            if (msg) msg.innerHTML = `❌ 连不上 <code>${escHtml(url)}</code> —— 先双击 <code>F:\\EnglishReaderDataDict\\start-all.bat</code> 启动服务`;
+            if (msg) msg.innerHTML = `❌ 连不上 <code>${escHtml(url)}</code> —— 先双击 <code>F:\\EnglishReaderDataDict\\start-all.vbs</code> 启动服务`;
             showToast('❌ 本地发音服务未启动');
         }
         return r.ok;
