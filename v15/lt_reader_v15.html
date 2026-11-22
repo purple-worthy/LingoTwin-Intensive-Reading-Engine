@@ -1947,7 +1947,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
           <div class="wlp-head">
             <span class="wlp-title">
               <button class="wlp-btn" id="wlpBack" title="返回上一个查询结果" disabled>←</button>
-              <span id="wlpTitleText">查词</span>
+              <span id="wlpTitleText">划词词典</span>
               <span class="wlp-depth" id="wlpDepth" style="display:none"></span>
             </span>
             <span class="wlp-actions">
@@ -2252,7 +2252,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         if (!back) return;
         back.disabled = _wlpHistory.length === 0;
         if (depth) { depth.style.display = _wlpHistory.length ? '' : 'none'; depth.textContent = _wlpHistory.length + ' 层'; }
-        if (title) title.textContent = (_wlpCurrent && _wlpCurrent.kind === 'paragraph') ? '段落分析' : '查词';
+        if (title) title.textContent = (_wlpCurrent && _wlpCurrent.kind === 'paragraph') ? '段落分析' : '划词词典';
     }
 
     function goBackWordLookup() {
