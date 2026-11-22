@@ -7,16 +7,27 @@
 （注册表里的 `Microsoft Zira Desktop` 属 SAPI5，Chrome 不上报，别指望它。）
 
 现有四级降级链（`lt_reader_v15.html` 的 `SpeechEngine`）：
-1. **本地 Kokoro** `F:\EnglishReaderDataDict\tts\tts_server.py`（端口 8081）
-2. 有道 `dictvoice`（单词，0.27s）
+1. **本地 Kokoro** `F:\EnglishReaderDataDict\tts\tts_server.py`（端口 **37702**）
+2. 本地真人音：朗文 mp3（`/dict-assets/ldoce6/...`，0.1s）→ 欧路补位 → 有道
 3. Google `translate_tts`（整句，按句切块 + 预取下一句）
 4. 浏览器 `speechSynthesis`（离线兜底，显式锁定音色并按语族过滤）
+
+### ⭐ 端口已迁移（2026-11-22 起，别再用 8080/8081）
+
+| 服务 | 旧端口 | **新端口** |
+|---|---|---|
+| MySQL 桥接（2mysql_bridge_server.py） | 8080 | **37701** |
+| Kokoro TTS（tts/tts_server.py） | 8081 | **37702** |
+| LT-Reader 专属段 | — | **37700-37799**（新服务从 37703 往上排，禁用 8080/8000 等常见端口） |
+
+权威文档：`F:\EnglishReaderDataDict\端口与服务说明.md`（端口分配、13 处修改点、故障排查速查都在这）。
+**页面"MySQL 连不上/查词面板不显示"先查 localStorage 脏数据**（2026-11-22 深夜已修，见下方 v15.5）。
 
 ### 启动方式（2026-11-22 集中到 F:\EnglishReaderDataDict）
 
 | 脚本 | 作用 |
 |---|---|
-| `start-all.bat` | 拉起桥接 8080 + 发音 8081，已在跑就跳过，不阻塞 |
+| `start-all.bat` | 拉起桥接 37701 + 发音 37702，已在跑就跳过，不阻塞 |
 | `start-all-silent.vbs` | 隐藏窗口版，WebStorm「Before launch」用 |
 | `stop-all.bat` | 按端口停这两个服务 |
 | `tts\start-tts.bat` | 只起发音服务 |

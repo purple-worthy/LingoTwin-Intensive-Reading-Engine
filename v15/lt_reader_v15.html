@@ -41,7 +41,7 @@
         .lookup-chip:hover { filter: brightness(1.08); }
         #wordLookupPanel {
             position: fixed; left: 0; top: 0; width: 390px; height: 100vh; background: #ffffff;
-            border: 1px solid #e2e8f0; box-shadow: 0 10px 40px rgba(15,23,42,0.18);
+            border: 1px solid #e2e8f0; box-shadow: 0 6px 24px rgba(15,23,42,0.16);
             z-index: 2900; display: none; flex-direction: column;
             min-width: 300px; min-height: 220px; box-sizing: border-box;
         }
@@ -52,7 +52,7 @@
         .wlp-rz.t { left: 0; right: 0; top: 0; height: 10px; cursor: row-resize; }
         .wlp-rz.b { left: 0; right: 0; bottom: 0; height: 10px; cursor: row-resize; }
         .wlp-rz.br { right: 0; bottom: 0; width: 20px; height: 20px; cursor: nwse-resize; }
-        #wordLookupPanel.wlp-dragging { opacity: .97; box-shadow: 0 18px 55px rgba(15,23,42,.3); }
+        #wordLookupPanel.wlp-dragging { opacity: .97; box-shadow: 0 12px 32px rgba(15,23,42,.28); }
         .wlp-rz.br::after { content: ""; position: absolute; right: 3px; bottom: 3px; width: 7px; height: 7px; border-right: 2px solid #94a3b8; border-bottom: 2px solid #94a3b8; }
         .wlp-head {
             display: flex; align-items: center; justify-content: space-between;
@@ -1866,6 +1866,8 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     let _wlpGeom = { left: null, top: null, width: 390, height: null };
     let _wlpPreset = 0;
     let _wlpPinned = false;   // 图钉：锁定结果与位置
+    let _wlpUserMoved = false; // ⭐ 本次会话用户是否主动拖动/缩放/切换过面板位置
+                               // 没动过 → 双击打开时自动回正预设位置（右侧），防止 localStorage 里的旧位置盖住正文
     let _wlpAlpha = 100;      // 背景透明度 35~100
 
     const WLP_PRESETS = [
@@ -1928,6 +1930,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 panel.classList.remove('wlp-dragging');
                 document.body.style.userSelect = '';
                 saveWlpGeom();
+                _wlpUserMoved = true;   // 用户主动挪过 → 尊重其位置
             };
             document.body.style.userSelect = 'none';
             window.addEventListener('mousemove', onMove);
@@ -1976,6 +1979,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             _wlpGeom = Object.assign({}, WLP_PRESETS[_wlpPreset]());
             applyWlpGeom();
             saveWlpGeom();
+            _wlpUserMoved = true;   // 用户主动切换预设 → 尊重其选择
             const names = ['右侧', '左侧', '底部', '顶部', '居中'];
             showToast('查词面板已移到' + names[_wlpPreset], 1200);
         };
@@ -2008,6 +2012,16 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         try {
             const saved = JSON.parse(localStorage.getItem('lt_wlp_geom') || 'null');
             if (saved && saved.geom) { _wlpGeom = Object.assign(_wlpGeom, saved.geom); _wlpPreset = saved.preset || 0; }
+            // ⭐ 修复：上次保存的位置在当前视口里基本不可见时（换屏/改分辨率/拖到屏幕边后关页面），
+            // 丢弃恢复值 → left/top 置 null，让 applyWlpGeom 回退到预设 0（右侧栏），避免"面板开了但看不见"
+            (function () {
+                const g = _wlpGeom, vw = window.innerWidth, vh = window.innerHeight;
+                const w0 = g.width || 390, h0 = g.height || (vh - 40);
+                if (g.left == null || g.top == null) return;
+                const visW = Math.max(0, Math.min(g.left + w0, vw) - Math.max(g.left, 0));
+                const visH = Math.max(0, Math.min(g.top + h0, vh) - Math.max(g.top, 0));
+                if (visW * visH < 0.25 * w0 * h0) { g.left = null; g.top = null; _wlpPreset = 0; }
+            })();
         } catch (e) { /* ignore */ }
         try {
             const ap = Number(localStorage.getItem('lt_wlp_alpha'));
@@ -2027,7 +2041,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             btn.title = _wlpPinned ? '已固定：结果与位置锁定，点此解除' : '固定当前结果与位置';
         }
         if (panel) panel.classList.toggle('wlp-pinned', _wlpPinned);
-        try { localStorage.setItem('lt_wlp_pinned', _wlpPinned ? '1' : '0'); } catch (e) { /* ignore */ }
+        // 图钉是会话级状态：刷新即解锁（此前有一行只写不读的 localStorage.setItem('lt_wlp_pinned')，已删）
     }
 
     function notifyWlpPinned() {
@@ -2259,6 +2273,12 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     /** 统一入口：把当前结果压栈，再用新结果覆盖 */
     async function navigateWlp(kind, rawText, opts) {
         ensureLookupPanel();
+        // ⭐ 本次会话用户没主动挪过面板 → 打开时回正预设位置（右侧）。
+        // 防止 localStorage 里残留的旧位置（左侧/屏幕中部/视口外）盖住正文中文——面板是"侧边词典"，家在侧边
+        if (!_wlpUserMoved) {
+            _wlpGeom.left = null; _wlpGeom.top = null;
+            applyWlpGeom();
+        }
         if (_wlpPinned) { notifyWlpPinned(); return; }
         const text = String(rawText || '').trim();
         if (!text) return;
@@ -2608,12 +2628,21 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     // 浏览器只保留桥接服务地址，请求体里不再携带任何账号密码。
     function getBridgeUrl() { return document.getElementById('dbApiUrl').value.trim().replace(/\/$/, ''); }
     async function callMysqlApi(path, extra = {}) {
-        const resp = await fetch(`${getBridgeUrl()}${path}`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(extra)
-        });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        return await resp.json();
+        // ⭐ 修复：加 15s 超时。之前没有 AbortController，若桥接地址指向了一个
+        // 存在但不响应的服务（或桥接卡死），fetch 会永久 pending，查词面板一直转圈
+        const ctrl = new AbortController();
+        const timer = setTimeout(() => ctrl.abort(), 15000);
+        try {
+            const resp = await fetch(`${getBridgeUrl()}${path}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(extra),
+                signal: ctrl.signal
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            return await resp.json();
+        } finally {
+            clearTimeout(timer);
+        }
     }
 
     async function connectAndSyncMysql(silent = false) {
@@ -6127,8 +6156,11 @@ img{max-width:100%;height:auto;vertical-align:middle;}
 
         // 只恢复桥接服务地址（DB 凭据在后端，浏览器不再保存）
         // KEY 升级 v15：丢弃浏览器里可能残留的旧端口(8080)记录，让新默认 37701 生效
+        // ⭐ 修复：恢复值必须落在专属端口段 37700-37799，否则（旧端口残留/手输错值）忽略之，用默认值
         const bootDb = JSON.parse(localStorage.getItem('mysql_conn_boot_v15') || '{}');
-        if (bootDb.apiUrl) document.getElementById('dbApiUrl').value = bootDb.apiUrl;
+        if (bootDb.apiUrl && /^https?:\/\/(127\.0\.0\.1|localhost):377\d\d\/?$/.test(bootDb.apiUrl.trim())) {
+            document.getElementById('dbApiUrl').value = bootDb.apiUrl.trim();
+        }
 
         const localPrefs = JSON.parse(localStorage.getItem('reader_prefs_v14') || '{}');
         applyLoadedPreferences(localPrefs);
@@ -6185,7 +6217,18 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         const dictBack = document.getElementById('dictBackBtn');
         if (dictBack) dictBack.onclick = goBackDictResult;
         updateDictNav();
+
+        // 2.7 外部插件副本（v15/plugin-para-vocab-slider.js + plugin-vocab-srs.js）：
+        // 文件只向 LT_registerExternalPlugin 队列入队，这里在 bootstrap 全部就绪后
+        // （LocalDB / DOM / 当前文章 / showToast 均可用）再统一 register。
+        // IndexedDB 里若存有用户导入的同名插件（可能更新），恢复流程先行，副本让位。
+        try {
+            (window.LT_registerExternalPlugin || []).forEach(fn => fn());
+        } catch (e) { console.warn('外部插件副本注册失败:', e); }
     })();
 </script>
+<!-- 外部插件副本：只入队（LT_registerExternalPlugin），由 bootstrap 尾部分发注册 -->
+<script src="plugin-para-vocab-slider.js"></script>
+<script src="plugin-vocab-srs.js"></script>
 </body>
 </html>
