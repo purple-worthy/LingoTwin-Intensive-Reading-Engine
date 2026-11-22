@@ -3949,11 +3949,25 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             } catch (e) { }
             return base + '/dict-assets/ldoce6/audio/' + acc + '/' + c + '/' + encodeURIComponent(w) + '.mp3';
         },
-        _playLocalWord(text, lang, token) {
+        /* 欧路语音库补位（豆包从 phon_en/uk.eudic 转出的真人音）。
+           命名规则与 _localWordUrl 完全相同，只是 code 换成 eudic；
+           只做朗文 404 后的补位，音质略逊朗文，绝不抢第一优先级。 */
+        _eudicWordUrl(word, lang) {
+            const acc = /en-gb/i.test(String(lang || '')) ? 'bre' : 'ame';
+            const w = String(word || '').toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+            const c = /^[a-z]/.test(w) ? w[0] : '0';
+            let base = 'http://127.0.0.1:37701';
+            try {
+                const el = document.getElementById('dbApiUrl');
+                if (el && el.value.trim()) base = el.value.trim().replace(/\/+$/, '');
+            } catch (e) { }
+            return base + '/dict-assets/eudic/' + acc + '/' + c + '/' + encodeURIComponent(w) + '.mp3';
+        },
+        _playLocalWord(text, lang, token, urlOverride) {
             return new Promise(resolve => {
                 const el = new Audio();
                 el.preload = 'auto';
-                el.src = this._localWordUrl(text, lang);
+                el.src = urlOverride || this._localWordUrl(text, lang);
                 this._regEl(el);
                 let settled = false, abandoned = false;
                 const done = ok => {
@@ -4450,22 +4464,28 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             //   单词是学发音的场景，必须精确 → 真人录音（0.27s）优先，失败无缝降级 Kokoro。
             const isWord = /^[A-Za-z][A-Za-z'’\- ]{0,44}$/.test(clean) && clean.split(/\s+/).length <= 4;
             if (isWord) {
-                // ① 本地朗文6 真人音（mdd 抽取，完全离线，~0.1s；抽取不到的词自动 404 降级）
+                // ① 本地朗文6 真人音（mdd 抽取，音质最好；抽取不到的词自动 404 降级）
                 this._playLocalWord(clean, lang, token).then(ok => {
                     if (token !== this._token) return;
                     if (ok) return;
-                    // ② 有道真人音（联网，0.3s）
-                    return this._playDictAudio(clean, lang, token).then(ok2 => {
+                    // ② 欧路语音库补位（豆包从 phon_en/uk.eudic 转出，本地真人音，覆盖朗文缺的 5.2 万词）
+                    const euUrl = this._eudicWordUrl(clean, lang);
+                    return this._playLocalWord(clean, lang, token, euUrl).then(okEu => {
                         if (token !== this._token) return;
-                        if (ok2) { this._prefetchOtherAccent(clean, lang); return; }
-                        // ③ 本地 Kokoro 合成 → ④ 在线句 → ⑤ 系统
-                        this._speakKokoro(clean, lang, token, btn, rest => {
+                        if (okEu) return;
+                        // ③ 有道真人音（联网，0.3s）
+                        return this._playDictAudio(clean, lang, token).then(ok2 => {
                             if (token !== this._token) return;
-                            if (!this._warnedTts) {
-                                this._warnedTts = true;
-                                showToast('ℹ️ 真人音不可用，已用本地合成代替。双击 F:\\EnglishReaderDataDict\\start-all.bat 可启用离线发音', 5200);
-                            }
-                            this._fallbackOnline(rest || clean, lang, token, btn);
+                            if (ok2) { this._prefetchOtherAccent(clean, lang); return; }
+                            // ④ 本地 Kokoro 合成 → ⑤ 在线句 → ⑥ 系统
+                            this._speakKokoro(clean, lang, token, btn, rest => {
+                                if (token !== this._token) return;
+                                if (!this._warnedTts) {
+                                    this._warnedTts = true;
+                                    showToast('ℹ️ 真人音不可用，已用本地合成代替。双击 F:\\EnglishReaderDataDict\\start-all.bat 可启用离线发音', 5200);
+                                }
+                                this._fallbackOnline(rest || clean, lang, token, btn);
+                            });
                         });
                     });
                 });
