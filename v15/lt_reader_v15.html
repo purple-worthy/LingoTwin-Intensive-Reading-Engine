@@ -326,6 +326,16 @@
         .dict-res-body { font-size: 15px; line-height: 1.8; color: #1e293b; }
         .hero-defs { margin-top: 10px; }
         .dict-history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+        /* 最近查询历史（需求13）：卡片 + 单条删除 + 清空 */
+        .dict-hist-card { position: relative; background:#fff; padding:10px 30px 10px 10px; border-radius:8px; border:1px solid #cbd5e1; cursor:pointer; }
+        .dict-hist-card:hover { border-color:#93c5fd; box-shadow:0 2px 8px rgba(59,130,246,.12); }
+        .dict-hist-del { position:absolute; top:6px; right:6px; border:0; background:transparent; color:#94a3b8; font-size:13px; line-height:1; cursor:pointer; padding:2px 5px; border-radius:4px; }
+        .dict-hist-del:hover { background:#fee2e2; color:#dc2626; }
+        .dict-hist-kind { font-size:10px; padding:1px 5px; border-radius:8px; background:#e0f2fe; color:#0369a1; margin-left:6px; }
+        .dict-hist-kind.zh { background:#fef3c7; color:#b45309; }
+        .dict-hist-empty { color:#94a3b8; font-size:12px; padding:8px 0; }
+        .dict-hist-clear { font-size:11px; color:#dc2626; background:#fff; border:1px solid #fecaca; padding:3px 9px; border-radius:5px; cursor:pointer; margin-left:10px; }
+        .dict-hist-clear:hover { background:#fee2e2; }
 
         /* 中文词条卡片 */
         .zh-defs ol { list-style: none; padding: 0; margin: 10px 0 0; }
@@ -1052,7 +1062,11 @@
     <div id="dictCurrentResultArea"></div>
 
     <div style="margin-top:20px;">
-        <h3 style="font-size:15px;color:#334155;border-bottom:1.5px dashed #cbd5e1;padding-bottom:8px;">🕒 本次会话最近查询记录（已自动归档至目录树「📁 单词查询归档」）</h3>
+        <h3 style="font-size:15px;color:#334155;border-bottom:1.5px dashed #cbd5e1;padding-bottom:8px;">
+            🕒 最近查询记录 <span id="dictHistoryCount" style="font-size:12px;color:#94a3b8;font-weight:normal;"></span>
+            <button id="dictHistoryClearBtn" class="dict-hist-clear" title="只清空这里的快捷记录，不删除已归档的文章">清空记录</button>
+            <span style="font-size:11px;color:#94a3b8;font-weight:normal;">（记录已持久化，刷新不丢；词条同时归档至「📁 单词查询归档」）</span>
+        </h3>
         <div class="dict-history-grid" id="dictRecentHistoryGrid"></div>
     </div>
 </div>
@@ -2827,8 +2841,117 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         return memoryDictCache;
     }
 
-    /* 独立单词查询中心逻辑 */
-    const dictSearchHistory = [];
+    /* ---------- 独立单词查询中心：最近查询历史（需求13：持久化 / 删除 / 清空） ----------
+       历史只是"快捷入口"，与「📁 单词查询归档」里的文章是两回事：
+       删历史不会删归档文章；最多保留 50 条，超出自动挤掉最旧的。 */
+    const DICT_HISTORY_KEY = 'lt_dict_search_history_v1';
+    const DICT_HISTORY_MAX = 50;
+    let dictSearchHistory = [];
+
+    function loadDictSearchHistory() {
+        try {
+            const raw = localStorage.getItem(DICT_HISTORY_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            dictSearchHistory = Array.isArray(arr) ? arr.slice(0, DICT_HISTORY_MAX) : [];
+        } catch (e) {
+            dictSearchHistory = [];
+        }
+        renderDictSearchHistory();
+    }
+
+    function persistDictSearchHistory() {
+        try {
+            localStorage.setItem(DICT_HISTORY_KEY, JSON.stringify(dictSearchHistory.slice(0, DICT_HISTORY_MAX)));
+        } catch (e) {
+            console.warn('[DictHistory] 持久化失败', e);
+        }
+    }
+
+    /** 统一入口：英文查词(wordEntry) 和 中文查词(cedict item) 都走这里 */
+    function addDictSearchHistory(item) {
+        const word = String((item && item.word) || '').trim();
+        if (!word) return;
+        const defs = (item && item.defs) || [];
+        const firstDef = defs[0];
+        const meaning = item.meaning || (typeof firstDef === 'string' ? firstDef : (firstDef && firstDef.meaning) || '');
+        dictSearchHistory = dictSearchHistory.filter(h => String(h.word || '').toLowerCase() !== word.toLowerCase());
+        dictSearchHistory.unshift({
+            word: word,
+            ipa: item.ipa || item.pinyin || '',   // 中文用拼音占位
+            meaning: String(meaning || '').slice(0, 80),
+            kind: item.kind || 'en',             // 'en' | 'zh'
+            nodeId: item.nodeId || ''
+        });
+        dictSearchHistory = dictSearchHistory.slice(0, DICT_HISTORY_MAX);
+        persistDictSearchHistory();
+        renderDictSearchHistory();
+    }
+
+    function removeDictSearchHistory(idx) {
+        const item = dictSearchHistory[idx];
+        if (!item) return;
+        dictSearchHistory.splice(idx, 1);
+        persistDictSearchHistory();
+        renderDictSearchHistory();
+        showToast(`🗑 已移除记录「${item.word}」（归档文章仍保留）`);
+    }
+
+    function clearDictSearchHistory() {
+        if (!dictSearchHistory.length) { showToast('最近查询记录本来就是空的'); return; }
+        if (!confirm(`确定清空这 ${dictSearchHistory.length} 条最近查询记录吗？\n\n只会清掉这里的快捷入口，「📁 单词查询归档」里的文章不会删除。`)) return;
+        dictSearchHistory = [];
+        persistDictSearchHistory();
+        renderDictSearchHistory();
+        showToast('✅ 已清空最近查询记录');
+    }
+
+    function renderDictSearchHistory() {
+        const grid = document.getElementById('dictRecentHistoryGrid');
+        if (!grid) return;
+        const countEl = document.getElementById('dictHistoryCount');
+        if (countEl) countEl.textContent = dictSearchHistory.length ? `${dictSearchHistory.length} 条` : '';
+        if (!dictSearchHistory.length) {
+            grid.innerHTML = '<div class="dict-hist-empty">暂无查询记录。查一个词后这里会自动保留，刷新页面也不丢。</div>';
+            return;
+        }
+        grid.innerHTML = dictSearchHistory.map((h, i) => {
+            const isZh = h.kind === 'zh';
+            const kindTag = isZh ? '<span class="dict-hist-kind zh">中</span>' : '<span class="dict-hist-kind">英</span>';
+            const sub = h.meaning || '点击查看词条卡';
+            return `<div class="vocab-item dict-hist-card" data-hist-idx="${i}" title="点击查看归档词条卡">
+              <button class="dict-hist-del" data-hist-del="${i}" title="删除这条记录（不删归档文章）">✕</button>
+              <div class="vocab-head"><span class="vocab-word">${escHtml(h.word)}</span>${kindTag}<span class="vocab-ipa">${escHtml(h.ipa || '')}</span></div>
+              <div style="font-size:12px;color:#475569;margin-top:4px;">${escHtml(sub.slice(0, 40))}</div>
+            </div>`;
+        }).join('');
+    }
+
+    /** 事件委托只绑一次：卡片点击=打开归档文章，✕=删单条 */
+    function initDictHistoryEvents() {
+        const grid = document.getElementById('dictRecentHistoryGrid');
+        if (!grid || grid._histBound) return;
+        grid._histBound = true;
+        grid.addEventListener('click', function (e) {
+            const del = e.target.closest('[data-hist-del]');
+            if (del) {
+                e.stopPropagation();
+                removeDictSearchHistory(Number(del.getAttribute('data-hist-del')));
+                return;
+            }
+            const card = e.target.closest('[data-hist-idx]');
+            if (!card) return;
+            const item = dictSearchHistory[Number(card.getAttribute('data-hist-idx'))];
+            if (!item) return;
+            if (item.nodeId) {
+                openArticleById(item.nodeId);
+                switchMainPage('reading');
+            } else {
+                showToast('这条老记录没有归档 id，请重新查一次这个词');
+            }
+        });
+        const clearBtn = document.getElementById('dictHistoryClearBtn');
+        if (clearBtn) clearBtn.onclick = clearDictSearchHistory;
+    }
     async function ensureQueryArchiveFolder() {
         await refreshDirectoryTree();
         let folder = allNodes.find(n => n.type === 'folder' && n.title === '单词查询归档' && !n.parentId);
@@ -2861,6 +2984,14 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         }
         if (resArea) resArea.innerHTML = items.map(renderZhCard).join('');
         await archiveZhEntry(items[0]);          // 归档到「📁 单词查询归档」，和英文查词一致
+        addDictSearchHistory({
+            word: items[0].simp,
+            pinyin: items[0].pinyin || '',
+            defs: items[0].defs,
+            meaning: (items[0].defs || []).filter(Boolean)[0] || '',
+            kind: 'zh',
+            nodeId: 'dict-zh-' + String(items[0].simp || '').replace(/[^\u4e00-\u9fa5A-Za-z0-9]/g, '_')
+        });
         showToast(`✅ 命中 ${items.length} 条中文词条，已归档`);
     }
 
@@ -3145,15 +3276,13 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         });
         await refreshDirectoryTree();
 
-        if (!dictSearchHistory.some(h => h.word === wordEntry.word)) {
-            dictSearchHistory.unshift(wordEntry);
-            document.getElementById('dictRecentHistoryGrid').innerHTML = dictSearchHistory.map(h => `
-        <div class="vocab-item" style="background:#fff;padding:10px;border-radius:8px;border:1px solid #cbd5e1;cursor:pointer;" onclick="openArticleById('dict-word-${h.word.toLowerCase().replace(/[^a-z0-9]/g, '_')}');switchMainPage('reading');">
-          <div class="vocab-head"><span class="vocab-word">${h.word}</span><span class="vocab-ipa">${h.ipa || ''}</span></div>
-          <div style="font-size:12px;color:#475569;margin-top:4px;">${(h.defs[0]?.meaning || '').slice(0, 40)}</div>
-        </div>
-      `).join('');
-        }
+        addDictSearchHistory({
+            word: wordEntry.word,
+            ipa: wordEntry.ipa || '',
+            defs: wordEntry.defs,
+            kind: 'en',
+            nodeId: wordNodeId
+        });
         showToast(`✅ 已查询 "${wordEntry.word}" 并自动存入数据库及「📁 单词查询归档」！`);
     }
 
@@ -6031,6 +6160,8 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         renderRecentReadList();
         initSelectionLookup();
         initDictResultNested();
+        loadDictSearchHistory();      // 需求13：恢复持久化的最近查询记录
+        initDictHistoryEvents();      // 需求13：卡片点击 / 单条删除 / 清空
         const dictBack = document.getElementById('dictBackBtn');
         if (dictBack) dictBack.onclick = goBackDictResult;
         updateDictNav();
