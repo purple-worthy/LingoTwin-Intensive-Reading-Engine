@@ -6,7 +6,7 @@
  *   扩展的 service worker 有 host_permissions，不受页面混合内容限制。
  */
 
-const BASE = 'http://127.0.0.1:8080';
+const BASE = 'http://127.0.0.1:37701';
 
 async function post(path, body) {
   const res = await fetch(BASE + path, {

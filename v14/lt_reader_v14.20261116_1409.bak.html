@@ -390,7 +390,7 @@
         <div class="setting-group">
             <h4>1. MySQL 全量词库 (340万词) 与书籍落库配置</h4>
             <div class="config-card">
-                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:8080"></div>
+                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:37701"></div>
                 <div class="config-row">
                     <span class="config-label">主机/端口：</span>
                     <input type="text" class="config-input" id="dbHost" value="127.0.0.1">
@@ -1616,8 +1616,11 @@
             } catch (e) { console.warn('恢复插件失败:', plg.id, e); }
         }
 
+        // 只接受专属端口段 37700-37799，忽略旧端口(8080)残留
         const bootDb = JSON.parse(localStorage.getItem('mysql_conn_boot_v14') || '{}');
-        if (bootDb.apiUrl) document.getElementById('dbApiUrl').value = bootDb.apiUrl;
+        if (bootDb.apiUrl && /^https?:\/\/(127\.0\.0\.1|localhost):377\d\d\/?$/.test(bootDb.apiUrl.trim())) {
+            document.getElementById('dbApiUrl').value = bootDb.apiUrl.trim();
+        }
         if (bootDb.host) document.getElementById('dbHost').value = bootDb.host;
         if (bootDb.port) document.getElementById('dbPort').value = bootDb.port;
         if (bootDb.database) document.getElementById('dbName').value = bootDb.database;

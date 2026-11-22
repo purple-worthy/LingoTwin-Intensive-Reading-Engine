@@ -615,7 +615,7 @@
         <div class="setting-group">
             <h4>1. 词库服务 (MySQL 340万词 · 凭据已移至后端)</h4>
             <div class="config-card">
-                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:8080"></div>
+                <div class="config-row"><span class="config-label">桥接服务：</span><input type="text" class="config-input" id="dbApiUrl" value="http://127.0.0.1:37701"></div>
                 <div class="config-row" style="justify-content:space-between;margin-top:4px;">
                     <span id="mysqlDiagMsg" style="font-size:11px;color:#64748b;">未连接（使用浏览器缓存）</span>
                     <button class="mini-btn" style="background:#0284c7;color:#fff;border-color:#0284c7;" onclick="connectAndSyncMysql()">🔌 连接词库服务</button>
@@ -3126,8 +3126,11 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         window.ReaderFeaturePlugins.renderPluginUI();
 
         // 只恢复桥接服务地址（DB 凭据在后端，浏览器不再保存）
+        // 只接受专属端口段 37700-37799，忽略旧端口(8080)残留，让新默认 37701 生效
         const bootDb = JSON.parse(localStorage.getItem('mysql_conn_boot_v14') || '{}');
-        if (bootDb.apiUrl) document.getElementById('dbApiUrl').value = bootDb.apiUrl;
+        if (bootDb.apiUrl && /^https?:\/\/(127\.0\.0\.1|localhost):377\d\d\/?$/.test(bootDb.apiUrl.trim())) {
+            document.getElementById('dbApiUrl').value = bootDb.apiUrl.trim();
+        }
 
         const localPrefs = JSON.parse(localStorage.getItem('reader_prefs_v14') || '{}');
         applyLoadedPreferences(localPrefs);

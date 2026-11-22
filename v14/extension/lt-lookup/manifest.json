@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "name": "LT 划词词典 · LingoTwin Lookup",
   "version": "1.0.2",
-  "description": "选中网页上的英文单词，右侧弹出牛津/朗文/麦克米伦/同义词四本词典的对照释义。依赖本地已启动的 MySQL 桥接服务（127.0.0.1:8080）。",
+  "description": "选中网页上的英文单词，右侧弹出牛津/朗文/麦克米伦/同义词四本词典的对照释义。依赖本地已启动的 MySQL 桥接服务（127.0.0.1:37701）。",
   "permissions": ["storage"],
-  "host_permissions": ["http://127.0.0.1:8080/*"],
+  "host_permissions": ["http://127.0.0.1:37701/*"],
   "background": {
     "service_worker": "background.js"
   },

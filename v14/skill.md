@@ -10,7 +10,7 @@
 - **工程简写**：`LT-Reader`
 - **核心文件组成**：
   - `lt_reader_v14.html`：单文件纯原生前端微内核主程序（Zero-Build，零构建依赖）。
-  - `mysql_bridge_server.py`：基于 Python FastAPI + PyMySQL 的本地轻量数据库网关服务（端口 `8080`）。
+  - `mysql_bridge_server.py`：基于 Python FastAPI + PyMySQL 的本地轻量数据库网关服务（端口 `37701`，专属段 37700-37799）。
   - `import_stardict_to_mysql.py`：ECDICT 全量 340 万词库一次性幂等导入脚本。
   - `start_bridge.vbs`：Windows 静默无黑框后台拉起脚本（配合 WebStorm / IDEA `Before launch` 任务）。
   - `plugin-para-vocab-slider.js`：外部热插拔扩展功能插件（段落同步滑动释义窗）。

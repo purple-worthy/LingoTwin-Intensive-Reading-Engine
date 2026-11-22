@@ -6,14 +6,14 @@
 新增：**整段选中 → 本地 Ollama 翻译 + 自动挑出重难点词**；**结果里继续双击查词，逐层返回，不限层数**；
 **面板可拖动、四边缩放、五种预设位置**。
 
-数据全部来自你本机的 MySQL 桥接服务（`127.0.0.1:8080`），不联网、不上传（段落翻译走你本机的 Ollama）。
+数据全部来自你本机的 MySQL 桥接服务（`127.0.0.1:37701`），不联网、不上传（段落翻译走你本机的 Ollama）。
 
 ---
 
 ## 一、安装（Chrome / Edge 通用）
 
 1. **先启动服务**：双击 `F:\EnglishReaderDataDict\restart_bridge.bat`
-   （先杀掉占着 8080 的旧进程，再启动新的，最后自动健康检查）
+   （先杀掉占着 37701 的旧进程，再启动新的，最后自动健康检查）
 2. 打开 `chrome://extensions/`（Edge 是 `edge://extensions/`）
 3. 右上角打开 **开发者模式**
 4. 点 **加载已解压的扩展程序**，选择本目录：
@@ -130,7 +130,7 @@ DIFFICULTY_LEVEL = "B2"   # 可选 A1 / A2 / B1 / B2 / C1 / C2
 
 ## 四、为什么要在 background 里转发请求
 
-插件的内容脚本运行在网页里。如果网页是 `https://`，从它直接请求 `http://127.0.0.1:8080`
+插件的内容脚本运行在网页里。如果网页是 `https://`，从它直接请求 `http://127.0.0.1:37701`
 会被浏览器判定为**混合内容**直接拦掉。
 
 所以请求统一由 `background.js`（service worker）发出——它带着 `host_permissions`，
@@ -157,7 +157,7 @@ DIFFICULTY_LEVEL = "B2"   # 可选 A1 / A2 / B1 / B2 / C1 / C2
 
 ```
 lt-lookup/
-├── manifest.json     MV3 扩展声明（含 127.0.0.1:8080 的 host_permissions）
+├── manifest.json     MV3 扩展声明（含 127.0.0.1:37701 的 host_permissions）
 ├── background.js     转发 lookup / analyze / ping 到本地桥接服务
 ├── content.js        双击与划词检测、可拖拽缩放面板、历史栈、卡片与段落渲染
 └── README.md         本文件
