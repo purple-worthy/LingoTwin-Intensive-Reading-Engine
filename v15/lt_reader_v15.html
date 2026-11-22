@@ -4625,6 +4625,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
        ============================================================ */
     const LTToolDock = window.LTToolDock = {
         K_GEO: 'lt_dock_geom_v1',
+        K_RESTORE: 'lt_dock_restore_v1',
         K_ALPHA: 'lt_dock_alpha_v1',
         K_PIN: 'lt_dock_pin_v1',
         K_ORIENT: 'lt_dock_orient_v1',
@@ -4766,6 +4767,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         keepInside() {
             const el = this.el;
             if (!el || !el.style.left) return;
+            if (this.hidden) return;   // ⭐ 侧边隐藏态：位置故意在视口外，不要被 clamp 拉回来
             const r = el.getBoundingClientRect();
             const w = el.offsetWidth, h = el.offsetHeight;
             this.place(
@@ -4831,8 +4833,17 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         hideSide(silent) {
             const el = this.el;
             if (!el) return;
-            // 先按"还在原位"算小拉手的位置，再加 transform（否则读到的是动画中的坐标）
+            // ⭐ 互斥修复：side-hidden 靠 transform:translateX(100%+14px) 移出屏幕，
+            // 只有贴在右边缘才真正出屏——工具条被拖到屏幕中部时"移出一个身位"仍在屏内，
+            // 造成"本体可见 + 小拉手也在"同时出现。先记住原位，再强制贴到右缘。
             const r = el.getBoundingClientRect();
+            try { localStorage.setItem(this.K_RESTORE, JSON.stringify({ left: Math.round(r.left), top: Math.round(r.top) })); } catch (e) { }
+            const dw = el.offsetWidth || 44;
+            const dh = el.offsetHeight || 300;
+            this.place(
+                Math.max(4, window.innerWidth - dw + 2),                       // 贴右缘（右移出屏由 transform 完成）
+                Math.max(4, Math.min(window.innerHeight - dh - 4, r.top))      // 纵向保持当前高度、不出屏
+            );
             const tab = document.getElementById('ltDockTab');
             if (tab) {
                 tab.style.top = Math.max(8, Math.min(window.innerHeight - 70, Math.round(r.top + 18))) + 'px';
@@ -4847,6 +4858,15 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             const el = this.el;
             this.hidden = false;
             if (el) el.classList.remove('side-hidden');
+            // 回到收起前的原位，并同步为正常拖拽位置（K_GEO），防止下次启动落在贴边态
+            try {
+                const rp = JSON.parse(localStorage.getItem(this.K_RESTORE) || 'null');
+                if (rp && typeof rp.left === 'number' && el) {
+                    this.place(rp.left, rp.top);
+                    localStorage.setItem(this.K_GEO, JSON.stringify(rp));
+                }
+                localStorage.removeItem(this.K_RESTORE);
+            } catch (e) { }
             const tab = document.getElementById('ltDockTab');
             if (tab) tab.classList.remove('show');
             try { localStorage.setItem(this.K_HIDDEN, '0'); } catch (e) { }
