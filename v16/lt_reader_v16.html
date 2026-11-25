@@ -19,8 +19,8 @@ window.LTLog = (function () {
 </script>
     <!-- 站点图标：内联 SVG，不额外请求文件，双击 HTML 也能显示 -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2312a594'/%3E%3Cstop offset='1' stop-color='%230b5f57'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='44' height='44' rx='11' fill='url(%23g)'/%3E%3Cpath d='M22 15.2c-3.3-1.9-7-2.1-10.8-.6a1 1 0 0 0-.6.9v15.1c0 .7.7 1.1 1.3.8 3.3-1.3 6.7-1.1 9.6.5.3.2.5.2.5-.2V15.2z' fill='%23fff'/%3E%3Cpath d='M22 15.2c3.3-1.9 7-2.1 10.8-.6a1 1 0 0 1 .6.9v15.1c0 .7-.7 1.1-1.3.8-3.3-1.3-6.7-1.1-9.6.5-.3.2-.5.2-.5-.2V15.2z' fill='%23e8fffb'/%3E%3Cpath d='M26.6 12.4h5.2v12.2l-2.6-2.1-2.6 2.1z' fill='%23fbbf24'/%3E%3C/svg%3E">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="vendor/jszip.min.js"></script>
+    <script src="vendor/pdf.min.js"></script>
     <style id="base-theme-styles">
         body.theme-green {
             --bg-outer: #e5e7eb; --bg-paper: #ffffff; --banner-bg: #4a5d54; --meta-bg: #6b7f75;
@@ -330,6 +330,47 @@ window.LTLog = (function () {
             border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 24px;
             background: #ffffff; box-shadow: 0 6px 20px rgba(0,0,0,0.04); margin-bottom: 24px;
         }
+        /* 需求24：我的笔记（个人对单词的行业理解，借鉴欧路词典） */
+        .dict-mynote { margin-top:14px; border:1.5px solid #fcd34d; border-radius:9px;
+            background:#fffbeb; overflow:hidden; }
+        .dict-mynote-head { display:flex; align-items:center; gap:8px; padding:7px 12px;
+            background:#fef3c7; border-bottom:1px solid #fde68a; font-size:12.5px; font-weight:700; color:#92400e; }
+        .dict-mynote-head .mynote-actions { margin-left:auto; display:flex; gap:6px; }
+        .dict-mynote-head button { border:1px solid #fcd34d; background:#fff; color:#92400e;
+            border-radius:5px; padding:1px 9px; font-size:11.5px; cursor:pointer; }
+        .dict-mynote-head button:hover { background:#fde68a; }
+        .dict-mynote-body { padding:10px 12px; font-size:13.5px; line-height:1.8; color:#78350f;
+            white-space:pre-wrap; word-break:break-word; }
+        .dict-mynote-body.mynote-empty { color:#b45309; font-style:italic; }
+        .dict-mynote-edit { padding:10px 12px; }
+        .dict-mynote-edit textarea { width:100%; min-height:90px; box-sizing:border-box; resize:vertical;
+            border:1px solid #fcd34d; border-radius:6px; padding:8px 10px; font:13.5px/1.7 inherit;
+            color:#78350f; background:#fff; }
+        .dict-mynote-edit .mynote-btns { margin-top:7px; display:flex; gap:8px; justify-content:flex-end; }
+        .dict-mynote-edit .mynote-btns button { border-radius:6px; padding:3px 14px; font-size:12px; cursor:pointer; }
+        .mynote-save { border:none; background:#d97706; color:#fff; }
+        .mynote-cancel { border:1px solid #fcd34d; background:#fff; color:#92400e; }
+        /* 需求23：自然语言 AI 对比问答卡 */
+        .aiqa-card { border:1.5px solid #a78bfa; border-radius:10px; padding:22px 24px;
+            background:linear-gradient(180deg,#faf5ff 0%,#ffffff 60%); box-shadow:0 6px 20px rgba(124,58,237,.08); margin-bottom:24px; }
+        .aiqa-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+            border-bottom:1.5px dashed #ddd6fe; padding-bottom:12px; margin-bottom:14px; }
+        .aiqa-badge { font-size:12px; font-weight:700; color:#fff; background:#7c3aed;
+            border-radius:14px; padding:2px 10px; }
+        .aiqa-q { font-size:15px; font-weight:600; color:#4c1d95; }
+        .aiqa-meta { margin-left:auto; font-size:11px; color:#94a3b8; }
+        .aiqa-body { font-size:15px; line-height:1.85; color:#1e293b; }
+        .aiqa-body h3 { font-size:15px; color:#6d28d9; margin:16px 0 6px; }
+        .aiqa-body p { margin:6px 0; }
+        .aiqa-body ul, .aiqa-body ol { margin:6px 0; padding-left:22px; }
+        .aiqa-body li { margin:3px 0; }
+        .aiqa-body code { background:#f3e8ff; color:#6d28d9; padding:1px 5px; border-radius:4px; font-size:13px; }
+        .aiqa-terms { margin-top:16px; border-top:1px dashed #ddd6fe; padding-top:10px; }
+        .aiqa-terms summary { font-size:12.5px; color:#7c3aed; cursor:pointer; font-weight:600; }
+        .aiqa-term-tag { display:inline-block; font-family:Georgia,serif; font-size:13px; font-weight:700;
+            color:#5b21b6; background:#ede9fe; border-radius:12px; padding:2px 10px; margin:6px 6px 0 0; }
+        .aiqa-stop { margin-left:8px; font-size:11px; color:#dc2626; background:#fef2f2;
+            border:1px solid #fecaca; border-radius:6px; padding:2px 9px; cursor:pointer; }
         .dict-res-header {
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 14px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
@@ -1066,10 +1107,10 @@ window.LTLog = (function () {
 <div class="page-container dict-search-view" id="dictSearchView">
     <div class="dict-search-hero">
         <div class="dict-search-row">
-            <input type="text" class="search-word-input" id="dictQueryInput" placeholder="英文单词 / 中文词（如 坚持），回车即查…" onkeydown="if(event.key==='Enter') executeDictLookup()">
+            <input type="text" class="search-word-input" id="dictQueryInput" placeholder="查词：输入单词/中文词　｜　AI对比问答：如「impact 和 affect 有什么区别」" onkeydown="if(event.key==='Enter') executeDictLookup()">
             <button class="search-submit-btn" onclick="executeDictLookup()">🔍 查询并归档</button>
         </div>
-        <div class="dict-search-hint">本地 340 万词库直连 · 生词由 Ollama 兜底 · 结果自动归档到「📁 单词查询归档」</div>
+        <div class="dict-search-hint">本地 340 万词库直连 · 生词由 Ollama 兜底 · <b>也可直接问「A 和 B 的区别」触发 AI 对比问答（含常用/计算机行业/最新用法解释）</b> · 结果自动归档到「📁 单词查询归档」</div>
     </div>
 
     <div id="dictNavBar">
@@ -1319,6 +1360,123 @@ window.LTLog = (function () {
         }
     }
 
+    /* ==================== 需求24：单词个人笔记（借鉴欧路词典） ====================
+       存储策略（新波 2026-11-25 定）：IndexedDB 存实际使用（离线快），MySQL 存备份（防丢）。
+       - 读：先查 IndexedDB；本地没有且 MySQL 连着 → 拉 MySQL 回填本地（换浏览器不丢）
+       - 写：双写，IndexedDB 成功即视为成功；MySQL 失败只告警不阻断
+       - 渲染：renderDictResultCard 是同步函数，故先输出占位 div，再异步填充 */
+    const NOTE_KEY = w => String(w || '').trim().toLowerCase();
+
+    async function getWordNote(word) {
+        const key = NOTE_KEY(word);
+        if (!key) return '';
+        try {
+            const rec = await LocalDB.get('word_notes', key);
+            if (rec && typeof rec.note === 'string') return rec.note;
+        } catch (e) { console.warn('[WordNote] IndexedDB 读取失败', e); }
+        // 本地没有 → 尝试从 MySQL 备份拉取并回填
+        if (isMysqlConnected) {
+            try {
+                const res = await callMysqlApi('/api/wordnote/get', { word: key });
+                if (res && res.ok && res.found && res.note) {
+                    await LocalDB.put('word_notes', { word: key, note: res.note, updatedAt: Date.now() });
+                    return res.note;
+                }
+            } catch (e) { console.warn('[WordNote] MySQL 备份读取失败', e); }
+        }
+        return '';
+    }
+
+    async function saveWordNote(word, note) {
+        const key = NOTE_KEY(word);
+        if (!key) return { ok: false, error: '缺少单词' };
+        const text = String(note || '');
+        if (text.length > 20000) return { ok: false, error: '笔记太长（上限 20000 字）' };
+        // ① 本地（主存储）—— 空笔记视为删除
+        try {
+            if (text.trim()) await LocalDB.put('word_notes', { word: key, note: text, updatedAt: Date.now() });
+            else await LocalDB.deleteItem('word_notes', key);
+        } catch (e) { return { ok: false, error: '本地保存失败：' + (e.message || e) }; }
+        // ② MySQL 备份（失败不阻断本地）
+        let backupWarn = '';
+        if (isMysqlConnected) {
+            try {
+                const res = await callMysqlApi('/api/wordnote/save', { word: key, note: text });
+                if (!res || !res.ok) backupWarn = '（云端备份未成功：' + ((res && res.error) || '未知') + '）';
+            } catch (e) { backupWarn = '（云端备份未成功：' + (e.message || e) + '）'; }
+        }
+        return { ok: true, warning: backupWarn };
+    }
+
+    /** 异步把笔记内容填进占位区。scope 指定容器（独立查词页 / 正文浮层），避免两处 id 冲突。 */
+    async function fillWordNote(word, scope) {
+        const root = scope || document;
+        const box = root.querySelector('#dictMyNoteBody');
+        if (!box) return;
+        const note = await getWordNote(word);
+        if (!box.isConnected || box.dataset.word !== NOTE_KEY(word)) return;  // 期间又查了别的词，丢弃旧结果
+        if (note) {
+            box.classList.remove('mynote-empty');
+            box.textContent = note;
+        } else {
+            box.classList.add('mynote-empty');
+            box.textContent = '还没写笔记。点右上「✎ 编辑」记下你对这个词的行业理解（如计算机语境下的含义）。';
+        }
+    }
+
+    /** 笔记区 HTML 占位（同步），safeWord 供内联 onclick 使用 */
+    function wordNoteHtml(word) {
+        const w = String(word || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        return `<div class="dict-mynote" data-note-word="${escHtml(word)}">
+            <div class="mynote-head">📝 我的笔记
+              <span class="mynote-actions">
+                <button type="button" onclick="editWordNote('${w}', this)">✎ 编辑</button>
+              </span>
+            </div>
+            <div class="dict-mynote-body mynote-empty" id="dictMyNoteBody" data-word="${escHtml(NOTE_KEY(word))}">⏳ 正在读取笔记…</div>
+          </div>`;
+    }
+
+    /** 进入编辑态：textarea + 保存/取消 */
+    async function editWordNote(word, btn) {
+        const card = btn && btn.closest ? btn.closest('.dict-mynote') : document.querySelector('.dict-mynote');
+        if (!card) return;
+        const key = NOTE_KEY(word);
+        const current = await getWordNote(word);
+        card.innerHTML = `<div class="mynote-head">📝 我的笔记 · 编辑「${escHtml(word)}」
+            <span class="mynote-actions"><button type="button" onclick="cancelWordNoteEdit('${String(word).replace(/'/g,"\\'")}', this)">取消</button></span>
+          </div>
+          <div class="dict-mynote-edit">
+            <textarea id="dictMyNoteInput" placeholder="记下你对该词的理解，尤其是计算机/行业语境下的含义…">${escHtml(current)}</textarea>
+            <div class="mynote-btns">
+              <button type="button" class="mynote-cancel" onclick="cancelWordNoteEdit('${String(word).replace(/'/g,"\\'")}', this)">取消</button>
+              <button type="button" class="mynote-save" onclick="commitWordNote('${String(word).replace(/'/g,"\\'")}', this)">保存</button>
+            </div>
+          </div>`;
+        const ta = document.getElementById('dictMyNoteInput');
+        if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+    }
+
+    function cancelWordNoteEdit(word, btn) {
+        const card = btn && btn.closest ? btn.closest('.dict-mynote') : document.querySelector('.dict-mynote');
+        if (!card) return;
+        card.outerHTML = wordNoteHtml(word);
+        fillWordNote(word);
+    }
+
+    async function commitWordNote(word, btn) {
+        const ta = document.getElementById('dictMyNoteInput');
+        const text = ta ? ta.value : '';
+        const res = await saveWordNote(word, text);
+        if (!res.ok) { alert('❌ ' + res.error); return; }
+        const card = btn && btn.closest ? btn.closest('.dict-mynote') : document.querySelector('.dict-mynote');
+        if (card) { card.outerHTML = wordNoteHtml(word); fillWordNote(word); }
+        showToast('✅ 笔记已保存' + (res.warning ? ' ' + res.warning : ''));
+    }
+    window.editWordNote = editWordNote;
+    window.cancelWordNoteEdit = cancelWordNoteEdit;
+    window.commitWordNote = commitWordNote;
+
     function renderDictResultCard(entry, sourceLabel, auth) {
         const items = (auth && auth.items) || [];
         // 别名已由后端跟随到原型词，所以按"有没有实际释义"挑，而不是排除 isRedirect
@@ -1419,6 +1577,7 @@ window.LTLog = (function () {
         ${posChips ? `<div class="hero-pos">${posChips}</div>` : ''}
         ${lemmaHtml}
         <div class="hero-defs">${defsHtml}</div>
+        ${wordNoteHtml(entry.word)}
         ${exHtml}
         ${authExHtml}
         ${aiExHtml}
@@ -1481,6 +1640,7 @@ Rules: include every common part of speech; keep "meaning" in Simplified Chinese
             entry.example = parsed.example;
             document.getElementById('dictCurrentResultArea').innerHTML =
                 renderDictResultCard(entry, entry._sourceLabel || '', window._lastAuth || null);
+            fillWordNote(entry.word);   // 需求24：重渲染后回填个人笔记
             showToast('✅ 例句已生成');
         } else {
             showToast('⚠️ 例句生成失败，请检查模型是否可用');
@@ -2351,6 +2511,9 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         }
         _wlpCurrent = { kind, key: text, html };
         body.innerHTML = html;
+        // 需求24：正文浮层回填个人笔记（词从占位读，兼容中/英文两种查询分支）
+        const noteCard = body.querySelector('.dict-mynote');
+        if (noteCard) fillWordNote(noteCard.dataset.noteWord, body);
         body.scrollTop = 0;
         updateWlpNav();
         armWlpAutoClose();          // 版本2：鼠标没进面板就自动收起
@@ -2766,7 +2929,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     }
 
     const LocalDB = {
-        dbName: 'IeltsReaderDB_v14', version: 1, db: null,
+        dbName: 'IeltsReaderDB_v14', version: 2, db: null,   // v2(需求24): 新增 word_notes 个人笔记 store
         async init() {
             return new Promise((resolve, reject) => {
                 const req = indexedDB.open(this.dbName, this.version);
@@ -2777,6 +2940,8 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                     if (!db.objectStoreNames.contains('plugins')) db.createObjectStore('plugins', { keyPath: 'id' });
                     if (!db.objectStoreNames.contains('global_dict')) db.createObjectStore('global_dict', { keyPath: 'word' });
                     if (!db.objectStoreNames.contains('reading_progress')) db.createObjectStore('reading_progress', { keyPath: 'articleId' });
+                    // 需求24：单词个人笔记（IndexedDB 主存储，MySQL 备份）
+                    if (!db.objectStoreNames.contains('word_notes')) db.createObjectStore('word_notes', { keyPath: 'word' });
                 };
                 req.onsuccess = (e) => { this.db = e.target.result; resolve(); };
                 req.onerror = (e) => reject(e.target.error);
@@ -3257,10 +3422,190 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         }
     }
 
+    /* ==================== 需求23：自然语言 AI 对比问答 ====================
+       搜索框输入自然语言（如 "impact 和 affect 有什么区别"、"compare impact and affect"）
+       → AI 从问句抽出要对比的英文词 → 分别查词库取精简字段 → 连同原问句丢给 AI
+       → 回答含【常用解释 / 计算机行业解释 / 最新用法变化】，不落词典死板释义。
+       全部复用既有能力：callMysqlApi 查词、Ollama /api/generate 生成，不新增服务。 */
+
+    /** 判断输入是否为"自然语言问句"而非单个查词。
+        规则：中文问句信号词 / 英文对比信号词 / 抽取出的英文词≥2 个。 */
+    function isAiQuestionQuery(raw) {
+        const s = String(raw || '').trim();
+        if (!s) return false;
+        // 单个英文单词（含短语 ≤3 词）视为查词，除非带明确问句信号
+        const zhAsk = /区别|不同|对比|比较|区别在|有什么不|什么意思|含义|用法|何时用|怎么用|difference|详解|辨析/.test(s);
+        const enAsk = /\b(compare|comparison|difference|differ|versus|vs\.?|between)\b/i.test(s);
+        if (zhAsk || enAsk) return true;
+        // 含中文 + 至少 2 个英文词 → 多半是中文问句里带了对比词
+        if (/[\u4e00-\u9fa5]/.test(s)) {
+            const enWords = s.match(/[A-Za-z][A-Za-z'\-]{1,}/g) || [];
+            if (enWords.length >= 2) return true;
+        }
+        // 纯英文："A vs B" / "A or B" / "A and B difference" 已在上面覆盖 vs/compare
+        return false;
+    }
+
+    /** 让 Ollama 从自然语言问句里抽出要对比的英文词，返回小写词数组（2~5 个）。
+        失败时回退：正则抓问句里的英文单词。 */
+    async function extractWordsFromQuestion(question) {
+        const url = document.getElementById('ollamaUrlInput').value.trim().replace(/\/$/, '');
+        const model = document.getElementById('ollamaModelSelect').value;
+        if (isOllamaConnected && model) {
+            try {
+                const resp = await fetch(`${url}/api/generate`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model,
+                        system: 'You extract the English words/phrases a user wants to compare. Output STRICT JSON only.',
+                        prompt: `From this question, list the English words or phrases being compared or asked about. Output STRICT JSON only: {"words":["word1","word2"]}\n\nQuestion: ${question}\n\nRules: only English words/phrases, lowercase, 1-5 items, no Chinese, no explanations. If it asks about a single word, return just that one.`,
+                        stream: false,
+                        options: { temperature: 0.1, num_predict: 128 }
+                    })
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const raw = (data.response || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+                    const m = raw.match(/\{[\s\S]*\}/);
+                    if (m) {
+                        const parsed = JSON.parse(m[0]);
+                        const words = (Array.isArray(parsed.words) ? parsed.words : [])
+                            .map(w => String(w).toLowerCase().trim())
+                            .filter(w => /^[a-z][a-z'\- ]{0,30}$/.test(w));
+                        if (words.length) return words.slice(0, 5);
+                    }
+                }
+            } catch (e) { console.warn('AI 抽词失败，回退正则', e); }
+        }
+        // 回退：抓英文单词，去掉常见疑问词/连接词
+        const stop = new Set(['compare','comparison','difference','differ','versus','vs','between','and','or','the','what','how','when','why','with','in','of','to','a','an','is','are','do','does','mean','meaning','usage','difference']);
+        const found = (String(question).match(/[A-Za-z][A-Za-z'\-]{1,}/g) || [])
+            .map(w => w.toLowerCase()).filter(w => !stop.has(w));
+        return Array.from(new Set(found)).slice(0, 5);
+    }
+
+    /** 把查词结果压成精简字段（控 token，避免超 num_ctx=4096）*/
+    function compactDictData(word, entry, auth) {
+        const out = { word };
+        if (entry) {
+            out.ipa = entry.ipa || '';
+            out.defs = (Array.isArray(entry.defs) ? entry.defs : [])
+                .slice(0, 4)
+                .map(d => ({ pos: d.pos || '', meaning: String(d.meaning || '').slice(0, 40) }));
+            if (entry.exchangeRaw) out.forms = String(entry.exchangeRaw).slice(0, 80);
+        }
+        // 权威词典：每本只取前 2 条释义摘要
+        if (auth && Array.isArray(auth.items)) {
+            out.authority = auth.items.slice(0, 4).map(it => ({
+                source: it.source || it.name || '',
+                brief: String(it.text || it.content || it.brief || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 100)
+            })).filter(x => x.brief);
+        }
+        return out;
+    }
+
+    /** AI 对比问答主流程 */
+    async function runAiWordQA(question) {
+        if (!isOllamaConnected) {
+            showToast('⚠️ 自然语言问答需先连接本地 Ollama（Setting → Ollama）');
+            return;
+        }
+        const resArea = document.getElementById('dictCurrentResultArea');
+        resArea.innerHTML = `<div class="aiqa-card"><div class="aiqa-head"><span class="aiqa-badge">🤖 AI 问答</span><span class="aiqa-q">${escHtml(question)}</span><button class="aiqa-stop" id="aiqaStopBtn">⏹ 停止</button></div><div class="aiqa-body" id="aiqaBody">🔍 正在理解你的问题并抽取要对比的词…</div></div>`;
+        const stopBtn = document.getElementById('aiqaStopBtn');
+        const bodyEl = document.getElementById('aiqaBody');
+        const ctrl = new AbortController();
+        currentAbortController = ctrl;
+        if (stopBtn) stopBtn.onclick = () => { ctrl.abort(); if (bodyEl) bodyEl.innerHTML = '⏹ 已停止'; };
+
+        try {
+            // ① AI 抽词
+            const words = await extractWordsFromQuestion(question);
+            if (!words.length) {
+                if (bodyEl) bodyEl.innerHTML = '❌ 没能从问题里识别出英文单词，请换个说法（例如：impact 和 affect 有什么区别）。';
+                return;
+            }
+            if (bodyEl) bodyEl.innerHTML = `🔍 识别到要对比的词：<b>${words.map(w => escHtml(w)).join('、')}</b><br>⏳ 正在分别查询词库…`;
+
+            // ② 分别查词库（并行），取精简字段
+            const dictData = await Promise.all(words.map(async (w) => {
+                let entry = null;
+                if (isMysqlConnected) {
+                    try {
+                        const res = await callMysqlApi('/api/dict/lookup', { words: [w] });
+                        if (res.items && res.items.length) entry = buildDictEntryFromRow(res.items[0]);
+                    } catch (e) { console.warn('问答查词失败', w, e); }
+                }
+                return compactDictData(w, entry, null);
+            }));
+            if (bodyEl) bodyEl.innerHTML = `🔍 识别到要对比的词：<b>${words.map(w => escHtml(w)).join('、')}</b><br>⏳ 词库已查完，正在让 AI 结合语境解答…`;
+
+            // ③ 丢给 AI 生成，强制三段结构
+            const url = document.getElementById('ollamaUrlInput').value.trim().replace(/\/$/, '');
+            const model = document.getElementById('ollamaModelSelect').value;
+            const systemPrompt = '你是一位资深英语教师 + IT 行业专家。回答必须简洁、准确、用简体中文，严格按三段结构输出，不要输出 markdown 代码块围栏。';
+            const userPrompt = `用户在查词工具里问了这个问题：\n「${question}」\n\n已从本地词库查到这些词的基础数据（JSON）：\n${JSON.stringify(dictData)}\n\n请结合上面的词典数据和你自己的知识回答。必须严格按下面三段输出（用 ### 开头的小标题分段），不要照抄词典的死板释义：\n\n### 常用解释\n日常英语里的含义和区别，给出典型例句。\n\n### 计算机行业解释\n这些词在 IT / 编程 / 计算机语境下的特殊含义或用法差异（如无相关含义就说明"计算机领域无特殊含义"）。\n\n### 最新用法变化\n近年来这些词的含义、流行度或使用习惯有什么新变化（如无则说明"无明显变化"）。`;
+
+            const resp = await fetch(`${url}/api/generate`, {
+                method: 'POST', signal: ctrl.signal,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model, system: systemPrompt, prompt: userPrompt,
+                    stream: false, options: { temperature: 0.3, num_predict: 900 }
+                })
+            });
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const answer = (data.response || '').replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+            if (!answer) throw new Error('模型返回为空');
+
+            // ④ 渲染：把 ### 小标题转成 <h3>，其余按行/列表排版
+            const html = formatAiAnswer(answer);
+            const termsHtml = dictData.map(d =>
+                `<span class="aiqa-term-tag">${escHtml(d.word)}${d.ipa ? ' ' + escHtml(d.ipa) : ''}</span>`
+            ).join('');
+            resArea.innerHTML = `<div class="aiqa-card">
+                <div class="aiqa-head"><span class="aiqa-badge">🤖 AI 问答</span><span class="aiqa-q">${escHtml(question)}</span><span class="aiqa-meta">${escHtml(model)}</span></div>
+                <div class="aiqa-body">${html}</div>
+                <details class="aiqa-terms"><summary>📚 参考了 ${dictData.length} 个词的本地词库数据（点击展开）</summary>${termsHtml}</details>
+            </div>`;
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            if (resArea.querySelector('#aiqaBody')) {
+                resArea.querySelector('#aiqaBody').innerHTML = `❌ AI 问答失败：${escHtml(err.message || String(err))}`;
+            }
+        } finally {
+            if (currentAbortController === ctrl) currentAbortController = null;
+        }
+    }
+
+    /** 把 AI 的纯文本答案排版成 HTML：### 标题 + 简单列表/段落 */
+    function formatAiAnswer(text) {
+        const lines = String(text).split(/\n+/).map(s => s.trim()).filter(Boolean);
+        let html = '';
+        lines.forEach(line => {
+            if (/^###\s+/.test(line)) {
+                html += `<h3>${escHtml(line.replace(/^###\s+/, ''))}</h3>`;
+            } else if (/^[-*]\s+/.test(line)) {
+                html += `<div style="margin:3px 0 3px 12px;">• ${escHtml(line.replace(/^[-*]\s+/, ''))}</div>`;
+            } else if (/^\d+[.)]\s+/.test(line)) {
+                html += `<div style="margin:3px 0 3px 12px;">${escHtml(line)}</div>`;
+            } else {
+                html += `<p>${escHtml(line)}</p>`;
+            }
+        });
+        return html || escHtml(text);
+    }
+
     async function executeDictLookupCore() {
         const inputEl = document.getElementById('dictQueryInput');
         const rawQuery = inputEl.value.trim();
         if (!rawQuery) return showToast('⚠️ 请输入要查询的单词或中文词！');
+        // 需求23：自然语言问句（"A 和 B 有什么区别" / "compare A and B"）→ 走 AI 对比问答
+        if (isAiQuestionQuery(rawQuery)) {
+            _dictCurrentQuery = rawQuery;
+            return runAiWordQA(rawQuery);
+        }
         // 含中文 → 走 CC-CEDICT（cedict 表），英文 → 走原来的 340 万词库
         if (/[\u4e00-\u9fa5]/.test(rawQuery)) return executeZhLookup(rawQuery);
 
@@ -3328,6 +3673,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
                 window._lastDictEntry = stub;
                 window._lastAuth = authOnly;
                 resArea.innerHTML = renderDictResultCard(stub, '权威词典', authOnly);
+                fillWordNote(cleanWord, resArea);   // 需求24：回填个人笔记
                 ReaderApp.speak(cleanWord);
                 return;
             }
@@ -3341,6 +3687,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         const auth = await fetchAuthority(cleanWord);
         window._lastAuth = auth;
         resArea.innerHTML = renderDictResultCard(wordEntry, sourceLabel, auth);
+        fillWordNote(wordEntry.word, resArea);   // 需求24：回填个人笔记
         ReaderApp.speak(wordEntry.word);
         // 顺手让本地服务把另一种口音也合成好，切英美音时同样是 0 延迟
         try { SpeechEngine.prefetch(wordEntry.word, window.ReaderApp.speechLang); } catch (e) { }
@@ -3628,7 +3975,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
         await LocalDB.put('articles', artObj); await refreshDirectoryTree(); await openArticleById(newId); closeImportModal(); document.getElementById('jsonInput').value = '';
     }
 
-    if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';
     function sanitizeText(str) { return str ? str.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFD]/g, '').replace(/\s+/g, ' ').trim() : ''; }
 
     async function handleMultiFormatEbook(input) {
@@ -5352,7 +5699,7 @@ img{max-width:100%;height:auto;vertical-align:middle;}
     });
 
     async function exportFullDatabase() {
-        const payload = { exportedAt: new Date().toISOString(), nodes: await LocalDB.getAll('nodes'), articles: await LocalDB.getAll('articles'), plugins: await LocalDB.getAll('plugins') };
+        const payload = { exportedAt: new Date().toISOString(), nodes: await LocalDB.getAll('nodes'), articles: await LocalDB.getAll('articles'), plugins: await LocalDB.getAll('plugins'), wordNotes: await LocalDB.getAll('word_notes') };
         const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' }));
         a.download = `lt_reader_backup_${new Date().toISOString().slice(0,10)}.json`; a.click(); showToast('✅ 备份已导出！');
     }
@@ -5367,6 +5714,8 @@ img{max-width:100%;height:auto;vertical-align:middle;}
             } else {
                 for (const n of (data.nodes || [])) await LocalDB.put('nodes', n);
                 for (const a of (data.articles || [])) await LocalDB.put('articles', a);
+                // 需求24：恢复个人笔记（IndexedDB 是主存储，备份里也带上）
+                for (const wn of (data.wordNotes || [])) await LocalDB.put('word_notes', wn);
                 await refreshDirectoryTree(); showToast('✅ 备份恢复成功！');
             }
         } catch (e) { alert('导入失败：' + e.message); }

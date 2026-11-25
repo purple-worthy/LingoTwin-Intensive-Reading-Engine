@@ -162,10 +162,35 @@
   .lt-score{font-size:10px;color:#94a3b8;background:#f1f5f9;border-radius:8px;padding:1px 6px}
   .lt-hard-why{flex-basis:100%;font-size:11px;color:#94a3b8;line-height:1.5}
   .lt-hard-zh{flex-basis:100%;font-size:12px;color:#475569}
+
+  /* 需求21：查词记录（自动归档 + 历史列表） */
+  .lt-btn.lt-hist.on{background:#ecfdf5;border-color:#0f766e;color:#0f766e}
+  .lt-hist-bar{display:none;align-items:center;gap:8px;padding:7px 14px;background:#f0fdfa;
+    border-bottom:1px solid #ccfbf1;font-size:11.5px;color:#0f766e;flex-shrink:0}
+  .lt-hist-bar.open{display:flex}
+  .lt-hist-bar .lt-hist-count{font-weight:700}
+  .lt-hist-bar .lt-hist-spacer{flex:1}
+  .lt-hist-bar button{border:1px solid #99f6e4;background:#fff;color:#0f766e;border-radius:5px;
+    padding:2px 8px;font-size:11px;cursor:pointer}
+  .lt-hist-bar button:hover{background:#ccfbf1}
+  .lt-hist-item{position:relative;border:1px solid #e2e8f0;border-radius:8px;padding:9px 11px;margin-bottom:8px;
+    background:#fff;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+  .lt-hist-item:hover{border-color:#5eead4;box-shadow:0 2px 10px rgba(15,118,110,.09)}
+  .lt-hist-item .lt-hi-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .lt-hist-item .lt-hi-word{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;color:#0f172a}
+  .lt-hist-item .lt-hi-ipa{font-family:"Lucida Sans Unicode",sans-serif;font-size:12px;color:#64748b}
+  .lt-hist-item .lt-hi-time{margin-left:auto;font-size:10.5px;color:#94a3b8}
+  .lt-hist-item .lt-hi-def{font-size:12.5px;color:#475569;margin-top:5px;line-height:1.6;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .lt-hist-item .lt-hi-del{position:absolute;top:6px;right:6px;width:20px;height:20px;border:none;
+    background:transparent;color:#cbd5e1;font-size:13px;line-height:1;cursor:pointer;border-radius:4px}
+  .lt-hist-item .lt-hi-del:hover{background:#fff1f2;color:#e11d48}
+  .lt-hist-empty{padding:26px 10px;text-align:center;color:#94a3b8;font-size:13px;line-height:1.8}
   `;
 
   /* ---------------- DOM ---------------- */
   let host, shadow, chip, panel, bodyEl, dotEl, titleEl, depthEl, backBtn, pinBtn, alphaRow, alphaRange, alphaVal;
+  let histBtn, histBar, histCountEl;   // 需求21：查词记录入口
   let pinned = false;              // 图钉：锁定当前结果与面板位置
   let alpha = 100;                 // 面板透明度（35~100）
   let geom = { left: null, top: null, width: 410, height: null };
@@ -175,6 +200,150 @@
   let autoCloseTimer = null;       // 空闲自动关闭定时器
   let panelHovered = false;        // 鼠标是否在结果面板内
   const AUTO_CLOSE_MS = 2500;      // 结果显示后，鼠标未进入面板则自动关闭
+
+  /* ---------------- 需求21：查词记录（持久化） ----------------
+     与 historyStack（会话内逐层返回）完全独立：
+       - historyStack：本次打开面板的导航栈，刷新即丢
+       - wordRecords：查过的词，存 chrome.storage.local，刷新/重开浏览器都在
+     只存基础索引（word/ipa/defText/time），不存完整卡片 html——四本词典数据本来就在本地词库里，
+     点开历史条目时重新查一次即可拿到最新结果，既省空间又不会因为词典更新而看到过期快照。 */
+  const WORD_RECORDS_KEY = 'ltWordRecords';
+  let wordRecords = [];            // [{word, ipa, defText, time}]
+  let historyOpen = false;         // 历史列表是否正在显示
+  let viewBeforeHistory = null;    // 进入历史前的卡片现场，用于返回还原
+
+  function loadWordRecords(cb) {
+    try {
+      chrome.storage.local.get([WORD_RECORDS_KEY], (r) => {
+        const arr = r && r[WORD_RECORDS_KEY];
+        wordRecords = Array.isArray(arr) ? arr : [];
+        if (typeof cb === 'function') cb();
+      });
+    } catch (e) {
+      wordRecords = [];
+      if (typeof cb === 'function') cb();
+    }
+  }
+
+  function persistWordRecords() {
+    try {
+      chrome.storage.local.set({ [WORD_RECORDS_KEY]: wordRecords });
+    } catch (e) { /* 存储失败不影响查词 */ }
+  }
+
+  /** 查词成功后调用：同词去重并置顶，只存基础索引（不存完整卡片，点开时现查词库） */
+  function addWordRecord(word, entry) {
+    const w = String(word || '').trim().toLowerCase();
+    if (!w) return;
+    const ipa = (entry && entry.ipa) || '';
+    // 多义项摘要：优先 entry.defs（[{pos,meaning}]），拼成 "n. 释义1 / v. 释义2"
+    let defText = '';
+    if (entry && Array.isArray(entry.defs) && entry.defs.length) {
+      defText = entry.defs.map(d =>
+        (d.pos ? d.pos + ' ' : '') + (d.meaning || '')
+      ).filter(Boolean).slice(0, 3).join(' / ');
+    }
+    wordRecords = wordRecords.filter(r => String(r.word || '').toLowerCase() !== w);
+    wordRecords.unshift({ word: w, ipa, defText, time: Date.now() });
+    persistWordRecords();
+    updateHistCount();
+  }
+
+  function removeWordRecord(idx) {
+    if (!wordRecords[idx]) return;
+    wordRecords.splice(idx, 1);
+    persistWordRecords();
+    renderHistory();
+  }
+
+  function clearWordRecords() {
+    if (!wordRecords.length) { flashHistMsg('还没有查词记录'); return; }
+    if (!confirm(`确定清空全部 ${wordRecords.length} 条查词记录吗？\n（只清记录，不影响其它数据）`)) return;
+    wordRecords = [];
+    persistWordRecords();
+    renderHistory();
+  }
+
+  function updateHistCount() {
+    if (histCountEl) histCountEl.textContent = wordRecords.length ? `共 ${wordRecords.length} 条` : '共 0 条';
+    if (histBtn) histBtn.classList.toggle('on', historyOpen);
+  }
+
+  function fmtTime(ts) {
+    try {
+      const d = new Date(ts);
+      const p = (n) => String(n).padStart(2, '0');
+      const now = new Date();
+      if (d.toDateString() === now.toDateString()) return `今天 ${p(d.getHours())}:${p(d.getMinutes())}`;
+      return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+    } catch (e) { return ''; }
+  }
+
+  /** 历史列表视图：点条目还原完整卡片，✕ 删单条 */
+  function renderHistory() {
+    if (!bodyEl) return;
+    historyOpen = true;
+    updateHistCount();
+    panel.classList.add('open');
+    clearTimeout(autoCloseTimer);
+    if (!wordRecords.length) {
+      bodyEl.innerHTML = '<div class="lt-hist-empty">还没有查词记录。<br>双击或划选任意英文单词，结果会自动保存在这里（刷新不丢）。</div>';
+    } else {
+      bodyEl.innerHTML = wordRecords.map((r, i) => `
+        <div class="lt-hist-item" data-hist-open="${i}" title="点击重新查询该词（显示最新词典结果）">
+          <button class="lt-hi-del" data-hist-del="${i}" title="删除这条记录">✕</button>
+          <div class="lt-hi-top">
+            <span class="lt-hi-word">${esc(r.word)}</span>
+            ${r.ipa ? `<span class="lt-hi-ipa">/${esc(r.ipa)}/</span>` : ''}
+            <span class="lt-hi-time">${fmtTime(r.time)}</span>
+          </div>
+          ${r.defText ? `<div class="lt-hi-def">${esc(r.defText)}</div>` : ''}
+        </div>`).join('');
+    }
+    bodyEl.scrollTop = 0;
+    if (titleEl) titleEl.textContent = '查词记录';
+    if (depthEl) depthEl.style.display = 'none';
+  }
+
+  function flashHistMsg(msg) {
+    const c = histCountEl;
+    if (!c) return;
+    const old = c.textContent;
+    c.textContent = msg;
+    setTimeout(() => { c.textContent = old; }, 1500);
+  }
+
+  function closeHistory() {
+    historyOpen = false;
+    if (histBar) histBar.classList.remove('open');
+    updateHistCount();
+  }
+
+  /** 从历史视图返回：还原进入前的卡片现场 */
+  function renderCardReturn() {
+    const v = viewBeforeHistory;
+    if (v && v.html) {
+      currentView = v;
+      bodyEl.innerHTML = v.html;
+      bodyEl.scrollTop = v.scrollTop || 0;
+      if (titleEl) titleEl.textContent = currentView.kind === 'paragraph' ? '段落分析' : '划词词典';
+      updateNav();
+      scheduleAutoClose();
+    } else {
+      bodyEl.innerHTML = '<div class="lt-loading">划词、双击单词，或选中一段英文</div>';
+      if (titleEl) titleEl.textContent = '划词词典';
+      if (depthEl) depthEl.style.display = 'none';
+    }
+  }
+
+  /** 打开历史列表：先记住当前现场 */
+  function openHistory() {
+    viewBeforeHistory = currentView
+      ? { kind: currentView.kind, key: currentView.key, html: currentView.html, scrollTop: bodyEl ? bodyEl.scrollTop : 0 }
+      : null;
+    if (histBar) histBar.classList.add('open');
+    renderHistory();
+  }
 
   const PRESETS = [
     () => ({ left: window.innerWidth - 410, top: 20, width: 410, height: window.innerHeight - 40 }), // 右侧
@@ -209,6 +378,7 @@
           <span class="lt-depth" style="display:none"></span>
         </span>
         <span class="lt-act">
+          <button class="lt-btn lt-hist" data-act="hist" title="查词记录（自动保存，刷新不丢）">🕘</button>
           <button class="lt-btn lt-pin" data-act="pin" title="固定当前结果与位置（点一下变色，再点解除）">📌</button>
           <button class="lt-btn" data-act="alpha" title="背景透明度">◐</button>
           <button class="lt-btn" data-act="pos" title="切换预设位置">⇋</button>
@@ -219,6 +389,13 @@
         <span>背景透明度</span>
         <input type="range" min="35" max="100" step="1" value="100">
         <span class="lt-alpha-val">100%</span>
+      </div>
+      <div class="lt-hist-bar">
+        <span class="lt-hist-count"></span>
+        <span style="color:#94a3b8">查词自动存索引，点击重新查词库</span>
+        <span class="lt-hist-spacer"></span>
+        <button data-act="hist-clear" title="清空全部查词记录">清空</button>
+        <button data-act="hist-close" title="收起">✕</button>
       </div>
       <div class="lt-rz l" data-rz="l"></div>
       <div class="lt-rz r" data-rz="r"></div>
@@ -232,6 +409,9 @@
     depthEl = panel.querySelector('.lt-depth');
     backBtn = panel.querySelector('[data-act="back"]');
     pinBtn = panel.querySelector('[data-act="pin"]');
+    histBtn = panel.querySelector('[data-act="hist"]');
+    histBar = panel.querySelector('.lt-hist-bar');
+    histCountEl = histBar.querySelector('.lt-hist-count');
     alphaRow = panel.querySelector('.lt-alpha');
     alphaRange = alphaRow.querySelector('input[type=range]');
     alphaVal = alphaRow.querySelector('.lt-alpha-val');
@@ -372,10 +552,22 @@
     const btn = e.target.closest('[data-act]');
     if (btn) {
       const act = btn.dataset.act;
-      if (act === 'close') panel.classList.remove('open');
+      if (act === 'close') { panel.classList.remove('open'); closeHistory(); }
       if (act === 'back') goBack();
       if (act === 'pin') setPinned(!pinned);
       if (act === 'alpha') alphaRow.classList.toggle('open');
+      // 需求21：查词记录入口
+      if (act === 'hist') {
+        if (historyOpen) { closeHistory(); renderCardReturn(); }
+        else openHistory();
+      }
+      if (act === 'hist-close') { closeHistory(); renderCardReturn(); }
+      if (act === 'hist-clear') clearWordRecords();
+      if (act === 'hist-del') {
+        e.stopPropagation();
+        removeWordRecord(Number(btn.dataset.histDel));
+        return;
+      }
       if (act === 'pos') {
         if (pinned) { notifyPinned(); return; }
         presetIdx = (presetIdx + 1) % PRESETS.length;
@@ -383,6 +575,13 @@
         applyGeom();
         saveGeom();
       }
+      return;
+    }
+    // 需求21：点历史条目 → 重新查一次词库（不还原过期快照，拿最新词典结果）
+    const hi = e.target.closest('[data-hist-open]');
+    if (hi) {
+      const r = wordRecords[Number(hi.dataset.histOpen)];
+      if (r && r.word) navigate('word', r.word);   // navigate 内部会 closeHistory()
       return;
     }
     const lk = e.target.closest('[data-lookup]');
@@ -578,7 +777,7 @@
     try {
       el = (root && typeof root.elementFromPoint === 'function') ? root.elementFromPoint(x, y) : null;
     } catch { return false; }
-    return !!(el && el.closest && el.closest('.lt-head, .lt-ipa, .lt-ptag, .lt-pos, .lt-def-pos, .lt-lvl, .lt-score, .lt-tag, .lt-depth, .lt-src, .lt-src-meta, .lt-caret'));
+    return !!(el && el.closest && el.closest('.lt-head, .lt-ipa, .lt-ptag, .lt-pos, .lt-def-pos, .lt-lvl, .lt-score, .lt-tag, .lt-depth, .lt-src, .lt-src-meta, .lt-caret, .lt-hist-bar, .lt-hist-item'));
   }
 
   /**
@@ -596,7 +795,7 @@
     } catch { return ''; }
     if (!el) return '';
     // 面板里的音标 / 词性 / 级别 / 难度等标签不是正文词，双击它们不该查出一个字母
-    if (el.closest && el.closest('.lt-head, .lt-ipa, .lt-ptag, .lt-pos, .lt-def-pos, .lt-lvl, .lt-score, .lt-tag, .lt-depth, .lt-src, .lt-src-meta, .lt-caret')) return '';
+    if (el.closest && el.closest('.lt-head, .lt-ipa, .lt-ptag, .lt-pos, .lt-def-pos, .lt-lvl, .lt-score, .lt-tag, .lt-depth, .lt-src, .lt-src-meta, .lt-caret, .lt-hist-bar, .lt-hist-item')) return '';
 
     // 从命中元素向上最多 4 层：覆盖 <b>bold</b>、<a>linked</a>、逐词 span 等内联包裹
     for (let depth = 0; el && depth < 4; depth++, el = el.parentElement) {
@@ -787,6 +986,7 @@
   async function navigate(kind, rawText) {
     ensureUI();
     hideChip();                              // 任何新查询都先收起划词放大镜，避免残留
+    closeHistory();                          // 需求21：新查询退出历史视图
     if (pinned) { notifyPinned(); return; }   // 固定后新查询不覆盖当前结果
     const text = String(rawText || '').trim();
     if (!text) return;
@@ -822,6 +1022,8 @@
         } else {
           html = renderCard(entry, auth, key);
           dotEl.className = 'lt-dot on';
+          // 需求21：查词成功后只存基础索引（词/音标/释义摘要），同词去重置顶
+          addWordRecord(key, entry);
         }
       }
     }
@@ -1150,8 +1352,13 @@
     window.__ltIsPinned = () => pinned;
     window.__ltAlpha = applyAlpha;
     window.__ltPickWord = pickWordFromEvent;   // 调试：传 {clientX, clientY} + 可选 root 验证取词
+    // 需求21：查词记录调试出口
+    window.__ltWordRecords = () => wordRecords;
+    window.__ltOpenHistory = openHistory;
+    window.__ltAddRecord = addWordRecord;
   } catch (e) { /* ignore */ }
 
   // 初始化
   ensureUI();
+  loadWordRecords();   // 需求21：恢复持久化的查词记录，更新角标计数
 })();

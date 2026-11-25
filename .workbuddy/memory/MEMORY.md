@@ -1,5 +1,24 @@
 # 项目长期记忆 — 英语精读器（LT Reader）
 
+## ⭐ 版本与桌面端（2026-11-25 更新）
+
+- **主线已是 v17**（`v17/lt_reader_v17.html`）+ 3 个本地 plugin JS + `vendor/` + `extension/lt-lookup/` + `skill.md`（架构笔记）；`lt_app.py`、`start-all.bat`、`start-all.vbs` 均已指向 v17。
+- ⭐ **v17 核心 = 模型接口改 OpenAI 兼容形式**：前端 4 处 `/api/generate`→`/v1/chat/completions`（统一走 `callOpenAI()`/`getModelApiBase()`），探测 `/api/tags`→`/v1/models`；后端桥接加 `_openai_chat()`/`_openai_chat_url()`。Ollama 仅作可选本地实现，可换任意 OpenAI 兼容服务。接口映射表在 `v17/问题总览.md`。前版本 v16 及以下仅历史留存。
+- （历史）v16：`v16/lt_reader_v16.html`，370KB / 6322 行；`lt_app.py:24` 曾修正指向 v16。
+- **已有 pywebview 桌面壳**：`F:\EnglishReaderDataDict\lt_app.py` + `start-desktop.bat`（内部调 `start-all.bat nopage` 拉服务，再用 WebView2 开窗口）。
+- **架构 = 厚 Python 后端 + 薄 HTML 前端**：三个独立服务缺一不可——桥接 37701（FastAPI+pymysql）、Kokoro TTS 37702（ONNX+phonemizer+espeakng）、**Ollama 11434**（生成 IPA/例句 + 段落翻译）。Tauri/Wails 的 Rust/Go 后端**无法替代**后两者。
+- **CDN 已全部本地化**：jszip/pdf.js/worker 在 `v16\vendor\`，断网可跑（旧"待本地化"标记已过期）。
+- 桌面选型见 `Md/桌面端选型分析-Tauri-vs-Wails.md`：自用 → pywebview；分发 → Tauri v2；不学 Rust → Wails v2。
+- `start-all.vbs` 零窗口幂等、服务刻意常驻，不是"进程残留 bug"。
+
+## ⭐ 需求 24~26 已完成（2026-11-25）
+
+- **需求24 个人笔记**：`renderDictResultCard` 释义下方 `.dict-mynote`（独立查词页+正文浮层共用）。双写=IndexedDB 主（LocalDB v2 `word_notes`）+ MySQL 备份（桥接 `word_notes` 表 + `/api/wordnote/get|save`）。同步函数用「占位+异步填充」+ 竞态保护。备份 `*.bak_20261125_req24`。
+- **需求25 调研**：`Md/词典释义方法论调研.md`。贴合真实需求=频率排序+真实语境例句+场景/学科标注+个人化闭环。LT-Reader 建议补：义项按 `d.ratio` 排序、近义词辨析（复用 `runAiWordQA()`）。
+- **需求26 快速拉起**：`Md/项目快速拉起评估.md`。关页面<1s；冷启动 7~8s（TTS 模型加载仅 1.4s 非瓶颈）。🔴 **37701 桥接曾实测挂掉**（用户查词失败先双击 start-all.vbs）。🔴 隐藏瓶颈：XMLHTTP 探死端口 2s/次 vs netstat 0.05s（慢44倍）→ **已把 start-all.vbs 的 PortAlive() 改 netstat**（备份 `.bak_20261125_req26`）。内存 TTS 426MB，32GB 常驻无压力，**不做定时全关**。
+- 待办建议：lt_app.py 改用 start-all.vbs /nopage；前端加桥接自愈提示。
+- **浏览器插件主线已迁到 v16**（2026-11-25）：`v16/extension/lt-lookup/`（manifest 1.0.3，README 路径同步）。v14 目录仅历史留存，**以后改插件认准 v16**。插件只依赖桥接 37701 + Ollama 11434，端口早已对齐，无版本耦合。
+
 ## ⭐ 发音/朗读（2026-11-22 定稿，别再重复排查）
 
 **本机 Chrome 没有任何本地英文音色**（实测只有 3 个中文 OneCore 音色 + 一批 Google 网络音色），
